@@ -1,0 +1,264 @@
+.right-panel {
+  width: 300px;
+  min-width: 300px;
+  background: var(--sidebar-bg);
+  border-left: 1px solid var(--glass-border);
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  transition: background-color 0.3s ease;
+}
+
+.right-panel-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.rp-icon-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.rp-icon-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+.rp-notification-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  background: var(--accent-red);
+  border-radius: 50%;
+}
+
+.rp-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rp-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--glass-bg);
+}
+
+.rp-profile h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.rp-profile p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.rp-card {
+  background: linear-gradient(135deg, #3b5bdb 0%, #5c7cfa 50%, #748ffc 100%);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(59, 91, 219, 0.35);
+}
+
+.rp-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rp-card-type {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.rp-card-logo {
+  display: flex;
+  gap: -4px;
+}
+
+.rp-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.rp-circle.red {
+  background: #eb001b;
+  margin-right: -8px;
+  z-index: 1;
+  position: relative;
+}
+
+.rp-circle.orange {
+  background: #f79e1b;
+  opacity: 0.85;
+}
+
+.rp-card-number {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.rp-card-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  opacity: 0.85;
+}
+
+.rp-limit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.rp-limit-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.72rem;
+}
+
+.rp-progress-bar {
+  height: 8px;
+  background: var(--glass-bg);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.rp-progress-fill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: 20px;
+  transition: width 0.5s ease;
+}
+
+.rp-section h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--text-primary);
+}
+
+.rp-payment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rp-payment-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rp-payment-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--glass-bg);
+}
+
+.rp-payment-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rp-payment-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.rp-payment-amount {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.rp-payment-date {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.rp-activities {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rp-activity-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+}
+
+.rp-activity-icon {
+  color: var(--accent-primary);
+  display: flex;
+}
+
+.rp-activity-label {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.rp-activity-percent {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.rp-activity-bar {
+  height: 6px;
+  background: var(--glass-bg);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.rp-activity-fill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: 20px;
+}
+
+@media (max-width: 1200px) {
+  .right-panel {
+    display: none;
+  }
+}

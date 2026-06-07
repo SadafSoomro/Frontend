@@ -13,6 +13,8 @@ import ResetPassword from './Pages/Auth/ResetPassword';
 import VerifyOTP from './Pages/Auth/VerifyOTP';
 import Profile from './Pages/Profile/Profile';
 import LandingPage from './Pages/Landing/LandingPage';
+import CartPage from './Pages/Cart/CartPage';
+import CheckoutPage from './Pages/Checkout/CheckoutPage';
 
 const Orders = () => <div className="animate-fade-in"><h1>Orders</h1><p className="text-secondary">Coming soon...</p></div>;
 const Wallet = () => <div className="animate-fade-in"><h1>Wallet</h1><p className="text-secondary">Coming soon...</p></div>;
@@ -27,6 +29,8 @@ function App() {
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Overview />} />

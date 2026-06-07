@@ -1,275 +1,757 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, removeFromCart, updateQuantity } from '../../Store/Slices/CartSlice';
+import {
+  ShieldCheck,
+  RotateCcw,
+  Lock,
+  Search,
+  User,
+  ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  ArrowRight,
+  Star,
+  X,
+  Trash2,
+  Plus,
+  Minus,
+} from 'lucide-react';
+import './LandingPage.css';
 
-/* ── Color Palette: Lilac Theme ── */
-const C = {
-  bg:        '#f7f3fc',   /* soft lilac white */
-  bgLight:   '#ffffff',
-  bgSection: '#f0e9f9',   /* light lilac */
-  primary:   '#7c4fa0',   /* deep lilac/purple */
-  accent:    '#b48dd4',   /* mid lilac */
-  accentSoft:'#e3d0f5',   /* pale lilac */
-  dark:      '#2d1f3d',   /* near-black purple */
-  textMid:   '#7a6690',   /* muted lilac text */
-  textLight: '#b8a8cc',   /* light muted text */
-  border:    '#e4d8f2',   /* lilac border */
-  white:     '#ffffff',
-};
+const brandSlides = [
+  {
+    id: 1,
+    title: 'THE ORDINARY',
+    subtitle: 'CLINICAL FORMULATIONS',
+    bg: '#e8ecef',
+    img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=450&h=550&fit=crop',
+    desc: 'Sincerity in Formulation',
+    badge: 'NEW',
+  },
+  {
+    id: 2,
+    title: 'REVOLUTION',
+    subtitle: 'MAKEUP REVOLUTION LONDON',
+    bg: '#fcddec',
+    img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=450&h=550&fit=crop',
+    desc: 'POUT LIP OIL',
+    badge: 'HOT',
+  },
+  {
+    id: 3,
+    title: 'CeraVe',
+    subtitle: 'DEVELOPED WITH DERMATOLOGISTS',
+    bg: '#e2f0d9',
+    img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=450&h=550&fit=crop',
+    desc: 'HYDRATING MOISTURIZER',
+    badge: 'FLAT 20% OFF',
+  },
+  {
+    id: 4,
+    title: 'BIOAQUA',
+    subtitle: 'NATURAL ESSENCE SKINCARE',
+    bg: '#d2ebec',
+    img: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=450&h=550&fit=crop',
+    desc: 'AVOCADO EYE MASK',
+    badge: 'Flat 20% Off',
+  },
+  {
+    id: 5,
+    title: 'LOREAL PARIS',
+    subtitle: 'BECAUSE YOU ARE WORTH IT',
+    bg: '#f9f0e6',
+    img: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=450&h=550&fit=crop',
+    desc: 'REVITALIFT SERUM',
+    badge: 'BESTSELLER',
+  },
+];
 
-/* ── Reusable SVG Icons ── */
-const HeartIcon = () => (
-  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={C.dark} strokeWidth="1.6" style={{ cursor: 'pointer' }}>
-    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-  </svg>
-);
-const BagIcon = () => (
-  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={C.dark} strokeWidth="1.6" style={{ cursor: 'pointer' }}>
-    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-    <line x1="3" y1="6" x2="21" y2="6"/>
-    <path d="M16 10a4 4 0 01-8 0"/>
-  </svg>
-);
-const UserIcon = () => (
-  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={C.dark} strokeWidth="1.6" style={{ cursor: 'pointer' }}>
-    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
-const LogoSVG = ({ size = 30 }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none">
-    <circle cx="50" cy="50" r="44" stroke={C.accent} strokeWidth="3" fill="none"/>
-    <circle cx="50" cy="50" r="7" fill={C.accent}/>
-    <path d="M50 18 Q62 34 50 50 Q38 34 50 18Z" fill={C.accent} opacity="0.7"/>
-    <path d="M50 82 Q62 66 50 50 Q38 66 50 82Z" fill={C.accent} opacity="0.7"/>
-    <path d="M18 50 Q34 62 50 50 Q34 38 18 50Z" fill={C.accent} opacity="0.7"/>
-    <path d="M82 50 Q66 62 50 50 Q66 38 82 50Z" fill={C.accent} opacity="0.7"/>
-  </svg>
-);
+const storeProducts = [
+  // Bestsellers
+  {
+    id: 1,
+    brand: 'OneStop',
+    name: 'Hot Air Brush',
+    category: 'haircare',
+    img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=400&fit=crop',
+    price: 4400,
+    originalPrice: 5500,
+    discount: 20,
+    rating: 4.5,
+    reviews: 124,
+    installment: 1466,
+    bestseller: true,
+  },
+  {
+    id: 2,
+    brand: 'ST London',
+    name: 'Dual Wet & Dry Compact Powder',
+    category: 'makeup',
+    img: 'https://images.unsplash.com/photo-1631214524020-3c69888b8f2c?w=400&h=400&fit=crop',
+    price: 2760,
+    originalPrice: 3450,
+    discount: 20,
+    rating: 4.5,
+    reviews: 200,
+    installment: 920,
+    bestseller: true,
+  },
+  {
+    id: 3,
+    brand: 'AXIS-Y',
+    name: 'Dark Spot Correcting Glow Serum — 50ml',
+    category: 'skincare',
+    img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=400&h=400&fit=crop',
+    price: 4000,
+    originalPrice: 5000,
+    discount: 20,
+    rating: 4.8,
+    reviews: 87,
+    installment: 1333,
+    bestseller: true,
+  },
+  {
+    id: 4,
+    brand: 'Medicube',
+    name: 'Collagen Night Wrapping Mask — 75ml',
+    category: 'skincare',
+    img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop',
+    price: 5020,
+    originalPrice: 6275,
+    discount: 20,
+    rating: 5,
+    reviews: 43,
+    installment: 1673,
+    bestseller: true,
+  },
+  {
+    id: 5,
+    brand: 'CeraVe',
+    name: 'Foaming Facial Cleanser',
+    category: 'skincare',
+    img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&h=400&fit=crop',
+    price: 3200,
+    originalPrice: 4000,
+    discount: 20,
+    rating: 4.5,
+    reviews: 65,
+    installment: 1066,
+    bestseller: true,
+  },
+  // Extra Skincare
+  {
+    id: 6,
+    brand: 'The Ordinary',
+    name: 'Niacinamide 10% + Zinc 1% — 30ml',
+    category: 'skincare',
+    img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=400&h=400&fit=crop',
+    price: 1800,
+    originalPrice: 2250,
+    discount: 20,
+    rating: 4.8,
+    reviews: 142,
+    installment: 600,
+  },
+  {
+    id: 7,
+    brand: 'Dr. Althea',
+    name: '345 Relief Cream — 50ml',
+    category: 'skincare',
+    img: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=400&h=400&fit=crop',
+    price: 3600,
+    originalPrice: 4500,
+    discount: 20,
+    rating: 4.7,
+    reviews: 29,
+    installment: 1200,
+  },
+  {
+    id: 8,
+    brand: 'COSRX',
+    name: 'Advanced Snail 96 Mucin Power Essence — 100ml',
+    category: 'skincare',
+    img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop',
+    price: 3900,
+    originalPrice: 4875,
+    discount: 20,
+    rating: 4.9,
+    reviews: 215,
+    installment: 1300,
+  },
+  // Extra Haircare
+  {
+    id: 9,
+    brand: 'Framesi',
+    name: 'Morphosis Re-Structure Shampoo — 250ml',
+    category: 'haircare',
+    img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop',
+    price: 2800,
+    originalPrice: 3500,
+    discount: 20,
+    rating: 4.6,
+    reviews: 18,
+    installment: 933,
+  },
+  {
+    id: 10,
+    brand: "L'Oreal",
+    name: 'Serie Expert Absolut Repair Mask — 250ml',
+    category: 'haircare',
+    img: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=400&h=400&fit=crop',
+    price: 4200,
+    originalPrice: 5250,
+    discount: 20,
+    rating: 4.8,
+    reviews: 54,
+    installment: 1400,
+  },
+  {
+    id: 11,
+    brand: 'Gosh',
+    name: 'Hair Treatment Oil — 50ml',
+    category: 'haircare',
+    img: 'https://images.unsplash.com/photo-1522351015484-76f2c417b36a?w=400&h=400&fit=crop',
+    price: 2400,
+    originalPrice: 3000,
+    discount: 20,
+    rating: 4.5,
+    reviews: 9,
+    installment: 800,
+  },
+  // Extra Makeup
+  {
+    id: 12,
+    brand: 'Maybelline',
+    name: 'SuperStay Matte Ink Liquid Lipstick',
+    category: 'makeup',
+    img: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop',
+    price: 1900,
+    originalPrice: 2375,
+    discount: 20,
+    rating: 4.7,
+    reviews: 320,
+    installment: 633,
+  },
+  {
+    id: 13,
+    brand: 'ST London',
+    name: 'Matte Liquid Concealer',
+    category: 'makeup',
+    img: 'https://images.unsplash.com/photo-1615396879814-4901929c543f?w=400&h=400&fit=crop',
+    price: 1500,
+    originalPrice: 1875,
+    discount: 20,
+    rating: 4.4,
+    reviews: 14,
+    installment: 500,
+  },
+  // Extra Babycare
+  {
+    id: 14,
+    brand: 'CeraVe',
+    name: 'Baby Wash & Shampoo — 237ml',
+    category: 'babycare',
+    img: 'https://images.unsplash.com/photo-1515488042361-404e9250afef?w=400&h=400&fit=crop',
+    price: 2900,
+    originalPrice: 3625,
+    discount: 20,
+    rating: 4.8,
+    reviews: 22,
+    installment: 966,
+  },
+  {
+    id: 15,
+    brand: 'Babi Mild',
+    name: 'Baby Cream & Lotion',
+    category: 'babycare',
+    img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&h=400&fit=crop',
+    price: 1600,
+    originalPrice: 2000,
+    discount: 20,
+    rating: 4.7,
+    reviews: 31,
+    installment: 533,
+  },
+];
 
-/* ── Font style helper ── */
-const serif   = "'Georgia', 'Times New Roman', serif";
-const sansSerif = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif";
+const categoryData = [
+  { name: 'Baby Cream & Lotion', img: 'https://images.unsplash.com/photo-1515488042361-404e9250afef?w=200&h=200&fit=crop', tab: 'babycare' },
+  { name: 'Baby Shampoo', img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop', tab: 'babycare' },
+  { name: 'Liquid Lipsticks', img: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Sunscreen', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=200&h=200&fit=crop', tab: 'skincare' },
+  { name: 'Shampoo & Conditioner', img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=200&h=200&fit=crop', tab: 'haircare' },
+  { name: 'Foundation', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Mascara', img: 'https://images.unsplash.com/photo-1631214524020-3c69888b8f2c?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Hair Treatment', img: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=200&h=200&fit=crop', tab: 'haircare' },
+  { name: 'Lip Liners', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Masks & Peels', img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=200&h=200&fit=crop', tab: 'skincare' },
+  { name: 'Face Wash & Cleansers', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=200&h=200&fit=crop', tab: 'skincare' },
+  { name: 'Makeup Remover', img: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200&h=200&fit=crop', tab: 'skincare' },
+  { name: 'Nail Polish', img: 'https://images.unsplash.com/photo-1639739502660-84c205ad88df?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Lip Balm & Mask', img: 'https://images.unsplash.com/photo-1617897903246-719242758050?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Body Wash', img: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=200&h=200&fit=crop', tab: 'skincare' },
+  { name: 'Primer', img: 'https://images.unsplash.com/photo-1615396879814-4901929c543f?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Candle', img: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=200&h=200&fit=crop', tab: 'candle' },
+  { name: 'Concealers', img: 'https://images.unsplash.com/photo-1615396879555-d41599874a77?w=200&h=200&fit=crop', tab: 'makeup' },
+  { name: 'Hair Dye', img: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200&h=200&fit=crop', tab: 'haircare' },
+  { name: 'Serums', img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=200&h=200&fit=crop', tab: 'skincare' },
+];
+
+const brandNames = [
+  'COSRX', 'Dr. Althea', 'Framesi', 'REVOLUTION', 'AXIS-Y',
+  'MAYBELLINE', 'ST LONDON', 'Medicube', 'CeraVe', 'L\'Oreal', 'Bioaqua', 'The Ordinary',
+];
+
+const StarRating = ({ rating }) => (
+  <div className="star-rating">
+    {[1, 2, 3, 4, 5].map((s) => (
+      <Star
+        key={s}
+        size={12}
+        fill={s <= Math.floor(rating) ? '#f59e0b' : (s - 0.5 <= rating ? '#f59e0b' : 'none')}
+        color="#f59e0b"
+      />
+    ))}
+  </div>
+);
 
 const LandingPage = () => {
-  const features = [
-    { num: '01', title: 'Natural Ingredients', desc: "Carefully sourced botanicals and actives that work in harmony with your skin's natural biology." },
-    { num: '02', title: 'Dermatologist Tested', desc: "Every product is clinically tested and approved by leading dermatologists for all skin types." },
-    { num: '03', title: 'Sustainable & Clean', desc: "Cruelty-free, vegan formulas in eco-conscious packaging. Good for you and the planet." },
-  ];
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('all'); // 'all' (bestsellers), 'skincare', 'haircare', 'makeup', 'babycare'
+  const [cartOpen, setCartOpen] = useState(false);
 
-  const products = [
-    { name: 'Hydra-Boost Serum', price: '$58', tag: 'BESTSELLER' },
-    { name: 'Vitamin C Brightening Cream', price: '$72', tag: 'NEW' },
-    { name: 'Aloe Calm Essence', price: '$44', tag: 'POPULAR' },
-  ];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const cartItems = useSelector((state) => state.cart.items);
+
+  const visibleSlides = 3;
+  const maxIndex = brandSlides.length - visibleSlides;
+  const nextSlide = () => setSlideIndex((prev) => Math.min(prev + 1, maxIndex));
+  const prevSlide = () => setSlideIndex((prev) => Math.max(prev - 1, 0));
+
+  const totalCartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const totalCartPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+  const filteredProducts = storeProducts.filter((product) => {
+    if (activeTab === 'all') return product.bestseller;
+    return product.category === activeTab;
+  });
+
+  const handleNavClick = (tabId, sectionId) => {
+    setActiveTab(tabId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
+    setCartOpen(true); // Open the drawer immediately when an item is added
+  };
 
   return (
-    <div style={{ minHeight: '100vh', width: '100%', background: C.bg, fontFamily: sansSerif, overflowX: 'hidden', color: C.dark }}>
+    <div className="landing-layout">
 
-      {/* ══════════════ NAVBAR ══════════════ */}
-      <nav style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '18px 80px', background: C.bgLight,
-        borderBottom: `1px solid ${C.border}`, position: 'sticky', top: 0, zIndex: 100,
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
-          <LogoSVG size={30} />
-          <span style={{ fontSize: '0.52rem', letterSpacing: '0.22em', color: C.accent, fontWeight: '700', fontFamily: sansSerif }}>BEAUTIFULLY</span>
+      {/* ── BENEFIT RIBBON ── */}
+      <div className="benefit-ribbon">
+        <div className="benefit-item"><ShieldCheck size={14} /><span>Authentic Products</span></div>
+        <div className="benefit-item"><RotateCcw size={14} /><span>Easy Returns</span></div>
+        <div className="benefit-item"><Lock size={14} /><span>Secure Payment</span></div>
+      </div>
+
+      {/* ── STICKY DARK HEADER ── */}
+      <header className="landing-header">
+        <div className="header-container">
+          <Link to="/" className="brand-logo-container">
+            <span className="logo-text-box">makskin</span>
+          </Link>
+
+          <nav className="header-nav">
+            <ul>
+              <li><button onClick={() => handleNavClick('all', 'products-section')} className="nav-link-btn sale-badge-btn">Sale</button></li>
+              <li><button onClick={() => handleNavClick('makeup', 'products-section')} className="nav-link-btn">Makeup</button></li>
+              <li><button onClick={() => handleNavClick('skincare', 'products-section')} className="nav-link-btn">Skin Care</button></li>
+              <li><button onClick={() => handleNavClick('haircare', 'products-section')} className="nav-link-btn">Hair Care</button></li>
+              <li><button onClick={() => handleNavClick('babycare', 'products-section')} className="nav-link-btn">Baby Care</button></li>
+              <li><button onClick={() => handleNavClick('perfumes', 'products-section')} className="nav-link-btn">Perfumes</button></li>
+              <li><button onClick={() => handleNavClick('candle', 'products-section')} className="nav-link-btn">Candle</button></li>
+              <li><a href="#brands" className="nav-link-btn">Shop All Brands</a></li>
+            </ul>
+          </nav>
+
+          <div className="header-actions">
+            <div className={`landing-search-wrapper ${searchOpen ? 'open' : ''}`}>
+              <button className="action-icon-btn" onClick={() => setSearchOpen(!searchOpen)} title="Search">
+                <Search size={18} />
+              </button>
+              {searchOpen && (
+                <input type="text" placeholder="Search products..." className="landing-search-input" autoFocus />
+              )}
+            </div>
+            <Link to="/login" className="action-icon-btn" title="My Account"><User size={18} /></Link>
+            <button className="action-icon-btn bag-btn-wrapper" title="Shopping Bag" onClick={() => setCartOpen(true)}>
+              <ShoppingBag size={18} />
+              {totalCartQuantity > 0 && (
+                <span className="cart-badge-dot">{totalCartQuantity}</span>
+              )}
+            </button>
+          </div>
         </div>
+      </header>
 
-        <div style={{ display: 'flex', gap: '50px' }}>
-          {[['Home', true], ['About', false], ['Store', false], ['Contact', false]].map(([link, active]) => (
-            <a key={link} href="#" style={{
-              textDecoration: 'none',
-              color: active ? C.primary : C.textLight,
-              fontWeight: active ? '700' : '400',
-              fontSize: '0.95rem',
-              fontFamily: sansSerif,
-              borderBottom: active ? `2px solid ${C.primary}` : 'none',
-              paddingBottom: '2px',
-            }}>{link}</a>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', gap: '22px', alignItems: 'center' }}>
-          <HeartIcon /> <BagIcon /> <UserIcon />
-        </div>
-      </nav>
-
-      {/* ══════════════ HERO SECTION ══════════════ */}
-      <section style={{ display: 'grid', gridTemplateColumns: '55% 45%', minHeight: 'calc(100vh - 66px)', position: 'relative' }}>
-
-        {/* LEFT */}
-        <div style={{ padding: '60px 80px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <h1 style={{
-            fontFamily: serif,
-            fontSize: 'clamp(3rem, 5.5vw, 5.5rem)',
-            fontWeight: '900', color: C.dark,
-            lineHeight: '1.02', letterSpacing: '-0.025em', margin: 0,
-          }}>
-            GET THE SKIN<br />
-            YOU WANT<br />
-            TO FEEL
+      {/* ── FULL-WIDTH HERO BANNER ── */}
+      <section className="hero-banner">
+        <img
+          src="https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=1600&h=580&fit=crop&crop=center"
+          alt="Hero Banner — Premium Skincare Collection"
+          className="hero-bg-img"
+        />
+        <div className="hero-gradient-overlay" />
+        <div className="hero-content">
+          <div className="hero-tag">
+            <Sparkles size={14} />
+            <span>SUMMER COLLECTION 2026</span>
+          </div>
+          <h1 className="hero-headline">
+            Discover Your<br />
+            <span className="hero-highlight">Perfect Skincare</span>
           </h1>
-
-          <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-end' }}>
-            <div style={{ maxWidth: '200px' }}>
-              <p style={{ fontSize: '0.72rem', fontWeight: '700', letterSpacing: '0.16em', color: C.primary, margin: '0 0 10px', textTransform: 'uppercase', fontFamily: sansSerif }}>AGING BEAUTY</p>
-              <p style={{ fontSize: '0.85rem', color: C.textMid, lineHeight: '1.65', margin: '0 0 18px', fontFamily: sansSerif }}>
-                Lorem ipsum dolor sit amet,<br />consectetur adipiscing elit.
-              </p>
-              <a href="#" style={{ textDecoration: 'none', color: C.primary, fontWeight: '700', fontSize: '0.9rem', borderBottom: `2px solid ${C.primary}`, paddingBottom: '2px', fontFamily: sansSerif }}>
-                Product Catalogue
-              </a>
-            </div>
-
-            <div style={{
-              width: '220px', height: '200px', borderRadius: '14px',
-              overflow: 'hidden', background: C.accentSoft, flexShrink: 0,
-              boxShadow: `0 8px 30px rgba(124,79,160,0.15)`,
-            }}>
-              <img src="/hero-model.png" alt="Serum application" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 30%' }} />
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT */}
-        <div style={{ position: 'relative', overflow: 'hidden' }}>
-          {/* Outline circle */}
-          <div style={{ position: 'absolute', top: '25px', right: '60px', width: '75px', height: '75px', borderRadius: '50%', border: `1.5px solid ${C.accentSoft}`, zIndex: 2 }} />
-
-          {/* Large rounded-left photo with lilac tint overlay */}
-          <div style={{
-            position: 'absolute', top: '30px', right: 0,
-            width: '90%', height: '65%',
-            borderTopLeftRadius: '180px', borderBottomLeftRadius: '180px',
-            overflow: 'hidden', background: C.accentSoft,
-          }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(180,141,212,0.15)', zIndex: 1 }} />
-            <img src="/hero-model.png" alt="Skincare Model" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
-          </div>
-
-          {/* Asterisk lines in lilac */}
-          <div style={{ position: 'absolute', left: '-30px', top: '55%', transform: 'translateY(-50%)', zIndex: 5 }}>
-            <svg width="78" height="78" viewBox="0 0 78 78">
-              <line x1="39" y1="0"  x2="39" y2="78" stroke={C.accentSoft} strokeWidth="1.5"/>
-              <line x1="0"  y1="39" x2="78" y2="39" stroke={C.accentSoft} strokeWidth="1.5"/>
-              <line x1="9"  y1="9"  x2="69" y2="69" stroke={C.accentSoft} strokeWidth="1.5"/>
-              <line x1="69" y1="9"  x2="9"  y2="69" stroke={C.accentSoft} strokeWidth="1.5"/>
-            </svg>
-          </div>
-
-          {/* Location + Contact */}
-          <div style={{ position: 'absolute', bottom: '50px', right: '40px', left: '20px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 20px', marginBottom: '14px' }}>
-              <div style={{ textAlign: 'right' }}>
-                <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: C.textLight, textTransform: 'uppercase', margin: '0 0 2px', fontFamily: sansSerif }}>LOCATION</p>
-                <p style={{ fontSize: '1rem', fontWeight: '700', color: C.dark, margin: 0, fontFamily: sansSerif }}>4172 B. Street</p>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: C.textLight, textTransform: 'uppercase', margin: '0 0 2px', fontFamily: sansSerif }}>CONTACT</p>
-                <p style={{ fontSize: '1rem', fontWeight: '700', color: C.dark, margin: 0, fontFamily: sansSerif }}>806-517-1530</p>
-              </div>
-            </div>
-            <p style={{ fontSize: '0.76rem', color: C.textLight, lineHeight: '1.55', margin: 0, textAlign: 'right', fontFamily: sansSerif }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br />
-              Praesent id odio scelerisque, imperdiet risus et, gravida
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════ FEATURES SECTION ══════════════ */}
-      <section style={{ padding: '100px 80px', background: C.bgLight, borderTop: `1px solid ${C.border}` }}>
-        <p style={{ fontSize: '0.72rem', letterSpacing: '0.25em', color: C.accent, textTransform: 'uppercase', marginBottom: '16px', fontFamily: sansSerif }}>OUR APPROACH</p>
-        <h2 style={{ fontFamily: serif, fontSize: '2.8rem', fontWeight: '800', color: C.dark, marginBottom: '70px', maxWidth: '500px', lineHeight: '1.15' }}>
-          Science Meets<br />Natural Beauty
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '50px' }}>
-          {features.map(({ num, title, desc }) => (
-            <div key={num} style={{ borderTop: `2px solid ${C.accent}`, paddingTop: '28px' }}>
-              <p style={{ fontSize: '0.75rem', color: C.accent, letterSpacing: '0.12em', marginBottom: '14px', fontFamily: sansSerif }}>{num}</p>
-              <h3 style={{ fontFamily: serif, fontSize: '1.3rem', fontWeight: '700', color: C.dark, marginBottom: '12px' }}>{title}</h3>
-              <p style={{ fontSize: '0.88rem', color: C.textMid, lineHeight: '1.65', fontFamily: sansSerif }}>{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══════════════ PRODUCTS SECTION ══════════════ */}
-      <section style={{ padding: '100px 80px', background: C.bgSection }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '60px' }}>
-          <div>
-            <p style={{ fontSize: '0.72rem', letterSpacing: '0.25em', color: C.accent, textTransform: 'uppercase', marginBottom: '12px', fontFamily: sansSerif }}>BESTSELLERS</p>
-            <h2 style={{ fontFamily: serif, fontSize: '2.6rem', fontWeight: '800', color: C.dark, margin: 0 }}>Our Signature Range</h2>
-          </div>
-          <a href="#" style={{ textDecoration: 'none', color: C.primary, fontWeight: '700', fontSize: '0.88rem', borderBottom: `2px solid ${C.primary}`, paddingBottom: '2px', fontFamily: sansSerif }}>
-            View All Products →
-          </a>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px' }}>
-          {products.map(({ name, price, tag }) => (
-            <div key={name} style={{ cursor: 'pointer' }}>
-              <div style={{
-                width: '100%', height: '360px',
-                background: C.accentSoft,
-                borderRadius: '16px', marginBottom: '20px',
-                position: 'relative', overflow: 'hidden',
-                boxShadow: `0 6px 24px rgba(124,79,160,0.1)`,
-              }}>
-                <img src="/hero-model.png" alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
-                <div style={{
-                  position: 'absolute', top: '16px', left: '16px',
-                  background: C.primary, color: C.white,
-                  fontSize: '0.62rem', letterSpacing: '0.15em',
-                  padding: '4px 12px', borderRadius: '20px', fontWeight: '700', fontFamily: sansSerif,
-                }}>{tag}</div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <p style={{ fontSize: '1rem', fontWeight: '700', color: C.dark, margin: '0 0 4px', fontFamily: sansSerif }}>{name}</p>
-                  <p style={{ fontSize: '0.85rem', color: C.textLight, margin: 0, fontFamily: sansSerif }}>Skincare</p>
-                </div>
-                <p style={{ fontFamily: serif, fontSize: '1.1rem', fontWeight: '800', color: C.primary, margin: 0 }}>{price}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══════════════ CTA BANNER ══════════════ */}
-      <section style={{
-        padding: '100px 80px',
-        background: C.primary,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '40px',
-      }}>
-        <div>
-          <p style={{ fontSize: '0.72rem', letterSpacing: '0.25em', color: C.accentSoft, textTransform: 'uppercase', marginBottom: '14px', fontFamily: sansSerif }}>LIMITED OFFER</p>
-          <h2 style={{ fontFamily: serif, fontSize: '3rem', fontWeight: '800', color: C.white, margin: '0 0 20px', lineHeight: '1.1' }}>
-            Your Skin Routine<br />Starts Here
-          </h2>
-          <p style={{ fontSize: '0.95rem', color: C.accentSoft, lineHeight: '1.65', maxWidth: '400px', margin: 0, fontFamily: sansSerif }}>
-            Discover a curated skincare ritual tailored to your unique needs. Science-backed formulas that deliver visible results.
+          <p className="hero-sub">
+            Shop 150+ authentic beauty brands with guaranteed delivery,
+            easy returns, and exclusive members‑only discounts.
           </p>
-        </div>
-        <div style={{ display: 'flex', gap: '16px', flexShrink: 0 }}>
-          <button style={{ padding: '16px 36px', background: C.white, color: C.primary, border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '0.95rem', cursor: 'pointer', fontFamily: sansSerif }}>Shop Now</button>
-          <button style={{ padding: '16px 36px', background: 'transparent', color: C.white, border: `1.5px solid ${C.accentSoft}`, borderRadius: '8px', fontWeight: '600', fontSize: '0.95rem', cursor: 'pointer', fontFamily: sansSerif }}>Learn More</button>
+          <div className="hero-cta-group">
+            <button className="hero-cta-primary" onClick={() => handleNavClick('all', 'products-section')}>
+              Shop Now <ArrowRight size={16} />
+            </button>
+            <button className="hero-cta-secondary" onClick={() => handleNavClick('all', 'products-section')}>
+              Flat 30% OFF →
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* ══════════════ FOOTER ══════════════ */}
-      <footer style={{ padding: '50px 80px', background: C.bgLight, borderTop: `1px solid ${C.border}` }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
-            <LogoSVG size={26} />
-            <span style={{ fontSize: '0.52rem', letterSpacing: '0.22em', color: C.accent, fontWeight: '700', fontFamily: sansSerif }}>BEAUTIFULLY</span>
-          </div>
-          <div style={{ display: 'flex', gap: '40px' }}>
-            {['Home', 'About', 'Store', 'Contact', 'Privacy'].map(link => (
-              <a key={link} href="#" style={{ textDecoration: 'none', color: C.textLight, fontSize: '0.85rem', fontFamily: sansSerif }}>{link}</a>
+      {/* ── SHOP BY CATEGORY SECTION ── */}
+      <section className="categories-section">
+        <div className="categories-header-container">
+          <h2 className="categories-title">Shop By Category</h2>
+        </div>
+        <div className="categories-grid-wrapper">
+          <div className="categories-grid">
+            {categoryData.map((cat, i) => (
+              <div
+                className="category-item"
+                key={i}
+                onClick={() => handleNavClick(cat.tab, 'products-section')}
+              >
+                <div className="category-circle">
+                  <div className="category-circle-inner-bg">
+                    <img src={cat.img} alt={cat.name} className="category-img" />
+                  </div>
+                </div>
+                <span className="category-label">{cat.name}</span>
+              </div>
             ))}
           </div>
-          <p style={{ fontSize: '0.8rem', color: C.textLight, margin: 0, fontFamily: sansSerif }}>© 2026 Beautifully. All rights reserved.</p>
+        </div>
+      </section>
+
+      <main className="landing-main">
+
+        {/* ── PRODUCTS SECTION WITH TABS ── */}
+        <section className="bestsellers-section" id="products-section">
+          <div className="section-header-row">
+            <h2 className="section-title">
+              {activeTab === 'all' ? 'Bestsellers' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('care', ' Care')}
+            </h2>
+            <div className="category-tabs-container">
+              <button
+                className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
+                onClick={() => setActiveTab('all')}
+              >
+                Bestsellers
+              </button>
+              <button
+                className={`tab-btn ${activeTab === 'skincare' ? 'active' : ''}`}
+                onClick={() => setActiveTab('skincare')}
+              >
+                Skin Care
+              </button>
+              <button
+                className={`tab-btn ${activeTab === 'haircare' ? 'active' : ''}`}
+                onClick={() => setActiveTab('haircare')}
+              >
+                Hair Care
+              </button>
+              <button
+                className={`tab-btn ${activeTab === 'makeup' ? 'active' : ''}`}
+                onClick={() => setActiveTab('makeup')}
+              >
+                Makeup
+              </button>
+              <button
+                className={`tab-btn ${activeTab === 'babycare' ? 'active' : ''}`}
+                onClick={() => setActiveTab('babycare')}
+              >
+                Baby Care
+              </button>
+            </div>
+          </div>
+
+          <div className="products-grid">
+            {filteredProducts.map((product) => (
+              <div className="product-card" key={product.id}>
+                {product.discount > 0 && (
+                  <span className="product-discount-badge">{product.discount}% OFF</span>
+                )}
+                <div className="product-img-wrapper">
+                  <img src={product.img} alt={product.name} />
+                </div>
+                <div className="product-info">
+                  <span className="product-brand">{product.brand}</span>
+                  <p className="product-name">{product.name}</p>
+                  <div className="product-rating-row">
+                    <StarRating rating={product.rating} />
+                    {product.reviews > 0 && (
+                      <span className="product-review-count">{product.reviews} reviews</span>
+                    )}
+                  </div>
+                  <div className="product-price-row">
+                    <span className="product-price">Rs.{product.price.toLocaleString()} PKR</span>
+                    <span className="product-original-price">Rs.{product.originalPrice.toLocaleString()}</span>
+                    <span className="product-off-label">{product.discount}% OFF</span>
+                  </div>
+                  <div className="product-installment">
+                    <span className="installment-badge">B</span>
+                    <span className="installment-label">Pay only</span>
+                    <strong className="installment-price">Rs.{product.installment.toLocaleString()}</strong>
+                    <span className="installment-label">now</span>
+                  </div>
+                  <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── BRANDS MARQUEE ── */}
+        <section className="brands-strip-section" id="brands">
+          <div className="brands-strip-header">
+            <h2>Home to 150+</h2>
+            <p>Authentic Brands</p>
+          </div>
+          <div className="brands-marquee-wrapper">
+            <div className="brands-marquee-track">
+              {[...brandNames, ...brandNames].map((b, i) => (
+                <span key={i} className="brand-marquee-item">{b}</span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── BRAND POSTER CAROUSEL ── */}
+        <section className="carousel-section">
+          <button className="slide-arrow prev" onClick={prevSlide} aria-label="Previous">
+            <ChevronLeft size={24} />
+          </button>
+          <div className="carousel-wrapper">
+            <div
+              className="carousel-track"
+              style={{ transform: `translateX(-${slideIndex * (100 / visibleSlides + 0.7)}%)` }}
+            >
+              {brandSlides.map((slide) => (
+                <div key={slide.id} className="brand-slide-card" style={{ backgroundColor: slide.bg }}>
+                  <div className="slide-img-wrapper">
+                    <img src={slide.img} alt={slide.title} />
+                    {slide.badge && <span className="slide-badge">{slide.badge}</span>}
+                  </div>
+                  <div className="slide-content">
+                    <h3 className="slide-brand-title">{slide.title}</h3>
+                    <p className="slide-brand-sub">{slide.subtitle}</p>
+                    <p className="slide-brand-desc">{slide.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button className="slide-arrow next" onClick={nextSlide} aria-label="Next">
+            <ChevronRight size={24} />
+          </button>
+        </section>
+
+        {/* ── PROMO BANNER ── */}
+        <section className="promo-banner-section">
+          <div className="wide-promo-banner">
+            <div className="promo-gradient-overlay" />
+            <div className="promo-content">
+              <div className="promo-tag">
+                <Sparkles size={16} />
+                <span>LIMITED TIME EXCLUSIVE</span>
+              </div>
+              <h2>SUPER SUMMER SALE</h2>
+              <h3>Flat 30% Off on Premium Skincare Routine Kits</h3>
+              <p>
+                Upgrade your summer beauty ritual with dermatologically tested bundles
+                designed for ultimate hydration, brightening, and barrier repair.
+              </p>
+              <div className="promo-actions">
+                <button className="promo-shop-btn" onClick={() => handleNavClick('all', 'products-section')}>Shop The Sale <ArrowRight size={16} /></button>
+                <span className="promo-shipping-notice">Free shipping on orders over Rs. 2,000</span>
+              </div>
+            </div>
+            <div className="promo-image-pane">
+              <img
+                src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=600&h=450&fit=crop"
+                alt="Summer Sale"
+              />
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* ── SLIDE-OUT CART DRAWER ── */}
+      <div className={`cart-drawer-backdrop ${cartOpen ? 'open' : ''}`} onClick={() => setCartOpen(false)}>
+        <div className="cart-drawer-container" onClick={(e) => e.stopPropagation()}>
+          <div className="cart-drawer-header">
+            <div className="header-title-wrapper">
+              <ShoppingBag size={20} className="bag-icon" />
+              <h3>Shopping Bag ({totalCartQuantity})</h3>
+            </div>
+            <button className="close-cart-btn" onClick={() => setCartOpen(false)}>
+              <X size={20} />
+            </button>
+          </div>
+
+          <div className="cart-drawer-items-wrapper">
+            {cartItems.length === 0 ? (
+              <div className="cart-empty-state">
+                <ShoppingBag size={48} className="empty-bag-icon" />
+                <p className="empty-title">Your shopping bag is empty</p>
+                <p className="empty-sub">Add products to your bag to check out!</p>
+                <button className="empty-shop-btn" onClick={() => setCartOpen(false)}>
+                  Continue Shopping
+                </button>
+              </div>
+            ) : (
+              <div className="cart-items-list">
+                {cartItems.map((item) => (
+                  <div className="cart-drawer-item" key={item.id}>
+                    <div className="cart-item-img-pane">
+                      <img src={item.img} alt={item.name} />
+                    </div>
+                    <div className="cart-item-info-pane">
+                      <span className="item-brand">{item.brand}</span>
+                      <p className="item-name">{item.name}</p>
+                      <div className="item-price-quantity-row">
+                        <span className="item-price-calc">
+                          Rs.{item.price.toLocaleString()} x {item.quantity}
+                        </span>
+                        <div className="item-quantity-controls">
+                          <button
+                            className="qty-btn"
+                            onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity - 1 }))}
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus size={10} />
+                          </button>
+                          <span className="qty-value">{item.quantity}</span>
+                          <button
+                            className="qty-btn"
+                            onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                          >
+                            <Plus size={10} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      className="remove-item-btn"
+                      onClick={() => dispatch(removeFromCart(item.id))}
+                      title="Remove product"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {cartItems.length > 0 && (
+            <div className="cart-drawer-footer">
+              <div className="subtotal-row">
+                <span>Subtotal:</span>
+                <span className="subtotal-amount">Rs.{totalCartPrice.toLocaleString()} PKR</span>
+              </div>
+              <p className="tax-shipping-info">Shipping calculated at checkout. Taxes included.</p>
+              <div className="checkout-cta-row">
+                <button
+                  className="view-cart-btn"
+                  onClick={() => {
+                    setCartOpen(false);
+                    navigate('/cart');
+                  }}
+                >
+                  View Bag
+                </button>
+                <button
+                  className="drawer-checkout-btn"
+                  onClick={() => {
+                    setCartOpen(false);
+                    navigate('/checkout');
+                  }}
+                >
+                  Checkout
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── FOOTER ── */}
+      <footer className="landing-footer">
+        <div className="footer-container">
+          <div className="footer-brand">
+            <span className="footer-logo">makskin</span>
+            <p>Your one‑stop destination for authentic cosmetics, clean skincare, and premium beauty essentials.</p>
+          </div>
+          <div className="footer-links-col">
+            <h4>Shop</h4>
+            <ul>
+              <li><button onClick={() => handleNavClick('makeup', 'products-section')} className="footer-nav-btn">Makeup</button></li>
+              <li><button onClick={() => handleNavClick('skincare', 'products-section')} className="footer-nav-btn">Skin Care</button></li>
+              <li><button onClick={() => handleNavClick('haircare', 'products-section')} className="footer-nav-btn">Hair Care</button></li>
+              <li><button onClick={() => handleNavClick('babycare', 'products-section')} className="footer-nav-btn">Baby Care</button></li>
+            </ul>
+          </div>
+          <div className="footer-links-col">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#returns">Easy Returns</a></li>
+              <li><a href="#shipping">Shipping Policy</a></li>
+              <li><a href="#faq">FAQ</a></li>
+              <li><a href="#contact">Contact Us</a></li>
+            </ul>
+          </div>
+          <div className="footer-contact">
+            <h4>Newsletter</h4>
+            <p>Subscribe for sales notifications, beauty tips, and product releases.</p>
+            <div className="subscribe-form">
+              <input type="email" placeholder="Your email address" aria-label="Email" />
+              <button type="button">Join</button>
+            </div>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <p>© 2026 Makskin. All rights reserved. Authentic Products, Guaranteed.</p>
         </div>
       </footer>
     </div>

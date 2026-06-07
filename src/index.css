@@ -1,35 +1,60 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --bg-dark: #09090b;
-  --sidebar-bg: #111113;
-  --card-bg: rgba(18, 18, 20, 0.8);
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --accent-pink: #ff4d94;
-  --accent-cyan: #4df3ff;
-  --accent-green: #4dff88;
-  --accent-yellow: #ffeb3b;
-  --accent-purple: #9c27b0;
+  --bg-dark: #fafafb; /* Mantis light background */
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
+  --glass-bg: #f5f5f5;
+  --glass-border: #f0f0f0;
+  --accent-primary: #1890ff; /* Mantis light primary blue */
+  --accent-primary-light: #e6f7ff;
+  --accent-primary-hover: #40a9ff;
+  --accent-pink: #eb2f96;
+  --accent-cyan: #13c2c2;
+  --accent-green: #52c41a;
+  --accent-yellow: #faad14;
+  --accent-purple: #722ed1;
+  --accent-red: #ff4d4f;
 
-  --text-primary: #ffffff;
+  --text-primary: #262626; /* Mantis primary text */
+  --text-secondary: #8c8c8c; /* Mantis secondary text */
+  --text-muted: #bfbfbf;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+  --radius-sm: 4px; /* Mantis has cleaner, sharper corners */
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body.dark {
+  --bg-dark: #000000; /* Pure black for premium look */
+  --sidebar-bg: #09090b; /* Very dark slate for sidebar distinction */
+  --card-bg: #0c0c0e; /* Card background */
+  --glass-bg: #141416;
+  --glass-border: #1f1f23; /* Border color */
+  --accent-primary: #ff2a85; /* Neon Pink */
+  --accent-primary-light: rgba(255, 42, 133, 0.15);
+  --accent-primary-hover: #e01a6f;
+  --accent-pink: #ff2a85;
+  --accent-cyan: #00f0ff;
+  --accent-green: #39ff14;
+  --accent-yellow: #fffb00;
+  --accent-purple: #bd00ff;
+  --accent-red: #ff0055;
+
+  --text-primary: #fafafa;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
-
-  --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.95);
 }
-
-body.light {
-  --bg-dark: #f4f4f5;
-  --sidebar-bg: #ffffff;
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --glass-bg: rgba(0, 0, 0, 0.03);
-  --glass-border: rgba(0, 0, 0, 0.1);
-  --text-primary: #18181b;
-  --text-secondary: #52525b;
-  --text-muted: #71717a;
-}
-
 
 * {
   margin: 0;
@@ -45,6 +70,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
@@ -56,30 +82,19 @@ ul {
   list-style: none;
 }
 
-/* Glassmorphism Utilities */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-}
-
 .glass-card {
   background: var(--card-bg);
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: var(--shadow-sm);
   padding: 24px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
-  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
-/* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -97,46 +112,20 @@ ul {
   background: var(--text-muted);
 }
 
-/* Layout Helper */
 #root {
   display: flex;
   min-height: 100vh;
   width: 100%;
 }
 
-.main-content {
-  flex: 1;
-  padding: 40px;
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-/* Animations */
-/* @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-} */
-
-/* .animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
-} */
-
-
 h1 {
-  font-size: 2.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 8px;
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
@@ -148,13 +137,12 @@ h2 {
   color: var(--text-secondary);
 }
 
-/* Form Elements for CRUD */
 input,
 select,
 textarea {
-  background: var(--sidebar-bg);
+  background: var(--card-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   padding: 12px 16px;
   color: var(--text-primary);
   font-family: inherit;
@@ -165,47 +153,44 @@ textarea {
 }
 
 option {
-  background: var(--sidebar-bg);
+  background: var(--card-bg);
   color: var(--text-primary);
 }
 
-
 input:focus,
 select:focus {
-  border-color: var(--accent-cyan);
+  border-color: var(--accent-primary);
 }
 
 button.primary {
-  background: var(--accent-pink);
+  background: var(--accent-primary);
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.3s;
+  transition: background 0.3s;
 }
 
 button.primary:hover {
-  opacity: 0.9;
+  background: var(--accent-primary-hover);
   color: white;
 }
-
 
 button.secondary {
   background: var(--glass-bg);
   color: var(--text-primary);
   border: 1px solid var(--glass-border);
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
 }
 
-
 button.danger {
-  background: #ff4d4d;
+  background: var(--accent-red);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -213,27 +198,27 @@ button.danger {
   cursor: pointer;
 }
 
-/* Tables for CRUD */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 24px;
 }
 
-
 th {
   text-align: left;
   padding: 16px;
   color: var(--text-muted);
   font-weight: 500;
+  font-size: 0.85rem;
   border-bottom: 1px solid var(--glass-border);
 }
 
 td {
   padding: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.9rem;
 }
 
 tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--glass-bg);
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../config';
+import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import './Auth.css';
 
 const Login = () => {
@@ -48,27 +49,54 @@ const Login = () => {
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <div className="auth-header">
-                    <h2>Welcome Back</h2>
-                    <p>Sign in to your account to continue</p>
-                </div>
+        <div className="auth-split-layout">
+            <Link to="/" className="back-home-btn">
+                <ArrowLeft size={16} /> Back to Store
+            </Link>
 
-                {error && (
-                    <div className="error-msg">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                        {error}
+            {/* Left Column (Aesthetic Graphic Panel) */}
+            <div className="auth-graphic-panel">
+                <div className="graphic-overlay" />
+                <div className="graphic-content">
+                    <div className="graphic-logo">
+                        <span className="logo-box">makskin</span>
                     </div>
-                )}
+                    <div className="graphic-text">
+                        <div className="promo-pill">
+                            <Sparkles size={14} className="sparkle-icon" />
+                            <span>100% Organic Formulations</span>
+                        </div>
+                        <h1>Reveal Your Natural Glow</h1>
+                        <p>Join a community of skincare lovers. Log in to manage your personalized routines, orders, and exclusive rewards.</p>
+                    </div>
+                    <div className="graphic-footer">
+                        <span>Guaranteed Authentic Products • Secure Checkout</span>
+                    </div>
+                </div>
+            </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <div className="input-wrapper">
+            {/* Right Column (Minimalist Form Panel) */}
+            <div className="auth-form-panel">
+                <div className="form-container">
+                    <div className="form-header">
+                        <h2>Welcome Back</h2>
+                        <p>Sign in to your account to continue</p>
+                    </div>
+
+                    {error && (
+                        <div className="error-msg">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="modern-form">
+                        <div className="modern-form-group">
+                            <label htmlFor="email">Email Address</label>
                             <input
+                                id="email"
                                 type="email"
                                 name="email"
                                 placeholder="name@example.com"
@@ -77,12 +105,14 @@ const Login = () => {
                                 required
                             />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label>Password</label>
-                        <div className="input-wrapper">
+                        <div className="modern-form-group">
+                            <div className="label-row">
+                                <label htmlFor="password">Password</label>
+                                <Link to="/forgotpassword" className="forgot-pass-link">Forgot?</Link>
+                            </div>
                             <input
+                                id="password"
                                 type="password"
                                 name="password"
                                 placeholder="••••••••"
@@ -91,15 +121,15 @@ const Login = () => {
                                 required
                             />
                         </div>
+
+                        <button type="submit" className="modern-auth-btn" disabled={loading}>
+                            {loading ? 'Signing in...' : 'Sign In'} <ArrowRight size={16} />
+                        </button>
+                    </form>
+
+                    <div className="form-footer">
+                        <span>Don't have an account? <Link to="/signup">Create account</Link></span>
                     </div>
-
-                    <button type="submit" className="auth-btn" disabled={loading}>
-                        {loading ? 'Signing in...' : 'Sign In'}
-                    </button>
-                </form>
-
-                <div className="auth-footer">
-                    Don't have an account? <Link to="/signup">Sign up</Link>
                 </div>
             </div>
         </div>

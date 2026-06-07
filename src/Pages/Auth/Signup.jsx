@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../../config';
+import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import './Auth.css';
 
 const Signup = () => {
@@ -59,27 +60,54 @@ const Signup = () => {
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <div className="auth-header">
-                    <h2>Create Account</h2>
-                    <p>Join us to start your skincare journey</p>
-                </div>
+        <div className="auth-split-layout">
+            <Link to="/" className="back-home-btn">
+                <ArrowLeft size={16} /> Back to Store
+            </Link>
 
-                {error && (
-                    <div className="error-msg">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                        {error}
+            {/* Left Column (Aesthetic Graphic Panel) */}
+            <div className="auth-graphic-panel">
+                <div className="graphic-overlay" />
+                <div className="graphic-content">
+                    <div className="graphic-logo">
+                        <span className="logo-box">makskin</span>
                     </div>
-                )}
+                    <div className="graphic-text">
+                        <div className="promo-pill">
+                            <Sparkles size={14} className="sparkle-icon" />
+                            <span>Exclusive Membership Perks</span>
+                        </div>
+                        <h1>Start Your Skincare Journey</h1>
+                        <p>Create an account to track shipments, access personalized skincare regimens, and unlock rewards points with every purchase.</p>
+                    </div>
+                    <div className="graphic-footer">
+                        <span>Guaranteed Authentic Products • Secure Checkout</span>
+                    </div>
+                </div>
+            </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Full Name</label>
-                        <div className="input-wrapper">
+            {/* Right Column (Minimalist Form Panel) */}
+            <div className="auth-form-panel">
+                <div className="form-container signup-container">
+                    <div className="form-header">
+                        <h2>Create Account</h2>
+                        <p>Join us to start your skincare journey</p>
+                    </div>
+
+                    {error && (
+                        <div className="error-msg">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="modern-form">
+                        <div className="modern-form-group">
+                            <label htmlFor="name">Full Name</label>
                             <input
+                                id="name"
                                 type="text"
                                 name="name"
                                 placeholder="John Doe"
@@ -88,12 +116,11 @@ const Signup = () => {
                                 required
                             />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <div className="input-wrapper">
+                        <div className="modern-form-group">
+                            <label htmlFor="email">Email Address</label>
                             <input
+                                id="email"
                                 type="email"
                                 name="email"
                                 placeholder="name@example.com"
@@ -102,12 +129,11 @@ const Signup = () => {
                                 required
                             />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label>Phone Number</label>
-                        <div className="input-wrapper">
+                        <div className="modern-form-group">
+                            <label htmlFor="phone">Phone Number</label>
                             <input
+                                id="phone"
                                 type="tel"
                                 name="phone"
                                 placeholder="+1 (555) 000-0000"
@@ -116,12 +142,11 @@ const Signup = () => {
                                 required
                             />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label>Password</label>
-                        <div className="input-wrapper">
+                        <div className="modern-form-group">
+                            <label htmlFor="password">Password</label>
                             <input
+                                id="password"
                                 type="password"
                                 name="password"
                                 placeholder="••••••••"
@@ -130,12 +155,11 @@ const Signup = () => {
                                 required
                             />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label>Confirm Password</label>
-                        <div className="input-wrapper">
+                        <div className="modern-form-group">
+                            <label htmlFor="confirmPassword">Confirm Password</label>
                             <input
+                                id="confirmPassword"
                                 type="password"
                                 name="confirmPassword"
                                 placeholder="••••••••"
@@ -144,15 +168,15 @@ const Signup = () => {
                                 required
                             />
                         </div>
+
+                        <button type="submit" className="modern-auth-btn" disabled={loading}>
+                            {loading ? 'Creating account...' : 'Create Account'} <ArrowRight size={16} />
+                        </button>
+                    </form>
+
+                    <div className="form-footer">
+                        <span>Already have an account? <Link to="/login">Sign in</Link></span>
                     </div>
-
-                    <button type="submit" className="auth-btn" disabled={loading}>
-                        {loading ? 'Creating account...' : 'Create Account'}
-                    </button>
-                </form>
-
-                <div className="auth-footer">
-                    Already have an account? <Link to="/login">Sign in</Link>
                 </div>
             </div>
         </div>
