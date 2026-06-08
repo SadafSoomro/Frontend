@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useAuth } from '../../context/AuthContext';
 import { addToCart, removeFromCart, updateQuantity } from '../../Store/Slices/CartSlice';
 import {
   ShieldCheck,
@@ -18,6 +19,8 @@ import {
   Trash2,
   Plus,
   Minus,
+  LogOut,
+  Settings,
 } from 'lucide-react';
 import './LandingPage.css';
 
@@ -321,12 +324,31 @@ const StarRating = ({ rating }) => (
 const LandingPage = () => {
   const [slideIndex, setSlideIndex] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('all'); // 'all' (bestsellers), 'skincare', 'haircare', 'makeup', 'babycare'
+  const [activeTab, setActiveTab] = useState('all');
   const [cartOpen, setCartOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
   const cartItems = useSelector((state) => state.cart.items);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setUserMenuOpen(false);
+    navigate('/');
+  };
 
   const visibleSlides = 3;
   const maxIndex = brandSlides.length - visibleSlides;
@@ -350,6 +372,11 @@ const LandingPage = () => {
   };
 
   const handleAddToCart = (product) => {
+    if (!isAuthenticated) {
+      // Redirect to login with return path
+      navigate('/login', { state: { from: '/', message: 'Please login to add items to your cart.' } });
+      return;
+    }
     dispatch(addToCart(product));
     setCartOpen(true); // Open the drawer immediately when an item is added
   };
@@ -393,7 +420,37 @@ const LandingPage = () => {
                 <input type="text" placeholder="Search products..." className="landing-search-input" autoFocus />
               )}
             </div>
-            <Link to="/login" className="action-icon-btn" title="My Account"><User size={18} /></Link>
+            {isAuthenticated ? (
+              <div className="user-menu-wrapper" ref={userMenuRef}>
+                <button
+                  className="user-menu-btn"
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  title="My Account"
+                >
+                  <User size={18} />
+                  <span className="user-greeting">Hi, {user?.name?.split(' ')[0]}</span>
+                </button>
+                {userMenuOpen && (
+                  <div className="user-dropdown">
+                    <div className="user-dropdown-header">
+                      <span className="user-dropdown-name">{user?.name}</span>
+                      <span className="user-dropdown-email">{user?.email}</span>
+                    </div>
+                    <Link to="/profile" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      <Settings size={16} /> Edit Profile
+                    </Link>
+                    <Link to="/admin" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      <User size={16} /> Admin Dashboard
+                    </Link>
+                    <button className="user-dropdown-item logout-item" onClick={handleLogout}>
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/login" className="action-icon-btn" title="My Account"><User size={18} /></Link>
+            )}
             <button className="action-icon-btn bag-btn-wrapper" title="Shopping Bag" onClick={() => setCartOpen(true)}>
               <ShoppingBag size={18} />
               {totalCartQuantity > 0 && (

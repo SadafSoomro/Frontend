@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useAuth } from '../../context/AuthContext';
 import { clearCart } from '../../Store/Slices/CartSlice';
+import { sendOrderConfirmationApi, validateCouponApi } from '../../API/api';
 import {
   ShieldCheck,
   RotateCcw,
@@ -13,6 +15,7 @@ import {
   CheckCircle,
   Truck,
   Sparkles,
+  Mail,
 } from 'lucide-react';
 import './CheckoutPage.css';
 
@@ -21,18 +24,26 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const cartItems = useSelector((state) => state.cart.items);
+  const { isAuthenticated, user } = useAuth();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/checkout', message: 'Please login to checkout.' } });
+    }
+  }, [isAuthenticated, navigate]);
 
   // Read discount data passed from CartPage router state
-  const {
-    discountPercent = 0,
-    discountAmount = 0,
-    promoCode = '',
-  } = location.state || {};
+  const locationState = location.state || {};
+
+  const [appliedDiscountPercent, setAppliedDiscountPercent] = useState(locationState.discountPercent || 0);
+  const [appliedDiscountAmount, setAppliedDiscountAmount] = useState(locationState.discountAmount || 0);
+  const [appliedPromoCode, setAppliedPromoCode] = useState(locationState.promoCode || '');
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
+    fullName: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
     address: '',
     city: '',
     zipCode: '',
@@ -42,31 +53,79 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [orderTrackingNumber, setOrderTrackingNumber] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponMessage, setCouponMessage] = useState('');
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   const shippingFee = subtotal > 2000 || subtotal === 0 ? 0 : 200;
-  const grandTotal = subtotal - discountAmount + shippingFee;
+  const grandTotal = subtotal - appliedDiscountAmount + shippingFee;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponMessage('Please enter a coupon code');
+      return;
+    }
+
+    try {
+      const { data } = await validateCouponApi(couponCode);
+      const newDiscountPercent = data.discountPercent;
+      const newDiscountAmount = (subtotal * newDiscountPercent) / 100;
+      setAppliedDiscountPercent(newDiscountPercent);
+      setAppliedDiscountAmount(newDiscountAmount);
+      setAppliedPromoCode(couponCode);
+      setCouponMessage(`✓ Coupon "${couponCode}" applied! ${newDiscountPercent}% discount`);
+    } catch (err) {
+      setCouponMessage('❌ Invalid or inactive coupon code');
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (cartItems.length === 0) return;
 
     setLoading(true);
 
-    // Simulate backend checkout processing API call
-    setTimeout(() => {
-      // Generate unique tracking number (e.g. MS-189725)
+    // Simulate processing delay then send confirmation email
+    setTimeout(async () => {
       const randomId = Math.floor(100000 + Math.random() * 900000);
-      setOrderTrackingNumber(`MS-${randomId}`);
+      const trackingNumber = `MS-${randomId}`;
+      setOrderTrackingNumber(trackingNumber);
       setLoading(false);
       setShowSuccessModal(true);
 
-      // Clear the cart on successful order placement
+      // Clear the cart
       dispatch(clearCart());
+
+      // Send order confirmation email via backend
+      try {
+        await sendOrderConfirmationApi({
+          orderTrackingNumber: trackingNumber,
+          cartItems,
+          subtotal,
+          discountAmount: appliedDiscountAmount,
+          discountPercent: appliedDiscountPercent,
+          promoCode: appliedPromoCode,
+          shippingFee,
+          grandTotal,
+          paymentMethod,
+          shippingInfo: {
+            address: formData.address,
+            city: formData.city,
+            zipCode: formData.zipCode,
+            email: formData.email,
+            name: formData.fullName,
+          },
+        });
+        setEmailSent(true);
+      } catch (err) {
+        console.error('Failed to send confirmation email:', err);
+        setEmailSent(false);
+      }
     }, 1500);
   };
 
@@ -297,15 +356,64 @@ const CheckoutPage = () => {
 
                 <div className="summary-divider" />
 
+                {/* Coupon Section */}
+                <div style={{ marginBottom: '1.25rem', padding: '1rem', background: 'rgba(226, 27, 38, 0.06)', borderRadius: '8px', border: '1px solid rgba(226, 27, 38, 0.15)' }}>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Promo Code</label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="text"
+                      placeholder="Enter coupon code"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      style={{
+                        flex: 1,
+                        padding: '10px 12px',
+                        background: 'var(--card-bg)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '6px',
+                        fontSize: '0.85rem',
+                        color: 'var(--text-primary)',
+                        outline: 'none'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      style={{
+                        padding: '10px 16px',
+                        background: 'var(--accent-primary)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                      onMouseLeave={(e) => e.target.style.opacity = '1'}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {couponMessage && (
+                    <p style={{ fontSize: '0.78rem', color: couponMessage.includes('✓') ? '#22c55e' : 'var(--text-secondary)', marginTop: '6px', marginBottom: 0 }}>
+                      {couponMessage}
+                    </p>
+                  )}
+                </div>
+
+                <div className="summary-divider" />
+
                 <div className="summary-row">
                   <span>Subtotal</span>
                   <span>Rs.{subtotal.toLocaleString()}</span>
                 </div>
 
-                {discountPercent > 0 && (
+                {appliedDiscountPercent > 0 && (
                   <div className="summary-row discount-row-highlight">
-                    <span>Discount ({discountPercent}% {promoCode && `"${promoCode.toUpperCase()}"`})</span>
-                    <span>- Rs.{discountAmount.toLocaleString()}</span>
+                    <span>Discount ({appliedDiscountPercent}% {appliedPromoCode && `"${appliedPromoCode.toUpperCase()}"`})</span>
+                    <span>- Rs.{appliedDiscountAmount.toLocaleString()}</span>
                   </div>
                 )}
 
@@ -346,7 +454,17 @@ const CheckoutPage = () => {
               <Sparkles size={14} />
               <span>THANK YOU FOR SHOPPING</span>
             </div>
-            <p className="success-intro">Your order has been received and is currently being processed. An email receipt has been sent to your inbox.</p>
+            <p className="success-intro">Your order has been received and is currently being processed.</p>
+
+            {/* Email notification status */}
+            <div className={`email-status-row ${emailSent ? 'sent' : 'sending'}`}>
+              <Mail size={14} />
+              <span>
+                {emailSent
+                  ? `Confirmation email sent to ${user?.email}`
+                  : 'Sending confirmation email...'}
+              </span>
+            </div>
 
             <div className="order-meta-box">
               <div className="meta-row">

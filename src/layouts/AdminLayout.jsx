@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '../Components/Sidebar';
+import { useAuth } from '../context/AuthContext';
 import { Search, Sun, Moon, Bell, Menu } from 'lucide-react';
 import './AdminLayout.css';
 import '../Styles/CrudPage.css';
@@ -22,6 +23,7 @@ const GithubIcon = (props) => (
 );
 
 const AdminLayout = () => {
+  const { user } = useAuth();
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -68,12 +70,18 @@ const AdminLayout = () => {
                   <span className="notification-badge">2</span>
                 </button>
               </div>
-              <div className="header-profile">
+              <div className="header-profile" title={user?.email || 'admin@makskin.com'} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <img
-                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emily"
-                  alt="Admin Profile"
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Admin'}`}
+                  alt={user?.name || 'Profile'}
                   className="header-avatar"
                 />
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.2 }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{user?.name || 'Guest Admin'}</span>
+                  <span style={{ fontSize: '0.65rem', color: (user?.role || 'admin') === 'admin' ? '#22c55e' : '#f59e0b', fontWeight: 700, textTransform: 'uppercase' }}>
+                    {user?.role || 'admin'}
+                  </span>
+                </div>
               </div>
             </div>
           </header>

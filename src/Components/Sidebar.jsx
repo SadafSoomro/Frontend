@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
@@ -9,14 +9,24 @@ import {
   Wallet,
   Settings,
   Image,
-  LogIn,
-  UserPlus,
+  LogOut,
+  UserCircle,
   HelpCircle,
   Sparkles,
+  Tag,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
 
 const Sidebar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   const menuSections = [
     {
       title: 'Navigation',
@@ -25,10 +35,9 @@ const Sidebar = () => {
       ]
     },
     {
-      title: 'Authentication',
+      title: 'Account',
       items: [
-        { id: 'login', icon: <LogIn size={18} />, label: 'Login', path: '/login' },
-        { id: 'register', icon: <UserPlus size={18} />, label: 'Register', path: '/signup' }
+        { id: 'profile', icon: <UserCircle size={18} />, label: 'My Profile', path: '/admin/profile' },
       ]
     },
     {
@@ -44,6 +53,7 @@ const Sidebar = () => {
       items: [
         { id: 'users', icon: <Users size={18} />, label: 'Users', path: '/admin/users' },
         { id: 'orders', icon: <ShoppingCart size={18} />, label: 'Orders', path: '/admin/orders' },
+        { id: 'coupons', icon: <Tag size={18} />, label: 'Coupons', path: '/admin/coupons' },
         { id: 'wallet', icon: <Wallet size={18} />, label: 'Wallet', path: '/admin/wallet' }
       ]
     },
@@ -95,6 +105,28 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
+        <div className="sidebar-user-info" style={{ padding: '0 1rem 0.75rem', fontSize: '0.8rem' }}>
+          <span style={{ display: 'block', fontWeight: 600 }}>{user?.name || 'Guest Admin'}</span>
+          <span style={{ display: 'block', opacity: 0.6, fontSize: '0.7rem', wordBreak: 'break-all' }}>{user?.email || 'admin@makskin.com'}</span>
+          <span style={{
+            display: 'inline-block',
+            marginTop: '6px',
+            padding: '2px 8px',
+            borderRadius: '4px',
+            fontSize: '0.65rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            background: (user?.role || 'admin') === 'admin' ? 'rgba(34, 197, 94, 0.12)' : 'rgba(245, 158, 11, 0.12)',
+            color: (user?.role || 'admin') === 'admin' ? '#22c55e' : '#f59e0b',
+            border: (user?.role || 'admin') === 'admin' ? '1px solid rgba(34, 197, 94, 0.2)' : '1px solid rgba(245, 158, 11, 0.2)'
+          }}>
+            {(user?.role || 'admin') === 'admin' ? 'Admin Role' : 'User Role'}
+          </span>
+        </div>
+        <button className="nav-item" onClick={handleLogout} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', color: 'inherit' }}>
+          <LogOut size={18} />
+          <span>Logout</span>
+        </button>
         <div className="mantis-pro-card">
           <div className="pro-illustration">
             <Sparkles size={24} className="pro-icon" />

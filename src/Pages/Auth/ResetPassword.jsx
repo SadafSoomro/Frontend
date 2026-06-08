@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { API_BASE_URL } from '../../config';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { resetPasswordApi } from '../../API/api';
+import { useAuth } from '../../context/AuthContext';
+import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import './Auth.css';
 
 const ResetPassword = () => {
@@ -9,10 +11,11 @@ const ResetPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    
+
     const navigate = useNavigate();
     const location = useLocation();
     const email = location.state?.email;
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,63 +28,79 @@ const ResetPassword = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/resetpassword`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, otp, password })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Reset failed');
-            }
-
-            localStorage.setItem('token', data.token);
-            navigate('/login');
+            const { data } = await resetPasswordApi({ email, otp, password });
+            login(data);
+            navigate('/');
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.message || err.message || 'Reset failed');
         } finally {
             setLoading(false);
         }
     };
 
-    return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <div className="auth-header">
-                    <h2>Reset Password</h2>
-                    <p>Enter the code sent to {email} and your new password</p>
-                </div>
+    if (!email) {
+        return (
+            <div className="auth-split-layout">
+                <Link to="/" className="back-home-btn">
+                    <ArrowLeft size={16} /> Back to Store
+                </Link>
 
-                {error && (
-                    <div className="error-msg">
-                        {error}
+                <div className="auth-form-panel">
+                    <div className="form-container">
+                        <div className="form-header">
+                            <h2>Email Required</h2>
+                            <p>Please request a password reset first.</p>
+                        </div>
+                        <Link to="/forgotpassword" className="modern-auth-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                            Forgot Password <ArrowRight size={16} />
+                        </Link>
                     </div>
-                )}
+                </div>
+            </div>
+        );
+    }
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Verification Code</label>
-                        <div className="input-wrapper">
+    return (
+        <div className="auth-split-layout">
+            <Link to="/" className="back-home-btn">
+                <ArrowLeft size={16} /> Back to Store
+            </Link>
+
+            <div className="auth-form-panel">
+                <div className="form-container">
+                    <div className="form-header">
+                        <h2>Reset Password</h2>
+                        <p>Enter the code sent to <strong>{email}</strong> and your new password</p>
+                    </div>
+
+                    {error && (
+                        <div className="error-msg">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="modern-form">
+                        <div className="modern-form-group">
+                            <label htmlFor="otp">Verification Code</label>
                             <input
+                                id="otp"
                                 type="text"
                                 placeholder="123456"
                                 maxLength="6"
                                 value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
+                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                                 required
                                 style={{ textAlign: 'center', fontSize: '1.2rem', letterSpacing: '0.3rem' }}
                             />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label>New Password</label>
-                        <div className="input-wrapper">
+                        <div className="modern-form-group">
+                            <label htmlFor="password">New Password</label>
                             <input
+                                id="password"
                                 type="password"
                                 placeholder="••••••••"
                                 value={password}
@@ -89,12 +108,11 @@ const ResetPassword = () => {
                                 required
                             />
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label>Confirm New Password</label>
-                        <div className="input-wrapper">
+                        <div className="modern-form-group">
+                            <label htmlFor="confirmPassword">Confirm New Password</label>
                             <input
+                                id="confirmPassword"
                                 type="password"
                                 placeholder="••••••••"
                                 value={confirmPassword}
@@ -102,12 +120,12 @@ const ResetPassword = () => {
                                 required
                             />
                         </div>
-                    </div>
 
-                    <button type="submit" className="auth-btn" disabled={loading}>
-                        {loading ? 'Resetting...' : 'Reset Password'}
-                    </button>
-                </form>
+                        <button type="submit" className="modern-auth-btn" disabled={loading}>
+                            {loading ? 'Resetting...' : 'Reset Password'} <ArrowRight size={16} />
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );

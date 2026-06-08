@@ -160,6 +160,17 @@ option {
 input:focus,
 select:focus {
   border-color: var(--accent-primary);
+  background: var(--card-bg);
+}
+
+/* Fix autofill turning white in dark mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--card-bg) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 button.primary {

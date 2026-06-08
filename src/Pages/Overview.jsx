@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchAllOrdersApi, getAllUsersApi } from '../API/api';
 import {
   TrendingUp,
   TrendingDown,
@@ -67,6 +68,34 @@ const recentOrders = [
 
 const Overview = () => {
   const [timeRange, setTimeRange] = useState('Month');
+  const [orders, setOrders] = useState([]);
+  const [usersCount, setUsersCount] = useState(0);
+  const [ordersCount, setOrdersCount] = useState(0);
+  const [salesTotal, setSalesTotal] = useState(0);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [ordersRes, usersRes] = await Promise.all([
+          fetchAllOrdersApi().catch(e => { console.error('Orders fetch failed', e); return { data: [] }; }),
+          getAllUsersApi().catch(e => { console.error('Users fetch failed', e); return { data: [] }; })
+        ]);
+        
+        const fetchedOrders = ordersRes.data || [];
+        setOrders(fetchedOrders.slice(0, 5));
+        setOrdersCount(fetchedOrders.length);
+        
+        const fetchedUsers = usersRes.data || [];
+        setUsersCount(fetchedUsers.length);
+
+        const totalSales = fetchedOrders.reduce((sum, order) => sum + (order.grandTotal || 0), 0);
+        setSalesTotal(totalSales);
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
   const chartData = timeRange === 'Month' ? monthData : weekData;
 
@@ -94,35 +123,35 @@ const Overview = () => {
         <div className="metric-card">
           <span className="metric-label">Total Users</span>
           <div className="metric-value-row">
-            <span className="metric-number">78,250</span>
+            <span className="metric-number">{usersCount.toLocaleString()}</span>
             <span className="trend-badge positive">
-              <TrendingUp size={12} /> 70.5%
+              <TrendingUp size={12} /> 12.5%
             </span>
           </div>
           <p className="metric-description">
-            You made an extra <span className="highlight-text">8,900</span> this year
+            Active registered users
           </p>
         </div>
 
         <div className="metric-card">
           <span className="metric-label">Total Order</span>
           <div className="metric-value-row">
-            <span className="metric-number">18,800</span>
-            <span className="trend-badge negative">
-              <TrendingDown size={12} /> 27.4%
+            <span className="metric-number">{ordersCount.toLocaleString()}</span>
+            <span className="trend-badge positive">
+              <TrendingUp size={12} /> 8.4%
             </span>
           </div>
           <p className="metric-description">
-            You made an extra <span className="highlight-text">1,943</span> this year
+            Orders placed on the platform
           </p>
         </div>
 
         <div className="metric-card">
           <span className="metric-label">Total Sales</span>
           <div className="metric-value-row">
-            <span className="metric-number">$35,078</span>
+            <span className="metric-number">Rs.{salesTotal.toLocaleString()}</span>
             <span className="trend-badge positive">
-              <TrendingUp size={12} /> 27.4%
+              <TrendingUp size={12} /> 15.2%
             </span>
           </div>
           <p className="metric-description">
@@ -237,20 +266,24 @@ const Overview = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentOrders.map((order, idx) => (
-                    <tr key={idx}>
-                      <td className="tracking-no">{order.trackingNo}</td>
-                      <td className="product-name">{order.name}</td>
-                      <td className="text-right">{order.totalOrder}</td>
+                  {orders.length > 0 ? orders.map((order, idx) => (
+                    <tr key={order._id || idx}>
+                      <td className="tracking-no">{order.trackingNumber || 'N/A'}</td>
+                      <td className="product-name">{order.items && order.items.length > 0 ? order.items[0].name + (order.items.length > 1 ? ` +${order.items.length - 1} more` : '') : 'N/A'}</td>
+                      <td className="text-right">{order.items ? order.items.reduce((acc, curr) => acc + curr.quantity, 0) : 0}</td>
                       <td>
-                        <span className={`status-badge ${order.status.toLowerCase()}`}>
+                        <span className={`status-badge ${order.status ? order.status.toLowerCase() : 'pending'}`}>
                           <span className="dot" />
-                          {order.status}
+                          {order.status || 'Pending'}
                         </span>
                       </td>
-                      <td className="text-right amount-col">{order.amount}</td>
+                      <td className="text-right amount-col">Rs.{(order.grandTotal || 0).toLocaleString()}</td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan="5" className="text-center">No orders found.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

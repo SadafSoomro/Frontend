@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../config';
+import { registerApi } from '../../API/api';
 import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import './Auth.css';
 
@@ -31,29 +31,16 @@ const Signup = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    phone: formData.phone,
-                    password: formData.password
-                })
+            await registerApi({
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Registration failed');
-            }
-
-            // Redirect to OTP verification
             navigate('/verify-otp', { state: { email: formData.email } });
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.message || err.message || 'Registration failed');
         } finally {
             setLoading(false);
         }
@@ -65,30 +52,21 @@ const Signup = () => {
                 <ArrowLeft size={16} /> Back to Store
             </Link>
 
-            {/* Left Column (Aesthetic Graphic Panel) */}
             <div className="auth-graphic-panel">
-                <div className="graphic-overlay" />
+                <div className="graphic-overlay"></div>
                 <div className="graphic-content">
-                    <div className="graphic-logo">
-                        <span className="logo-box">makskin</span>
-                    </div>
+                    <div className="graphic-logo">makskin</div>
+                    <div className="promo-pill">Join the Family</div>
                     <div className="graphic-text">
-                        <div className="promo-pill">
-                            <Sparkles size={14} className="sparkle-icon" />
-                            <span>Exclusive Membership Perks</span>
-                        </div>
-                        <h1>Start Your Skincare Journey</h1>
-                        <p>Create an account to track shipments, access personalized skincare regimens, and unlock rewards points with every purchase.</p>
-                    </div>
-                    <div className="graphic-footer">
-                        <span>Guaranteed Authentic Products • Secure Checkout</span>
+                        <h1>Unlock Exclusive Benefits</h1>
+                        <p>Create an account to track orders, save your favorite items, and receive personalized skincare advice.</p>
                     </div>
                 </div>
+                <div className="graphic-footer">© 2026 Makskin Cosmetics. All rights reserved.</div>
             </div>
 
-            {/* Right Column (Minimalist Form Panel) */}
             <div className="auth-form-panel">
-                <div className="form-container signup-container">
+                <div className="form-container">
                     <div className="form-header">
                         <h2>Create Account</h2>
                         <p>Join us to start your skincare journey</p>

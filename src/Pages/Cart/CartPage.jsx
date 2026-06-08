@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useAuth } from '../../context/AuthContext';
 import { removeFromCart, updateQuantity } from '../../Store/Slices/CartSlice';
+import { validateCouponApi } from '../../API/api';
 import {
   ShieldCheck,
   RotateCcw,
@@ -25,28 +27,31 @@ const CartPage = () => {
   const [discountPercent, setDiscountPercent] = useState(0);
   const [promoError, setPromoError] = useState('');
   const [promoSuccess, setPromoSuccess] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
 
   const totalCartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-  // Apply promo/voucher code
-  const handleApplyPromo = (e) => {
+  // Apply promo/voucher code — validated against backend
+  const handleApplyPromo = async (e) => {
     e.preventDefault();
     setPromoError('');
     setPromoSuccess('');
-
     const formattedCode = promoCode.trim().toUpperCase();
-    if (formattedCode === 'WELCOME10') {
-      setDiscountPercent(10);
-      setPromoSuccess('Voucher "WELCOME10" applied! 10% OFF your subtotal.');
-    } else if (formattedCode === 'MAKSKIN30') {
-      setDiscountPercent(30);
-      setPromoSuccess('Voucher "MAKSKIN30" applied! 30% OFF your subtotal.');
-    } else if (formattedCode === '') {
+    if (!formattedCode) {
       setPromoError('Please enter a voucher code.');
-    } else {
-      setPromoError('Invalid voucher code. Try "WELCOME10" or "MAKSKIN30".');
+      return;
+    }
+    setPromoLoading(true);
+    try {
+      const { data } = await validateCouponApi(formattedCode);
+      setDiscountPercent(data.discountPercent);
+      setPromoSuccess(`Coupon "${data.code}" applied! ${data.discountPercent}% OFF your subtotal.`);
+    } catch (err) {
+      setPromoError(err.response?.data?.message || 'Invalid or expired coupon code.');
       setDiscountPercent(0);
+    } finally {
+      setPromoLoading(false);
     }
   };
 
@@ -217,8 +222,8 @@ const CartPage = () => {
                       onChange={(e) => setPromoCode(e.target.value)}
                       disabled={discountPercent > 0}
                     />
-                    <button type="submit" disabled={discountPercent > 0}>
-                      Apply
+                     <button type="submit" disabled={discountPercent > 0 || promoLoading}>
+                      {promoLoading ? 'Checking...' : 'Apply'}
                     </button>
                   </div>
                   {promoError && <p className="promo-msg error">{promoError}</p>}

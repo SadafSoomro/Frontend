@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../config';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { loginApi } from '../../API/api';
+import { useAuth } from '../../context/AuthContext';
 import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import './Auth.css';
 
@@ -12,6 +13,8 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const { login } = useAuth();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,26 +26,18 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+            const { data } = await loginApi(formData);
+            login(data);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
-            }
-
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data));
-            
-            navigate('/');
+            const redirectTo = location.state?.from || '/';
+            navigate(redirectTo);
         } catch (err) {
-            setError(err.message);
+            const responseData = err.response?.data;
+            if (responseData?.notVerified) {
+                navigate('/verify-otp', { state: { email: formData.email } });
+                return;
+            }
+            setError(responseData?.message || err.message || 'Login failed');
         } finally {
             setLoading(false);
         }
@@ -54,28 +49,19 @@ const Login = () => {
                 <ArrowLeft size={16} /> Back to Store
             </Link>
 
-            {/* Left Column (Aesthetic Graphic Panel) */}
             <div className="auth-graphic-panel">
-                <div className="graphic-overlay" />
+                <div className="graphic-overlay"></div>
                 <div className="graphic-content">
-                    <div className="graphic-logo">
-                        <span className="logo-box">makskin</span>
-                    </div>
+                    <div className="graphic-logo">makskin</div>
+                    <div className="promo-pill">Premium Skincare</div>
                     <div className="graphic-text">
-                        <div className="promo-pill">
-                            <Sparkles size={14} className="sparkle-icon" />
-                            <span>100% Organic Formulations</span>
-                        </div>
-                        <h1>Reveal Your Natural Glow</h1>
-                        <p>Join a community of skincare lovers. Log in to manage your personalized routines, orders, and exclusive rewards.</p>
-                    </div>
-                    <div className="graphic-footer">
-                        <span>Guaranteed Authentic Products • Secure Checkout</span>
+                        <h1>Discover Your True Radiance</h1>
+                        <p>100% authentic cosmetics and clean skincare products tailored for your unique beauty journey.</p>
                     </div>
                 </div>
+                <div className="graphic-footer">© 2026 Makskin Cosmetics. All rights reserved.</div>
             </div>
 
-            {/* Right Column (Minimalist Form Panel) */}
             <div className="auth-form-panel">
                 <div className="form-container">
                     <div className="form-header">
