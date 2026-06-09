@@ -17,24 +17,16 @@ const Products = () => {
     name: '',
     slug: '',
     description: '',
-    short_description: '',
     price: '',
     discount_price: '',
     stock_quantity: '',
     sku: '',
     category_id: '',
     brand: '',
-    skin_type: [],
-    concerns: [],
-    ingredients: '',
-    how_to_use: '',
-    benefits: '',
     main_image: null,
     gallery_images: [],
     status: 'active',
-    is_featured: false,
-    meta_title: '',
-    meta_description: ''
+    is_featured: false
   });
 
   const [previews, setPreviews] = useState({ main: null, gallery: [] });
@@ -62,13 +54,11 @@ const Products = () => {
     } else {
       setEditingProduct(null);
       setFormData({
-        name: '', slug: '', description: '', short_description: '',
+        name: '', slug: '', description: '',
         price: '', discount_price: '', stock_quantity: '', sku: '',
-        category_id: '', brand: '', skin_type: [], concerns: [],
-        ingredients: '', how_to_use: '', benefits: '',
+        category_id: '', brand: '',
         main_image: null, gallery_images: [],
-        status: 'active', is_featured: false,
-        meta_title: '', meta_description: ''
+        status: 'active', is_featured: false
       });
       setPreviews({ main: null, gallery: [] });
     }
@@ -117,19 +107,29 @@ const Products = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Auto-generate slug from name if empty
+    let slug = formData.slug;
+    if (!slug || slug.trim() === '') {
+      slug = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    // Auto-generate SKU if empty
+    let sku = formData.sku;
+    if (!sku || sku.trim() === '') {
+      sku = 'SKU-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+    }
+
+    const updatedFormData = { ...formData, slug, sku };
+
     const data = new FormData();
-    Object.keys(formData).forEach(key => {
+    Object.keys(updatedFormData).forEach(key => {
       if (key === 'gallery_images') {
-        formData.gallery_images.forEach(img => {
+        updatedFormData.gallery_images.forEach(img => {
           data.append('gallery_images', img);
         });
-      } else if (key === 'skin_type' || key === 'concerns') {
-        const arrayValues = Array.isArray(formData[key])
-          ? formData[key]
-          : formData[key].split(',').map(s => s.trim()).filter(s => s !== '');
-        arrayValues.forEach(val => data.append(key, val));
-      } else if (formData[key] !== null && formData[key] !== undefined) {
-        data.append(key, formData[key]);
+      } else if (updatedFormData[key] !== null && updatedFormData[key] !== undefined) {
+        data.append(key, updatedFormData[key]);
       }
     });
 
@@ -233,7 +233,7 @@ const Products = () => {
 
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content modal-lg modal-scroll">
+          <div className="modal-content modal-md modal-scroll">
             <div className="modal-header">
               <div className="title-with-icon">
                 {editingProduct && <Edit2 size={20} className="text-accent" />}
@@ -247,155 +247,97 @@ const Products = () => {
             )}
 
             <form onSubmit={handleSubmit} className="crud-form">
-              <div className="form-two-columns">
-                {/* ── Left Column ── */}
-                <div className="form-column">
-                  <section className="form-section">
-                    <div className="section-header-mini">
-                      <Info size={16} />
-                      <h3>Basic Information</h3>
-                    </div>
-                    <div className="form-group">
-                      <label>Product Name</label>
-                      <div className="input-with-button">
-                        <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Vitamin C Radiance Serum" required />
-                        <button type="button" className="btn-secondary-small" onClick={generateSlug}>Generate Slug</button>
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label>Slug (URL key)</label>
-                      <input type="text" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="vitamin-c-radiance-serum" required />
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Category</label>
-                        <select value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: e.target.value })} required>
-                          <option value="">Select Category</option>
-                          {categories.map(cat => <option key={cat._id} value={cat._id}>{cat.name}</option>)}
-                        </select>
-                      </div>
-                      <div className="form-group">
-                        <label>Brand</label>
-                        <input type="text" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} placeholder="e.g. SkinGlo" required />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label>Short Description</label>
-                      <input type="text" value={formData.short_description} onChange={(e) => setFormData({ ...formData, short_description: e.target.value })} placeholder="Brief overview for search results..." />
-                    </div>
-                    <div className="form-group">
-                      <label>Full Description</label>
-                      <textarea rows="3" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Detailed product story and features..." required />
-                    </div>
-                  </section>
-
-                  <section className="form-section">
-                    <div className="section-header-mini">
-                      <Tag size={16} />
-                      <h3>Pricing & Stock</h3>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Price ($)</label>
-                        <input type="number" step="0.01" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
-                      </div>
-                      <div className="form-group">
-                        <label>Discount Price ($)</label>
-                        <input type="number" step="0.01" value={formData.discount_price} onChange={(e) => setFormData({ ...formData, discount_price: e.target.value })} />
-                      </div>
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Stock Quantity</label>
-                        <input type="number" value={formData.stock_quantity} onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })} required />
-                      </div>
-                      <div className="form-group">
-                        <label>SKU</label>
-                        <input type="text" value={formData.sku} onChange={(e) => setFormData({ ...formData, sku: e.target.value })} placeholder="e.g. SRUM-VC-001" required />
-                      </div>
-                    </div>
-                  </section>
+              <div className="form-group">
+                <label>Product Name</label>
+                <div className="input-with-button">
+                  <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Vitamin C Radiance Serum" required />
+                  <button type="button" className="btn-secondary-small" onClick={generateSlug}>Generate Slug</button>
                 </div>
+              </div>
 
-                {/* ── Right Column ── */}
-                <div className="form-column">
-                  <section className="form-section">
-                    <div className="section-header-mini">
-                      <ImageIcon size={16} />
-                      <h3>Product Media</h3>
-                    </div>
-                    <div className="form-group">
-                      <label>Main Product Image</label>
-                      <div className="main-upload-area">
-                        {previews.main ? (
-                          <div className="main-preview-large">
-                            <img src={previews.main} alt="Main" />
-                            <button type="button" className="remove-main" onClick={() => { setPreviews({ ...previews, main: null }); setFormData({ ...formData, main_image: null }); }}>
-                              <X size={16} />
-                            </button>
-                          </div>
-                        ) : (
-                          <label className="upload-box-large">
-                            <input type="file" accept="image/*" onChange={handleMainImageChange} hidden />
-                            <Upload size={28} />
-                            <span>Upload Main Image</span>
-                          </label>
-                        )}
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label>Gallery Images</label>
-                      <div className="gallery-grid">
-                        {previews.gallery.map((img, index) => (
-                          <div key={index} className="gallery-preview-item">
-                            <img src={img} alt={`Gallery ${index}`} />
-                            <button type="button" className="remove-gallery" onClick={() => handleRemoveGalleryImage(index)}><X size={12} /></button>
-                          </div>
-                        ))}
-                        <label className="upload-box-small">
-                          <input type="file" accept="image/*" multiple onChange={handleGalleryChange} hidden />
-                          <Plus size={20} />
-                        </label>
-                      </div>
-                    </div>
-                  </section>
+              <div className="form-group">
+                <label>Category</label>
+                <select value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: e.target.value })} required>
+                  <option value="">Select Category</option>
+                  {categories.map(cat => <option key={cat._id} value={cat._id}>{cat.name}</option>)}
+                </select>
+              </div>
 
-                  <section className="form-section">
-                    <div className="section-header-mini">
-                      <Layers size={16} />
-                      <h3>Specifications & SEO</h3>
+              <div className="form-group">
+                <label>Brand</label>
+                <input type="text" value={formData.brand} onChange={(e) => setFormData({ ...formData, brand: e.target.value })} placeholder="e.g. SkinGlo" required />
+              </div>
+
+              <div className="form-group">
+                <label>Description</label>
+                <textarea rows="3" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Detailed product story and features..." required />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Price (Rs.)</label>
+                  <input type="number" step="0.01" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Original Price (Rs.)</label>
+                  <input type="number" step="0.01" value={formData.discount_price} onChange={(e) => setFormData({ ...formData, discount_price: e.target.value })} />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Stock Quantity</label>
+                  <input type="number" value={formData.stock_quantity} onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })} required />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Main Product Image</label>
+                <div className="main-upload-area">
+                  {previews.main ? (
+                    <div className="main-preview-large">
+                      <img src={previews.main} alt="Main" />
+                      <button type="button" className="remove-main" onClick={() => { setPreviews({ ...previews, main: null }); setFormData({ ...formData, main_image: null }); }}>
+                        <X size={16} />
+                      </button>
                     </div>
-                    <div className="form-group">
-                      <label>Ingredients</label>
-                      <textarea rows="2" value={formData.ingredients} onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })} placeholder="Active and inactive ingredients..." />
+                  ) : (
+                    <label className="upload-box-large">
+                      <input type="file" accept="image/*" onChange={handleMainImageChange} hidden />
+                      <Upload size={28} />
+                      <span>Upload Main Image</span>
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Gallery Images</label>
+                <div className="gallery-grid">
+                  {previews.gallery.map((img, index) => (
+                    <div key={index} className="gallery-preview-item">
+                      <img src={img} alt={`Gallery ${index}`} />
+                      <button type="button" className="remove-gallery" onClick={() => handleRemoveGalleryImage(index)}><X size={12} /></button>
                     </div>
-                    <div className="form-group">
-                      <label>Benefits</label>
-                      <textarea rows="2" value={formData.benefits} onChange={(e) => setFormData({ ...formData, benefits: e.target.value })} placeholder="Key benefits..." />
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Skin Types</label>
-                        <input type="text" value={Array.isArray(formData.skin_type) ? formData.skin_type.join(', ') : formData.skin_type} onChange={(e) => setFormData({ ...formData, skin_type: e.target.value.split(',').map(s => s.trim()) })} placeholder="Dry, Oily, Sensitive" />
-                      </div>
-                      <div className="form-group">
-                        <label>Concerns</label>
-                        <input type="text" value={Array.isArray(formData.concerns) ? formData.concerns.join(', ') : formData.concerns} onChange={(e) => setFormData({ ...formData, concerns: e.target.value.split(',').map(s => s.trim()) })} placeholder="Acne, Aging, Dullness" />
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label>How to Use</label>
-                      <textarea rows="2" value={formData.how_to_use} onChange={(e) => setFormData({ ...formData, how_to_use: e.target.value })} placeholder="Application instructions..." />
-                    </div>
-                    <div className="form-group">
-                      <label>Meta Title (SEO)</label>
-                      <input type="text" value={formData.meta_title} onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })} />
-                    </div>
-                    <div className="form-group">
-                      <label>Meta Description (SEO)</label>
-                      <textarea rows="2" value={formData.meta_description} onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })} />
-                    </div>
-                  </section>
+                  ))}
+                  <label className="upload-box-small">
+                    <input type="file" accept="image/*" multiple onChange={handleGalleryChange} hidden />
+                    <Plus size={20} />
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Status</label>
+                  <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '24px' }}>
+                  <input type="checkbox" checked={formData.is_featured} onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })} id="is_featured" />
+                  <label htmlFor="is_featured" style={{ margin: 0 }}>Featured</label>
                 </div>
               </div>
 

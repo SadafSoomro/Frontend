@@ -3,6 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { addToCart, removeFromCart, updateQuantity } from '../../Store/Slices/CartSlice';
+import { getProducts } from '../../Store/Slices/ProductSlice';
+import { getCategories } from '../../Store/Slices/CategorySlice';
+import { getBanners } from '../../Store/Slices/BannerSlice';
+import { assetUrl } from '../../config';
 import {
   ShieldCheck,
   RotateCcw,
@@ -24,290 +28,6 @@ import {
 } from 'lucide-react';
 import './LandingPage.css';
 
-const brandSlides = [
-  {
-    id: 1,
-    title: 'THE ORDINARY',
-    subtitle: 'CLINICAL FORMULATIONS',
-    bg: '#e8ecef',
-    img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=450&h=550&fit=crop',
-    desc: 'Sincerity in Formulation',
-    badge: 'NEW',
-  },
-  {
-    id: 2,
-    title: 'REVOLUTION',
-    subtitle: 'MAKEUP REVOLUTION LONDON',
-    bg: '#fcddec',
-    img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=450&h=550&fit=crop',
-    desc: 'POUT LIP OIL',
-    badge: 'HOT',
-  },
-  {
-    id: 3,
-    title: 'CeraVe',
-    subtitle: 'DEVELOPED WITH DERMATOLOGISTS',
-    bg: '#e2f0d9',
-    img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=450&h=550&fit=crop',
-    desc: 'HYDRATING MOISTURIZER',
-    badge: 'FLAT 20% OFF',
-  },
-  {
-    id: 4,
-    title: 'BIOAQUA',
-    subtitle: 'NATURAL ESSENCE SKINCARE',
-    bg: '#d2ebec',
-    img: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=450&h=550&fit=crop',
-    desc: 'AVOCADO EYE MASK',
-    badge: 'Flat 20% Off',
-  },
-  {
-    id: 5,
-    title: 'LOREAL PARIS',
-    subtitle: 'BECAUSE YOU ARE WORTH IT',
-    bg: '#f9f0e6',
-    img: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=450&h=550&fit=crop',
-    desc: 'REVITALIFT SERUM',
-    badge: 'BESTSELLER',
-  },
-];
-
-const storeProducts = [
-  // Bestsellers
-  {
-    id: 1,
-    brand: 'OneStop',
-    name: 'Hot Air Brush',
-    category: 'haircare',
-    img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=400&fit=crop',
-    price: 4400,
-    originalPrice: 5500,
-    discount: 20,
-    rating: 4.5,
-    reviews: 124,
-    installment: 1466,
-    bestseller: true,
-  },
-  {
-    id: 2,
-    brand: 'ST London',
-    name: 'Dual Wet & Dry Compact Powder',
-    category: 'makeup',
-    img: 'https://images.unsplash.com/photo-1631214524020-3c69888b8f2c?w=400&h=400&fit=crop',
-    price: 2760,
-    originalPrice: 3450,
-    discount: 20,
-    rating: 4.5,
-    reviews: 200,
-    installment: 920,
-    bestseller: true,
-  },
-  {
-    id: 3,
-    brand: 'AXIS-Y',
-    name: 'Dark Spot Correcting Glow Serum — 50ml',
-    category: 'skincare',
-    img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=400&h=400&fit=crop',
-    price: 4000,
-    originalPrice: 5000,
-    discount: 20,
-    rating: 4.8,
-    reviews: 87,
-    installment: 1333,
-    bestseller: true,
-  },
-  {
-    id: 4,
-    brand: 'Medicube',
-    name: 'Collagen Night Wrapping Mask — 75ml',
-    category: 'skincare',
-    img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop',
-    price: 5020,
-    originalPrice: 6275,
-    discount: 20,
-    rating: 5,
-    reviews: 43,
-    installment: 1673,
-    bestseller: true,
-  },
-  {
-    id: 5,
-    brand: 'CeraVe',
-    name: 'Foaming Facial Cleanser',
-    category: 'skincare',
-    img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&h=400&fit=crop',
-    price: 3200,
-    originalPrice: 4000,
-    discount: 20,
-    rating: 4.5,
-    reviews: 65,
-    installment: 1066,
-    bestseller: true,
-  },
-  // Extra Skincare
-  {
-    id: 6,
-    brand: 'The Ordinary',
-    name: 'Niacinamide 10% + Zinc 1% — 30ml',
-    category: 'skincare',
-    img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=400&h=400&fit=crop',
-    price: 1800,
-    originalPrice: 2250,
-    discount: 20,
-    rating: 4.8,
-    reviews: 142,
-    installment: 600,
-  },
-  {
-    id: 7,
-    brand: 'Dr. Althea',
-    name: '345 Relief Cream — 50ml',
-    category: 'skincare',
-    img: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=400&h=400&fit=crop',
-    price: 3600,
-    originalPrice: 4500,
-    discount: 20,
-    rating: 4.7,
-    reviews: 29,
-    installment: 1200,
-  },
-  {
-    id: 8,
-    brand: 'COSRX',
-    name: 'Advanced Snail 96 Mucin Power Essence — 100ml',
-    category: 'skincare',
-    img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop',
-    price: 3900,
-    originalPrice: 4875,
-    discount: 20,
-    rating: 4.9,
-    reviews: 215,
-    installment: 1300,
-  },
-  // Extra Haircare
-  {
-    id: 9,
-    brand: 'Framesi',
-    name: 'Morphosis Re-Structure Shampoo — 250ml',
-    category: 'haircare',
-    img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&h=400&fit=crop',
-    price: 2800,
-    originalPrice: 3500,
-    discount: 20,
-    rating: 4.6,
-    reviews: 18,
-    installment: 933,
-  },
-  {
-    id: 10,
-    brand: "L'Oreal",
-    name: 'Serie Expert Absolut Repair Mask — 250ml',
-    category: 'haircare',
-    img: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=400&h=400&fit=crop',
-    price: 4200,
-    originalPrice: 5250,
-    discount: 20,
-    rating: 4.8,
-    reviews: 54,
-    installment: 1400,
-  },
-  {
-    id: 11,
-    brand: 'Gosh',
-    name: 'Hair Treatment Oil — 50ml',
-    category: 'haircare',
-    img: 'https://images.unsplash.com/photo-1522351015484-76f2c417b36a?w=400&h=400&fit=crop',
-    price: 2400,
-    originalPrice: 3000,
-    discount: 20,
-    rating: 4.5,
-    reviews: 9,
-    installment: 800,
-  },
-  // Extra Makeup
-  {
-    id: 12,
-    brand: 'Maybelline',
-    name: 'SuperStay Matte Ink Liquid Lipstick',
-    category: 'makeup',
-    img: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop',
-    price: 1900,
-    originalPrice: 2375,
-    discount: 20,
-    rating: 4.7,
-    reviews: 320,
-    installment: 633,
-  },
-  {
-    id: 13,
-    brand: 'ST London',
-    name: 'Matte Liquid Concealer',
-    category: 'makeup',
-    img: 'https://images.unsplash.com/photo-1615396879814-4901929c543f?w=400&h=400&fit=crop',
-    price: 1500,
-    originalPrice: 1875,
-    discount: 20,
-    rating: 4.4,
-    reviews: 14,
-    installment: 500,
-  },
-  // Extra Babycare
-  {
-    id: 14,
-    brand: 'CeraVe',
-    name: 'Baby Wash & Shampoo — 237ml',
-    category: 'babycare',
-    img: 'https://images.unsplash.com/photo-1515488042361-404e9250afef?w=400&h=400&fit=crop',
-    price: 2900,
-    originalPrice: 3625,
-    discount: 20,
-    rating: 4.8,
-    reviews: 22,
-    installment: 966,
-  },
-  {
-    id: 15,
-    brand: 'Babi Mild',
-    name: 'Baby Cream & Lotion',
-    category: 'babycare',
-    img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&h=400&fit=crop',
-    price: 1600,
-    originalPrice: 2000,
-    discount: 20,
-    rating: 4.7,
-    reviews: 31,
-    installment: 533,
-  },
-];
-
-const categoryData = [
-  { name: 'Baby Cream & Lotion', img: 'https://images.unsplash.com/photo-1515488042361-404e9250afef?w=200&h=200&fit=crop', tab: 'babycare' },
-  { name: 'Baby Shampoo', img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&h=200&fit=crop', tab: 'babycare' },
-  { name: 'Liquid Lipsticks', img: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Sunscreen', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=200&h=200&fit=crop', tab: 'skincare' },
-  { name: 'Shampoo & Conditioner', img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=200&h=200&fit=crop', tab: 'haircare' },
-  { name: 'Foundation', img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Mascara', img: 'https://images.unsplash.com/photo-1631214524020-3c69888b8f2c?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Hair Treatment', img: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=200&h=200&fit=crop', tab: 'haircare' },
-  { name: 'Lip Liners', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Masks & Peels', img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=200&h=200&fit=crop', tab: 'skincare' },
-  { name: 'Face Wash & Cleansers', img: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=200&h=200&fit=crop', tab: 'skincare' },
-  { name: 'Makeup Remover', img: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200&h=200&fit=crop', tab: 'skincare' },
-  { name: 'Nail Polish', img: 'https://images.unsplash.com/photo-1639739502660-84c205ad88df?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Lip Balm & Mask', img: 'https://images.unsplash.com/photo-1617897903246-719242758050?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Body Wash', img: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=200&h=200&fit=crop', tab: 'skincare' },
-  { name: 'Primer', img: 'https://images.unsplash.com/photo-1615396879814-4901929c543f?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Candle', img: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=200&h=200&fit=crop', tab: 'candle' },
-  { name: 'Concealers', img: 'https://images.unsplash.com/photo-1615396879555-d41599874a77?w=200&h=200&fit=crop', tab: 'makeup' },
-  { name: 'Hair Dye', img: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=200&h=200&fit=crop', tab: 'haircare' },
-  { name: 'Serums', img: 'https://images.unsplash.com/photo-1620916566395-044f9003ced4?w=200&h=200&fit=crop', tab: 'skincare' },
-];
-
-const brandNames = [
-  'COSRX', 'Dr. Althea', 'Framesi', 'REVOLUTION', 'AXIS-Y',
-  'MAYBELLINE', 'ST LONDON', 'Medicube', 'CeraVe', 'L\'Oreal', 'Bioaqua', 'The Ordinary',
-];
-
 const StarRating = ({ rating }) => (
   <div className="star-rating">
     {[1, 2, 3, 4, 5].map((s) => (
@@ -322,18 +42,29 @@ const StarRating = ({ rating }) => (
 );
 
 const LandingPage = () => {
-  const [slideIndex, setSlideIndex] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [cartOpen, setCartOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [activeBanner, setActiveBanner] = useState(0);
   const userMenuRef = useRef(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
   const cartItems = useSelector((state) => state.cart.items);
+  const { products } = useSelector((state) => state.products);
+  const { categories } = useSelector((state) => state.categories);
+  const { banners } = useSelector((state) => state.banners);
 
+  // Fetch data from API on mount
+  useEffect(() => {
+    dispatch(getProducts());
+    dispatch(getCategories());
+    dispatch(getBanners());
+  }, [dispatch]);
+
+  // Close user menu on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
@@ -344,24 +75,34 @@ const LandingPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Hero banner auto-advance
+  useEffect(() => {
+    if (banners.length === 0) return;
+    const interval = setInterval(() => {
+      setActiveBanner((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners.length]);
+
   const handleLogout = () => {
     logout();
     setUserMenuOpen(false);
     navigate('/');
   };
 
-  const visibleSlides = 3;
-  const maxIndex = brandSlides.length - visibleSlides;
-  const nextSlide = () => setSlideIndex((prev) => Math.min(prev + 1, maxIndex));
-  const prevSlide = () => setSlideIndex((prev) => Math.max(prev - 1, 0));
-
   const totalCartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalCartPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-  const filteredProducts = storeProducts.filter((product) => {
-    if (activeTab === 'all') return product.bestseller;
-    return product.category === activeTab;
+  // Filter products based on active tab
+  const filteredProducts = products.filter((product) => {
+    if (activeTab === 'all') return product.is_featured;
+    const productCat = (product.category_id?.description || '').toLowerCase().replace(/\s+/g, '');
+    const tabNormalized = activeTab.toLowerCase().replace(/\s+/g, '');
+    return productCat === tabNormalized;
   });
+
+  // Extract unique brand names from products for marquee
+  const brandNames = [...new Set(products.map((p) => p.brand))];
 
   const handleNavClick = (tabId, sectionId) => {
     setActiveTab(tabId);
@@ -373,12 +114,22 @@ const LandingPage = () => {
 
   const handleAddToCart = (product) => {
     if (!isAuthenticated) {
-      // Redirect to login with return path
       navigate('/login', { state: { from: '/', message: 'Please login to add items to your cart.' } });
       return;
     }
-    dispatch(addToCart(product));
-    setCartOpen(true); // Open the drawer immediately when an item is added
+    const discount = product.discount_price
+      ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
+      : 0;
+    dispatch(addToCart({
+      id: product._id,
+      brand: product.brand,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.discount_price || product.price,
+      discount,
+      img: assetUrl(product.main_image),
+    }));
+    setCartOpen(true);
   };
 
   return (
@@ -461,15 +212,30 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* ── FULL-WIDTH HERO BANNER ── */}
-      <section className="hero-banner">
-        <img
-          src="https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=1600&h=580&fit=crop&crop=center"
-          alt="Hero Banner — Premium Skincare Collection"
-          className="hero-bg-img"
-        />
-        <div className="hero-gradient-overlay" />
-        <div className="hero-content">
+      {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
+      <section className="hero-banner" style={{ position: 'relative', overflow: 'hidden' }}>
+        {/* Stacked banner images with fade transition */}
+        {banners.map((banner, index) => (
+          <img
+            key={banner._id}
+            src={assetUrl(banner.image)}
+            alt={banner.title || `Hero Banner ${index + 1}`}
+            className="hero-bg-img"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activeBanner === index ? 1 : 0,
+              transition: 'opacity 1s ease-in-out',
+              zIndex: 1,
+            }}
+          />
+        ))}
+        <div className="hero-gradient-overlay" style={{ position: 'relative', zIndex: 2 }} />
+        <div className="hero-content" style={{ position: 'relative', zIndex: 3 }}>
           <div className="hero-tag">
             <Sparkles size={14} />
             <span>SUMMER COLLECTION 2026</span>
@@ -491,6 +257,38 @@ const LandingPage = () => {
             </button>
           </div>
         </div>
+        {/* Dot indicators */}
+        {banners.length > 1 && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              gap: '10px',
+              zIndex: 4,
+            }}
+          >
+            {banners.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveBanner(index)}
+                aria-label={`Go to banner ${index + 1}`}
+                style={{
+                  width: activeBanner === index ? '28px' : '10px',
+                  height: '10px',
+                  borderRadius: '5px',
+                  border: 'none',
+                  background: activeBanner === index ? '#fff' : 'rgba(255,255,255,0.5)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  padding: 0,
+                }}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ── SHOP BY CATEGORY SECTION ── */}
@@ -500,15 +298,15 @@ const LandingPage = () => {
         </div>
         <div className="categories-grid-wrapper">
           <div className="categories-grid">
-            {categoryData.map((cat, i) => (
+            {categories.map((cat) => (
               <div
                 className="category-item"
-                key={i}
-                onClick={() => handleNavClick(cat.tab, 'products-section')}
+                key={cat._id}
+                onClick={() => handleNavClick(cat.description, 'products-section')}
               >
                 <div className="category-circle">
                   <div className="category-circle-inner-bg">
-                    <img src={cat.img} alt={cat.name} className="category-img" />
+                    <img src={assetUrl(cat.image)} alt={cat.name} className="category-img" />
                   </div>
                 </div>
                 <span className="category-label">{cat.name}</span>
@@ -561,40 +359,58 @@ const LandingPage = () => {
           </div>
 
           <div className="products-grid">
-            {filteredProducts.map((product) => (
-              <div className="product-card" key={product.id}>
-                {product.discount > 0 && (
-                  <span className="product-discount-badge">{product.discount}% OFF</span>
-                )}
-                <div className="product-img-wrapper">
-                  <img src={product.img} alt={product.name} />
-                </div>
-                <div className="product-info">
-                  <span className="product-brand">{product.brand}</span>
-                  <p className="product-name">{product.name}</p>
-                  <div className="product-rating-row">
-                    <StarRating rating={product.rating} />
-                    {product.reviews > 0 && (
-                      <span className="product-review-count">{product.reviews} reviews</span>
-                    )}
-                  </div>
-                  <div className="product-price-row">
-                    <span className="product-price">Rs.{product.price.toLocaleString()} PKR</span>
-                    <span className="product-original-price">Rs.{product.originalPrice.toLocaleString()}</span>
-                    <span className="product-off-label">{product.discount}% OFF</span>
-                  </div>
-                  <div className="product-installment">
-                    <span className="installment-badge">B</span>
-                    <span className="installment-label">Pay only</span>
-                    <strong className="installment-price">Rs.{product.installment.toLocaleString()}</strong>
-                    <span className="installment-label">now</span>
-                  </div>
-                  <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
-                    Add to Cart
-                  </button>
-                </div>
+            {filteredProducts.length === 0 ? (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: '#888' }}>
+                <ShoppingBag size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
+                <p style={{ fontSize: '18px', fontWeight: 500 }}>No products found</p>
+                <p style={{ fontSize: '14px', marginTop: '8px' }}>Try selecting a different category.</p>
               </div>
-            ))}
+            ) : (
+              filteredProducts.map((product) => {
+                const discount = product.discount_price
+                  ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
+                  : 0;
+                const installment = Math.round(product.price / 3);
+                return (
+                  <div className="product-card" key={product._id}>
+                    {discount > 0 && (
+                      <span className="product-discount-badge">{discount}% OFF</span>
+                    )}
+                    <div className="product-img-wrapper">
+                      <img src={assetUrl(product.main_image)} alt={product.name} />
+                    </div>
+                    <div className="product-info">
+                      <span className="product-brand">{product.brand}</span>
+                      <p className="product-name">{product.name}</p>
+                      <div className="product-rating-row">
+                        <StarRating rating={product.rating || 0} />
+                        {product.reviews > 0 && (
+                          <span className="product-review-count">{product.reviews} reviews</span>
+                        )}
+                      </div>
+                      <div className="product-price-row">
+                        <span className="product-price">Rs.{product.price.toLocaleString()} PKR</span>
+                        {product.discount_price && (
+                          <>
+                            <span className="product-original-price">Rs.{product.discount_price.toLocaleString()}</span>
+                            <span className="product-off-label">{discount}% OFF</span>
+                          </>
+                        )}
+                      </div>
+                      <div className="product-installment">
+                        <span className="installment-badge">B</span>
+                        <span className="installment-label">Pay only</span>
+                        <strong className="installment-price">Rs.{installment.toLocaleString()}</strong>
+                        <span className="installment-label">now</span>
+                      </div>
+                      <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </section>
 
@@ -611,36 +427,6 @@ const LandingPage = () => {
               ))}
             </div>
           </div>
-        </section>
-
-        {/* ── BRAND POSTER CAROUSEL ── */}
-        <section className="carousel-section">
-          <button className="slide-arrow prev" onClick={prevSlide} aria-label="Previous">
-            <ChevronLeft size={24} />
-          </button>
-          <div className="carousel-wrapper">
-            <div
-              className="carousel-track"
-              style={{ transform: `translateX(-${slideIndex * (100 / visibleSlides + 0.7)}%)` }}
-            >
-              {brandSlides.map((slide) => (
-                <div key={slide.id} className="brand-slide-card" style={{ backgroundColor: slide.bg }}>
-                  <div className="slide-img-wrapper">
-                    <img src={slide.img} alt={slide.title} />
-                    {slide.badge && <span className="slide-badge">{slide.badge}</span>}
-                  </div>
-                  <div className="slide-content">
-                    <h3 className="slide-brand-title">{slide.title}</h3>
-                    <p className="slide-brand-sub">{slide.subtitle}</p>
-                    <p className="slide-brand-desc">{slide.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <button className="slide-arrow next" onClick={nextSlide} aria-label="Next">
-            <ChevronRight size={24} />
-          </button>
         </section>
 
         {/* ── PROMO BANNER ── */}

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Plus, Edit2, Trash, X, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Trash, X, Loader2, Upload, Image as ImageIcon } from 'lucide-react';
 import { getCategories, createCategory, updateCategory, deleteCategory, clearError } from '../../Store/Slices/CategorySlice';
+import { getProducts } from '../../Store/Slices/ProductSlice';
 import { assetUrl } from '../../config';
 
 const Categories = () => {
   const dispatch = useDispatch();
-  const { categories, loading, error, submitting } = useSelector((state) => state.categories);
+  const { categories, loading, error, submitting } = useSelector(state => state.categories);
+  const { products, loading: productsLoading } = useSelector(state => state.products);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -15,6 +17,7 @@ const Categories = () => {
 
   useEffect(() => {
     dispatch(getCategories());
+    dispatch(getProducts());
   }, [dispatch]);
 
   const handleOpenModal = (category = null) => {
@@ -25,7 +28,7 @@ const Categories = () => {
         name: category.name,
         description: category.description,
         image: category.image,
-        isActive: category.isActive !== undefined ? category.isActive : true
+        isActive: category.isActive !== undefined ? category.isActive : true,
       });
       setPreviewImage(category.image ? assetUrl(category.image) : null);
     } else {
@@ -63,7 +66,6 @@ const Categories = () => {
     } else if (editingCategory && typeof formData.image === 'string') {
       data.append('image', formData.image);
     }
-
     let result;
     if (editingCategory) {
       result = await dispatch(updateCategory({ id: editingCategory._id, formData: data }));
@@ -79,25 +81,28 @@ const Categories = () => {
     }
   };
 
+  const productsByCategory = (catId) =>
+    products?.filter((p) => (p.category_id?._id || p.category_id) === catId) || [];
+
   return (
     <div className="crud-page">
       <div className="page-header">
         <div className="header-text">
-          <h1>Categories</h1>
-          <p className="text-secondary">Organize your products into logical groups.</p>
+          <h1 style={{ color: '#fff' }}>Categories</h1>
+          <p className="text-secondary" style={{ color: '#bbb' }}>Organize your products into logical groups.</p>
         </div>
-        <button className="primary" onClick={() => handleOpenModal()}>
+        <button className="primary" onClick={() => handleOpenModal()} style={{ background: '#e21b26', color: '#fff' }}>
           <Plus size={20} /> Add Category
         </button>
       </div>
 
-      {loading ? (
+      {(loading || productsLoading) ? (
         <div className="loading-state">
           <Loader2 className="animate-spin" size={40} />
           <p>Loading categories...</p>
         </div>
       ) : (
-        <div className="glass-card table-section">
+        <div className="glass-card table-section" style={{ background: 'rgba(30,30,48,0.7)' }}>
           <table>
             <thead>
               <tr>
@@ -111,36 +116,59 @@ const Categories = () => {
             <tbody>
               {categories.length === 0 ? (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>
+                  <td colSpan="5" style={{ textAlign: 'center', padding: '40px', color: '#bbb' }}>
                     <p className="text-secondary">No categories found. Click "Add Category" to create one.</p>
                   </td>
                 </tr>
               ) : (
                 categories.map((category) => (
-                  <tr key={category._id}>
-                    <td>
-                      <div className="category-preview-small">
-                        {category.image ? (
-                          <img src={assetUrl(category.image)} alt={category.name} />
-                        ) : (
-                          <div className="no-image-placeholder"><ImageIcon size={16} /></div>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ fontWeight: 600 }}>{category.name}</td>
-                    <td className="text-secondary description-cell">{category.description}</td>
-                    <td>
-                      <span className={`status-badge ${category.isActive ? 'active' : 'inactive'}`}>
-                        {category.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="action-btns">
-                        <button className="icon-btn-small" onClick={() => handleOpenModal(category)}><Edit2 size={16} /></button>
-                        <button className="delete-btn" onClick={() => handleDelete(category._id)}><Trash size={16} /></button>
-                      </div>
-                    </td>
-                  </tr>
+                  <React.Fragment key={category._id}>
+                    <tr>
+                      <td>
+                        <div className="category-preview-small">
+                          {category.image ? (
+                            <img src={assetUrl(category.image)} alt={category.name} />
+                          ) : (
+                            <div className="no-image-placeholder"><ImageIcon size={16} /></div>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ fontWeight: 600, color: '#fff' }}>{category.name}</td>
+                      <td className="text-secondary description-cell" style={{ color: '#bbb' }}>{category.description}</td>
+                      <td>
+                        <span className={`status-badge ${category.isActive ? 'active' : 'inactive'}`}>
+                          {category.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-btns">
+                          <button className="icon-btn-small" onClick={() => handleOpenModal(category)}><Edit2 size={16} /></button>
+                          <button className="delete-btn" onClick={() => handleDelete(category._id)}><Trash size={16} /></button>
+                        </div>
+                      </td>
+                    </tr>
+                    {productsByCategory(category._id).length > 0 ? (
+                      <tr>
+                        <td colSpan="5" style={{ padding: '12px 0' }}>
+                          <div className="product-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' }}>
+                            {productsByCategory(category._id).map((product) => (
+                              <div key={product._id} className="product-card" style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '8px', textAlign: 'center' }}>
+                                <img src={assetUrl(product.main_image)} alt={product.name} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+                                <p style={{ margin: '4px 0', fontSize: '0.85rem', color: '#fff' }}>{product.name}</p>
+                                <p style={{ fontSize: '0.75rem', color: '#bbb' }}>${product.price.toFixed(2)}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <td colSpan="5" style={{ textAlign: 'center', padding: '12px', color: '#bbb' }}>
+                          No products found. Try selecting a different category.
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))
               )}
             </tbody>
@@ -155,9 +183,7 @@ const Categories = () => {
               <h2>{editingCategory ? 'Edit Category' : 'Add New Category'}</h2>
               <button className="close-btn" onClick={handleCloseModal}><X size={20} /></button>
             </div>
-
             {error && <div className="form-error"><span>{error}</span></div>}
-
             <form onSubmit={handleSubmit} className="crud-form">
               <div className="form-group">
                 <label>Category Name</label>
@@ -174,7 +200,7 @@ const Categories = () => {
                     <div className="image-preview-container">
                       <img src={previewImage} alt="Preview" />
                       <button type="button" className="remove-img" onClick={() => { setPreviewImage(null); setFormData({ ...formData, image: null }); }}>
-                        <X size={16} />
+                        <X size={12} />
                       </button>
                     </div>
                   ) : (
@@ -192,13 +218,10 @@ const Categories = () => {
                   <span>Active Category</span>
                 </label>
               </div>
-
               <div className="modal-footer">
                 <button type="button" className="secondary" onClick={handleCloseModal} disabled={submitting}>Cancel</button>
                 <button type="submit" className="primary" disabled={submitting}>
-                  {submitting ? (
-                    <><Loader2 size={16} className="animate-spin" /><span>Saving...</span></>
-                  ) : 'Save Category'}
+                  {submitting ? (<><Loader2 size={16} className="animate-spin" /><span>Saving...</span></>) : 'Save Category'}
                 </button>
               </div>
             </form>
