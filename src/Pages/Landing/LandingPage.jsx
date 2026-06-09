@@ -48,6 +48,100 @@ const LandingPage = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
   const userMenuRef = useRef(null);
+  const categoriesScrollRef = useRef(null);
+  const promotionalScrollRef = useRef(null);
+
+  // Auto-scroll logic for Promotional Banners
+  useEffect(() => {
+    const promoContainer = promotionalScrollRef.current;
+    if (!promoContainer) return;
+
+    let promoAnimationId;
+    let promoIsHovering = false;
+
+    const startPromoScroll = () => {
+      promoIsHovering = false;
+      promoAnimationId = requestAnimationFrame(promoScrollLoop);
+    };
+
+    const stopPromoScroll = () => {
+      promoIsHovering = true;
+      cancelAnimationFrame(promoAnimationId);
+    };
+
+    const promoScrollLoop = () => {
+      if (!promoIsHovering && promoContainer) {
+        promoContainer.scrollLeft += 1;
+        if (promoContainer.scrollLeft >= promoContainer.scrollWidth / 2) {
+          promoContainer.scrollLeft = 0;
+        }
+      }
+      promoAnimationId = requestAnimationFrame(promoScrollLoop);
+    };
+
+    promoAnimationId = requestAnimationFrame(promoScrollLoop);
+
+    promoContainer.addEventListener('mouseenter', stopPromoScroll);
+    promoContainer.addEventListener('mouseleave', startPromoScroll);
+    promoContainer.addEventListener('touchstart', stopPromoScroll);
+    promoContainer.addEventListener('touchend', startPromoScroll);
+
+    return () => {
+      cancelAnimationFrame(promoAnimationId);
+      if (promoContainer) {
+        promoContainer.removeEventListener('mouseenter', stopPromoScroll);
+        promoContainer.removeEventListener('mouseleave', startPromoScroll);
+        promoContainer.removeEventListener('touchstart', stopPromoScroll);
+        promoContainer.removeEventListener('touchend', startPromoScroll);
+      }
+    };
+  }, []);
+
+  // Auto-scroll logic for Shop By Category
+  useEffect(() => {
+    const scrollContainer = categoriesScrollRef.current;
+    if (!scrollContainer) return;
+
+    let animationId;
+    let isHovering = false;
+
+    const startScroll = () => {
+      isHovering = false;
+      animationId = requestAnimationFrame(scrollLoop);
+    };
+
+    const stopScroll = () => {
+      isHovering = true;
+      cancelAnimationFrame(animationId);
+    };
+
+    const scrollLoop = () => {
+      if (!isHovering && scrollContainer) {
+        scrollContainer.scrollLeft += 0.8;
+        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
+          scrollContainer.scrollLeft = 0;
+        }
+      }
+      animationId = requestAnimationFrame(scrollLoop);
+    };
+
+    animationId = requestAnimationFrame(scrollLoop);
+
+    scrollContainer.addEventListener('mouseenter', stopScroll);
+    scrollContainer.addEventListener('mouseleave', startScroll);
+    scrollContainer.addEventListener('touchstart', stopScroll);
+    scrollContainer.addEventListener('touchend', startScroll);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('mouseenter', stopScroll);
+        scrollContainer.removeEventListener('mouseleave', startScroll);
+        scrollContainer.removeEventListener('touchstart', stopScroll);
+        scrollContainer.removeEventListener('touchend', startScroll);
+      }
+    };
+  }, []);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,6 +157,11 @@ const LandingPage = () => {
     dispatch(getCategories());
     dispatch(getBanners());
   }, [dispatch]);
+
+  // Only show top 5 categories that have products
+  const displayCategories = categories.filter(cat => 
+    products.some(p => p.category_id?._id === cat._id)
+  ).slice(0, 5);
 
   // Close user menu on outside click
   useEffect(() => {
@@ -90,15 +189,22 @@ const LandingPage = () => {
     navigate('/');
   };
 
+  const promoBanners = [
+    { img: products.length > 0 && products[0].main_image ? assetUrl(products[0].main_image) : "/hero-model.png", brand: "KRYOLAN", title: "PROFESSIONAL MAKE-UP", discount: "15%" },
+    { img: products.length > 1 && products[1].main_image ? assetUrl(products[1].main_image) : "/hero-model.png", brand: "ESTELIN", title: "SKINCARE", discount: "20%" },
+    { img: products.length > 2 && products[2].main_image ? assetUrl(products[2].main_image) : "/hero-model.png", brand: "FRAMESI", title: "HAIR FASHION", discount: "15%" },
+    { img: products.length > 3 && products[3].main_image ? assetUrl(products[3].main_image) : "/hero-model.png", brand: "LUSCIOUS", title: "LIVE NOW", discount: "20%" },
+    { img: products.length > 4 && products[4].main_image ? assetUrl(products[4].main_image) : "/hero-model.png", brand: "L'ORÉAL", title: "PARIS", discount: "20%" },
+    { img: products.length > 5 && products[5].main_image ? assetUrl(products[5].main_image) : "/hero-model.png", brand: "ONESKIN", title: "SKIN", discount: "15%" },
+  ];
+
   const totalCartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalCartPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   // Filter products based on active tab
   const filteredProducts = products.filter((product) => {
     if (activeTab === 'all') return product.is_featured;
-    const productCat = (product.category_id?.description || '').toLowerCase().replace(/\s+/g, '');
-    const tabNormalized = activeTab.toLowerCase().replace(/\s+/g, '');
-    return productCat === tabNormalized;
+    return product.category_id?._id === activeTab;
   });
 
   // Extract unique brand names from products for marquee
@@ -152,12 +258,11 @@ const LandingPage = () => {
           <nav className="header-nav">
             <ul>
               <li><button onClick={() => handleNavClick('all', 'products-section')} className="nav-link-btn sale-badge-btn">Sale</button></li>
-              <li><button onClick={() => handleNavClick('makeup', 'products-section')} className="nav-link-btn">Makeup</button></li>
-              <li><button onClick={() => handleNavClick('skincare', 'products-section')} className="nav-link-btn">Skin Care</button></li>
-              <li><button onClick={() => handleNavClick('haircare', 'products-section')} className="nav-link-btn">Hair Care</button></li>
-              <li><button onClick={() => handleNavClick('babycare', 'products-section')} className="nav-link-btn">Baby Care</button></li>
-              <li><button onClick={() => handleNavClick('perfumes', 'products-section')} className="nav-link-btn">Perfumes</button></li>
-              <li><button onClick={() => handleNavClick('candle', 'products-section')} className="nav-link-btn">Candle</button></li>
+              {displayCategories.map((cat) => (
+                <li key={cat._id}>
+                  <button onClick={() => handleNavClick(cat._id, 'products-section')} className="nav-link-btn">{cat.name}</button>
+                </li>
+              ))}
               <li><a href="#brands" className="nav-link-btn">Shop All Brands</a></li>
             </ul>
           </nav>
@@ -296,13 +401,13 @@ const LandingPage = () => {
         <div className="categories-header-container">
           <h2 className="categories-title">Shop By Category</h2>
         </div>
-        <div className="categories-grid-wrapper">
+        <div className="categories-grid-wrapper" ref={categoriesScrollRef}>
           <div className="categories-grid">
-            {categories.map((cat) => (
+            {[...categories, ...categories].map((cat, idx) => (
               <div
                 className="category-item"
-                key={cat._id}
-                onClick={() => handleNavClick(cat.description, 'products-section')}
+                key={`${cat._id}-${idx}`}
+                onClick={() => handleNavClick(cat._id, 'products-section')}
               >
                 <div className="category-circle">
                   <div className="category-circle-inner-bg">
@@ -322,7 +427,9 @@ const LandingPage = () => {
         <section className="bestsellers-section" id="products-section">
           <div className="section-header-row">
             <h2 className="section-title">
-              {activeTab === 'all' ? 'Bestsellers' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('care', ' Care')}
+              {activeTab === 'all' 
+                ? 'Bestsellers' 
+                : categories.find(c => c._id === activeTab)?.name || 'Products'}
             </h2>
             <div className="category-tabs-container">
               <button
@@ -331,30 +438,15 @@ const LandingPage = () => {
               >
                 Bestsellers
               </button>
-              <button
-                className={`tab-btn ${activeTab === 'skincare' ? 'active' : ''}`}
-                onClick={() => setActiveTab('skincare')}
-              >
-                Skin Care
-              </button>
-              <button
-                className={`tab-btn ${activeTab === 'haircare' ? 'active' : ''}`}
-                onClick={() => setActiveTab('haircare')}
-              >
-                Hair Care
-              </button>
-              <button
-                className={`tab-btn ${activeTab === 'makeup' ? 'active' : ''}`}
-                onClick={() => setActiveTab('makeup')}
-              >
-                Makeup
-              </button>
-              <button
-                className={`tab-btn ${activeTab === 'babycare' ? 'active' : ''}`}
-                onClick={() => setActiveTab('babycare')}
-              >
-                Baby Care
-              </button>
+              {displayCategories.map(cat => (
+                <button
+                  key={cat._id}
+                  className={`tab-btn ${activeTab === cat._id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(cat._id)}
+                >
+                  {cat.name}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -424,6 +516,30 @@ const LandingPage = () => {
             <div className="brands-marquee-track">
               {[...brandNames, ...brandNames].map((b, i) => (
                 <span key={i} className="brand-marquee-item">{b}</span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── PROMOTIONAL BANNERS CAROUSEL ── */}
+        <section className="promotional-banners-section">
+          <div className="promo-banners-wrapper" ref={promotionalScrollRef}>
+            <div className="promo-banners-track">
+              {[...promoBanners, ...promoBanners].map((banner, i) => (
+                <div key={`promo-${i}`} className="promo-banner-card">
+                  <img src={banner.img} alt={banner.brand} className="promo-banner-img" />
+                  <div className="promo-banner-overlay">
+                    <div className="promo-banner-brand-text">
+                      <h4>{banner.brand}</h4>
+                      <p>{banner.title}</p>
+                    </div>
+                    <div className="promo-banner-discount">
+                      <span className="flat-text">FLAT</span>
+                      <strong className="discount-val">{banner.discount}</strong>
+                      <span className="off-text">OFF</span>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -569,10 +685,11 @@ const LandingPage = () => {
           <div className="footer-links-col">
             <h4>Shop</h4>
             <ul>
-              <li><button onClick={() => handleNavClick('makeup', 'products-section')} className="footer-nav-btn">Makeup</button></li>
-              <li><button onClick={() => handleNavClick('skincare', 'products-section')} className="footer-nav-btn">Skin Care</button></li>
-              <li><button onClick={() => handleNavClick('haircare', 'products-section')} className="footer-nav-btn">Hair Care</button></li>
-              <li><button onClick={() => handleNavClick('babycare', 'products-section')} className="footer-nav-btn">Baby Care</button></li>
+              {displayCategories.map(cat => (
+                <li key={cat._id}>
+                  <button onClick={() => handleNavClick(cat._id, 'products-section')} className="footer-nav-btn">{cat.name}</button>
+                </li>
+              ))}
             </ul>
           </div>
           <div className="footer-links-col">

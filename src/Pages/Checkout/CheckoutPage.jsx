@@ -33,6 +33,10 @@ const CheckoutPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Read discount data passed from CartPage router state
   const locationState = location.state || {};
 
@@ -318,7 +322,20 @@ const CheckoutPage = () => {
 
                 {paymentMethod === 'card' && (
                   <div className="card-input-details-subform">
-                    <p className="subform-notice">Card payment fields are disabled in demo mode. Please select Cash on Delivery.</p>
+                    <div className="form-group" style={{ marginBottom: '14px' }}>
+                      <label>Card Number</label>
+                      <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxLength="19" required />
+                    </div>
+                    <div className="form-grid-inputs" style={{ gap: '14px' }}>
+                      <div className="form-group">
+                        <label>Expiry Date</label>
+                        <input type="text" placeholder="MM/YY" maxLength="5" required />
+                      </div>
+                      <div className="form-group">
+                        <label>CVV</label>
+                        <input type="password" placeholder="XXX" maxLength="4" required />
+                      </div>
+                    </div>
                   </div>
                 )}
 
