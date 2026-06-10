@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { clearCart } from '../../Store/Slices/CartSlice';
-import { sendOrderConfirmationApi, validateCouponApi } from '../../API/api';
+import { sendOrderConfirmationApi, validateCouponApi, getPaymentConfigApi, createPaymentIntentApi } from '../../API/api';
+import StripeCardPayment from '../../Components/StripeCardPayment';
+import { STRIPE_PUBLISHABLE_KEY } from '../../config';
 import {
   ShieldCheck,
   RotateCcw,
@@ -60,10 +62,73 @@ const CheckoutPage = () => {
   const [emailSent, setEmailSent] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponMessage, setCouponMessage] = useState('');
+  const [paymentError, setPaymentError] = useState('');
+  const [stripePublishableKey, setStripePublishableKey] = useState(STRIPE_PUBLISHABLE_KEY);
+  const [clientSecret, setClientSecret] = useState('');
+  const [paymentIntentLoading, setPaymentIntentLoading] = useState(false);
+  const stripePaymentRef = useRef(null);
+
+  const pendingTrackingNumber = useMemo(
+    () => `MS-${Math.floor(100000 + Math.random() * 900000)}`,
+    []
+  );
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   const shippingFee = subtotal > 2000 || subtotal === 0 ? 0 : 200;
   const grandTotal = subtotal - appliedDiscountAmount + shippingFee;
+
+  useEffect(() => {
+    const loadPaymentConfig = async () => {
+      try {
+        const { data } = await getPaymentConfigApi();
+        const publishableKey = data.publishableKey || STRIPE_PUBLISHABLE_KEY;
+        setStripePublishableKey(publishableKey);
+      } catch {
+        setStripePublishableKey(STRIPE_PUBLISHABLE_KEY);
+      }
+    };
+
+    loadPaymentConfig();
+  }, []);
+
+  useEffect(() => {
+    if (paymentMethod !== 'card' || !stripePublishableKey || grandTotal <= 0 || !isAuthenticated) {
+      setClientSecret('');
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const createIntent = async () => {
+      setPaymentIntentLoading(true);
+      setPaymentError('');
+
+      try {
+        const { data } = await createPaymentIntentApi({
+          amount: grandTotal,
+          orderTrackingNumber: pendingTrackingNumber,
+        });
+        if (!cancelled) {
+          setClientSecret(data.clientSecret);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setPaymentError(err.response?.data?.message || 'Failed to initialize card payment');
+          setClientSecret('');
+        }
+      } finally {
+        if (!cancelled) {
+          setPaymentIntentLoading(false);
+        }
+      }
+    };
+
+    createIntent();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [paymentMethod, stripePublishableKey, grandTotal, pendingTrackingNumber, isAuthenticated]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -93,44 +158,55 @@ const CheckoutPage = () => {
     if (cartItems.length === 0) return;
 
     setLoading(true);
+    setPaymentError('');
 
-    // Simulate processing delay then send confirmation email
-    setTimeout(async () => {
-      const randomId = Math.floor(100000 + Math.random() * 900000);
-      const trackingNumber = `MS-${randomId}`;
-      setOrderTrackingNumber(trackingNumber);
-      setLoading(false);
-      setShowSuccessModal(true);
+    try {
+      let stripePaymentIntentId = '';
+      const trackingNumber = pendingTrackingNumber;
 
-      // Clear the cart
-      dispatch(clearCart());
+      if (paymentMethod === 'card') {
+        if (!stripePublishableKey) {
+          throw new Error('Card payments are not configured yet. Please use COD or Bank Transfer.');
+        }
+        if (!clientSecret) {
+          throw new Error('Card payment form is still loading. Please wait a moment and try again.');
+        }
 
-      // Send order confirmation email via backend
-      try {
-        await sendOrderConfirmationApi({
-          orderTrackingNumber: trackingNumber,
-          cartItems,
-          subtotal,
-          discountAmount: appliedDiscountAmount,
-          discountPercent: appliedDiscountPercent,
-          promoCode: appliedPromoCode,
-          shippingFee,
-          grandTotal,
-          paymentMethod,
-          shippingInfo: {
-            address: formData.address,
-            city: formData.city,
-            zipCode: formData.zipCode,
-            email: formData.email,
-            name: formData.fullName,
-          },
-        });
-        setEmailSent(true);
-      } catch (err) {
-        console.error('Failed to send confirmation email:', err);
-        setEmailSent(false);
+        const paymentIntent = await stripePaymentRef.current.confirmPayment();
+        stripePaymentIntentId = paymentIntent.id;
       }
-    }, 1500);
+
+      await sendOrderConfirmationApi({
+        orderTrackingNumber: trackingNumber,
+        cartItems,
+        subtotal,
+        discountAmount: appliedDiscountAmount,
+        discountPercent: appliedDiscountPercent,
+        promoCode: appliedPromoCode,
+        shippingFee,
+        grandTotal,
+        paymentMethod,
+        stripePaymentIntentId,
+        shippingInfo: {
+          address: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+          email: formData.email,
+          name: formData.fullName,
+        },
+      });
+
+      setOrderTrackingNumber(trackingNumber);
+      dispatch(clearCart());
+      setEmailSent(true);
+      setShowSuccessModal(true);
+    } catch (err) {
+      const message = err.response?.data?.message || err.message || 'Failed to place order';
+      setPaymentError(message);
+      setEmailSent(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -287,7 +363,7 @@ const CheckoutPage = () => {
                     </div>
                   </label>
 
-                  {/* Credit Card */}
+                  {/* Credit Card (Stripe) */}
                   <label className={`payment-option-label ${paymentMethod === 'card' ? 'selected' : ''}`}>
                     <input
                       type="radio"
@@ -299,7 +375,7 @@ const CheckoutPage = () => {
                     <CreditCard size={20} className="option-icon" />
                     <div className="option-info">
                       <strong>Credit / Debit Card</strong>
-                      <span>Pay securely online with Visa, Mastercard, or UnionPay.</span>
+                      <span>Pay securely with Stripe — Visa, Mastercard, and more.</span>
                     </div>
                   </label>
 
@@ -321,21 +397,36 @@ const CheckoutPage = () => {
                 </div>
 
                 {paymentMethod === 'card' && (
-                  <div className="card-input-details-subform">
-                    <div className="form-group" style={{ marginBottom: '14px' }}>
-                      <label>Card Number</label>
-                      <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxLength="19" required />
-                    </div>
-                    <div className="form-grid-inputs" style={{ gap: '14px' }}>
-                      <div className="form-group">
-                        <label>Expiry Date</label>
-                        <input type="text" placeholder="MM/YY" maxLength="5" required />
+                  <div className="card-input-details-subform stripe-card-subform">
+                    <p className="subform-notice">
+                      Your card details are processed securely by Stripe. We never store your card number.
+                    </p>
+                    {!stripePublishableKey ? (
+                      <div className="stripe-payment-loading">
+                        Card payments need Stripe keys in backend and frontend .env files, then restart both servers.
                       </div>
-                      <div className="form-group">
-                        <label>CVV</label>
-                        <input type="password" placeholder="XXX" maxLength="4" required />
+                    ) : paymentIntentLoading ? (
+                      <div className="stripe-payment-loading">Loading secure payment form...</div>
+                    ) : clientSecret ? (
+                      <StripeCardPayment
+                        key={clientSecret}
+                        ref={stripePaymentRef}
+                        publishableKey={stripePublishableKey}
+                        clientSecret={clientSecret}
+                        billingDetails={{
+                          name: formData.fullName,
+                          email: formData.email,
+                          phone: formData.phone,
+                          address: formData.address,
+                          city: formData.city,
+                          zipCode: formData.zipCode,
+                        }}
+                      />
+                    ) : (
+                      <div className="stripe-payment-loading">
+                        {paymentError || 'Preparing card payment...'}
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
 
@@ -450,8 +541,20 @@ const CheckoutPage = () => {
                   <span className="final-total-val">Rs.{grandTotal.toLocaleString()} PKR</span>
                 </div>
 
-                <button type="submit" className="place-order-btn" disabled={loading}>
-                  {loading ? 'Processing Order...' : `Place Order (Rs.${grandTotal.toLocaleString()})`}
+                {paymentError && (
+                  <p className="checkout-payment-error">{paymentError}</p>
+                )}
+
+                <button
+                  type="submit"
+                  className="place-order-btn"
+                  disabled={loading || (paymentMethod === 'card' && stripePublishableKey && (paymentIntentLoading || !clientSecret))}
+                >
+                  {loading
+                    ? (paymentMethod === 'card' ? 'Processing Payment...' : 'Processing Order...')
+                    : paymentMethod === 'card'
+                      ? `Pay Rs.${grandTotal.toLocaleString()} with Card`
+                      : `Place Order (Rs.${grandTotal.toLocaleString()})`}
                 </button>
               </div>
             </div>

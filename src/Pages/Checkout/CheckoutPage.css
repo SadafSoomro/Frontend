@@ -248,6 +248,38 @@
   line-height: 1.35;
 }
 
+.stripe-card-subform {
+  margin-top: 16px;
+}
+
+.stripe-payment-loading {
+  padding: 16px;
+  background: #fbfaf9;
+  border: 1px dashed #d4c8c0;
+  border-radius: 6px;
+  color: #7a6e67;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.stripe-payment-element-wrap {
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #d4c8c0;
+  border-radius: 6px;
+}
+
+.checkout-payment-error {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 6px;
+  color: #b91c1c;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
 .card-input-details-subform {
   margin-top: 16px;
   background: #fbf9f6;

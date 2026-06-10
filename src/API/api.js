@@ -41,6 +41,11 @@ export const updateUserApi = (id, data) => API.put(`/auth/users/${id}`, data);
 export const deleteUserApi = (id) => API.delete(`/auth/users/${id}`);
 export const sendOrderConfirmationApi = (data) => API.post('/auth/order-confirmation', data);
 
+// Payment APIs
+export const getPaymentConfigApi = () => API.get('/payments/config');
+export const createPaymentIntentApi = (data) => API.post('/payments/create-intent', data);
+export const verifyPaymentApi = (data) => API.post('/payments/verify', data);
+
 // Coupon APIs
 export const validateCouponApi = (code) => API.post('/coupons/validate', { code });
 export const fetchAllCouponsApi = () => API.get('/coupons');
