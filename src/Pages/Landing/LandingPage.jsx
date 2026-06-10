@@ -25,6 +25,7 @@ import {
   Minus,
   LogOut,
   Settings,
+  Package,
 } from 'lucide-react';
 import './LandingPage.css';
 
@@ -294,6 +295,9 @@ const LandingPage = () => {
                     </div>
                     <Link to="/profile" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
                       <Settings size={16} /> Edit Profile
+                    </Link>
+                    <Link to="/my-orders" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                      <Package size={16} /> My Orders
                     </Link>
                     <Link to="/admin" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
                       <User size={16} /> Admin Dashboard

@@ -1,0 +1,366 @@
+.my-orders-page-layout {
+  min-height: 100vh;
+  width: 100%;
+  background: #fdfcfb;
+  color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.my-orders-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.my-orders-main {
+  flex: 1;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 40px 32px 60px;
+  box-sizing: border-box;
+}
+
+.my-orders-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.my-orders-toolbar h1 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+}
+
+.my-orders-toolbar p {
+  margin: 0;
+  color: #7a6e67;
+  font-size: 0.92rem;
+}
+
+.refresh-orders-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #151413;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.refresh-orders-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.my-orders-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #b91c1c;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.my-orders-loading {
+  text-align: center;
+  color: #7a6e67;
+  padding: 48px 0;
+}
+
+.my-orders-empty {
+  text-align: center;
+  padding: 80px 24px;
+  background: #fff;
+  border: 1px solid #ebdcd3;
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.my-orders-empty svg {
+  color: #d4c8c0;
+  margin-bottom: 16px;
+}
+
+.my-orders-empty h2 {
+  margin: 0 0 8px;
+}
+
+.my-orders-empty p {
+  margin: 0 0 20px;
+  color: #7a6e67;
+}
+
+.shop-now-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e21b26;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.my-orders-section {
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.my-orders-section h2 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  color: #5a4b41;
+}
+
+.my-orders-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.my-order-card {
+  background: #fff;
+  border: 1px solid #ebdcd3;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.my-order-card-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.my-order-expand-btn {
+  background: none;
+  border: none;
+  color: #7a6e67;
+  cursor: pointer;
+  padding: 0;
+}
+
+.my-order-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.my-order-tracking {
+  font-family: monospace;
+  font-weight: 700;
+  color: #e21b26;
+  letter-spacing: 0.4px;
+}
+
+.my-order-date {
+  font-size: 0.78rem;
+  color: #9a8a7f;
+}
+
+.my-order-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.my-order-total {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.my-order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.my-order-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: #7a6e67;
+}
+
+.my-order-actions {
+  margin-top: 12px;
+}
+
+.cancel-order-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #dc2626;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel-order-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.my-order-details {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0e8e3;
+}
+
+.my-order-shipping span {
+  display: block;
+  font-size: 0.72rem;
+  color: #9a8a7f;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+
+.my-order-shipping p {
+  margin: 0 0 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.my-order-items-title {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9a8a7f;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.my-order-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-order-item-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fbfaf9;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.my-order-item-row img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.my-order-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-order-item-info p {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.my-order-item-info span {
+  font-size: 0.74rem;
+  color: #9a8a7f;
+}
+
+.my-order-item-qty {
+  font-size: 0.82rem;
+  color: #7a6e67;
+}
+
+.my-order-item-price {
+  font-weight: 700;
+  font-size: 0.86rem;
+}
+
+.my-order-totals {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.my-order-totals div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: #5a4b41;
+}
+
+.my-order-totals .discount-line span:last-child {
+  color: #16a34a;
+}
+
+.my-order-totals .grand-line {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid #f0e8e3;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .my-orders-main {
+    padding: 28px 16px 48px;
+  }
+
+  .my-orders-list {
+    grid-template-columns: 1fr;
+  }
+
+  .my-orders-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .my-order-card-header {
+    grid-template-columns: auto 1fr;
+  }
+
+  .my-order-meta {
+    grid-column: 2;
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

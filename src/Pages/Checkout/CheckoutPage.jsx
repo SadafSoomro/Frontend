@@ -385,11 +385,11 @@ const CheckoutPage = () => {
                       style={{
                         flex: 1,
                         padding: '10px 12px',
-                        background: 'var(--card-bg)',
-                        border: '1px solid var(--glass-border)',
+                        background: '#fff',
+                        border: '1px solid #d4c8c0',
                         borderRadius: '6px',
                         fontSize: '0.85rem',
-                        color: 'var(--text-primary)',
+                        color: '#1a1a1a',
                         outline: 'none'
                       }}
                     />

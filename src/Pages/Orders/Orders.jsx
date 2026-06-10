@@ -6,7 +6,8 @@ import { fetchAllOrdersApi, updateOrderStatusApi, deleteOrderApi } from '../../A
 
 const statusConfig = {
   pending:   { label: 'Pending',   color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
-  confirmed: { label: 'Confirmed', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+  delivered: { label: 'Delivered', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+  confirmed: { label: 'Delivered', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
   cancelled: { label: 'Cancelled', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
 };
 
@@ -73,7 +74,7 @@ const Orders = () => {
     method === 'cod' ? 'Cash on Delivery' : method === 'card' ? 'Card' : 'Bank Transfer';
 
   const pendingCount = orders.filter((o) => o.status === 'pending').length;
-  const confirmedCount = orders.filter((o) => o.status === 'confirmed').length;
+  const deliveredCount = orders.filter((o) => o.status === 'delivered' || o.status === 'confirmed').length;
   const cancelledCount = orders.filter((o) => o.status === 'cancelled').length;
 
   return (
@@ -93,7 +94,7 @@ const Orders = () => {
         {[
           { label: 'Total Orders', value: orders.length, color: 'var(--accent-primary)' },
           { label: 'Pending', value: pendingCount, color: '#f59e0b' },
-          { label: 'Confirmed', value: confirmedCount, color: '#22c55e' },
+          { label: 'Delivered', value: deliveredCount, color: '#22c55e' },
           { label: 'Cancelled', value: cancelledCount, color: '#ef4444' },
         ].map((stat) => (
           <div key={stat.label} className="glass-card" style={{ padding: '1rem 1.5rem', flex: '1', minWidth: 120 }}>
@@ -176,14 +177,14 @@ const Orders = () => {
                             <button
                               className="icon-btn-small"
                               style={{ color: '#22c55e', borderColor: 'rgba(34,197,94,0.3)' }}
-                              onClick={() => handleStatusChange(order._id, 'confirmed')}
-                              title="Confirm order"
+                              onClick={() => handleStatusChange(order._id, 'delivered')}
+                              title="Mark as delivered"
                             >
                               <CheckCircle size={15} />
                             </button>
                             <button
                               className="icon-btn-small"
-                              style={{ color: '#f59e0b', borderColor: 'rgba(245,158,11,0.3)' }}
+                              style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' }}
                               onClick={() => handleStatusChange(order._id, 'cancelled')}
                               title="Cancel order"
                             >
@@ -191,10 +192,20 @@ const Orders = () => {
                             </button>
                           </>
                         )}
-                        {order.status === 'confirmed' && (
+                        {(order.status === 'delivered' || order.status === 'confirmed') && (
                           <button
                             className="icon-btn-small"
                             style={{ color: '#f59e0b', borderColor: 'rgba(245,158,11,0.3)' }}
+                            onClick={() => handleStatusChange(order._id, 'pending')}
+                            title="Mark as pending"
+                          >
+                            <Clock size={15} />
+                          </button>
+                        )}
+                        {(order.status === 'delivered' || order.status === 'confirmed') && (
+                          <button
+                            className="icon-btn-small"
+                            style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)' }}
                             onClick={() => handleStatusChange(order._id, 'cancelled')}
                             title="Cancel order"
                           >
@@ -202,14 +213,24 @@ const Orders = () => {
                           </button>
                         )}
                         {order.status === 'cancelled' && (
-                          <button
-                            className="icon-btn-small"
-                            style={{ color: '#22c55e', borderColor: 'rgba(34,197,94,0.3)' }}
-                            onClick={() => handleStatusChange(order._id, 'confirmed')}
-                            title="Re-confirm order"
-                          >
-                            <CheckCircle size={15} />
-                          </button>
+                          <>
+                            <button
+                              className="icon-btn-small"
+                              style={{ color: '#f59e0b', borderColor: 'rgba(245,158,11,0.3)' }}
+                              onClick={() => handleStatusChange(order._id, 'pending')}
+                              title="Mark as pending"
+                            >
+                              <Clock size={15} />
+                            </button>
+                            <button
+                              className="icon-btn-small"
+                              style={{ color: '#22c55e', borderColor: 'rgba(34,197,94,0.3)' }}
+                              onClick={() => handleStatusChange(order._id, 'delivered')}
+                              title="Mark as delivered"
+                            >
+                              <CheckCircle size={15} />
+                            </button>
+                          </>
                         )}
                         <button
                           className="delete-btn"

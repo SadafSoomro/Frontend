@@ -6,14 +6,15 @@ import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import './Auth.css';
 
 const Login = () => {
+    const location = useLocation();
     const [formData, setFormData] = useState({
-        email: '',
+        email: location.state?.email || '',
         password: ''
     });
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
     const { login } = useAuth();
 
     const handleChange = (e) => {
@@ -68,6 +69,20 @@ const Login = () => {
                         <h2>Welcome Back</h2>
                         <p>Sign in to your account to continue</p>
                     </div>
+
+                    {successMessage && (
+                        <div className="success-msg" style={{
+                            background: 'rgba(34, 197, 94, 0.12)',
+                            border: '1px solid rgba(34, 197, 94, 0.35)',
+                            color: '#15803d',
+                            padding: '12px 14px',
+                            borderRadius: '8px',
+                            fontSize: '0.85rem',
+                            marginBottom: '1rem'
+                        }}>
+                            {successMessage}
+                        </div>
+                    )}
 
                     {error && (
                         <div className="error-msg">

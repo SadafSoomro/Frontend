@@ -383,13 +383,36 @@
   border-radius: 4px;
   padding: 10px 12px;
   font-size: 0.82rem;
+  color: #1a1a1a;
   outline: none;
   margin-bottom: 0;
   text-transform: uppercase;
 }
 
+.promo-code-form input::placeholder {
+  color: #9a8a7f;
+  text-transform: none;
+}
+
 .promo-code-form input:focus {
   border-color: #1a1a1a;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+.cart-page-layout input[type="text"],
+.cart-page-layout input[type="email"],
+.cart-page-layout input[type="tel"],
+.cart-page-layout input[type="number"],
+.cart-page-layout input[type="password"] {
+  color: #1a1a1a;
+}
+
+.cart-page-layout input:-webkit-autofill,
+.cart-page-layout input:-webkit-autofill:hover,
+.cart-page-layout input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1a1a1a !important;
+  -webkit-box-shadow: 0 0 0 30px #fbfaf9 inset !important;
 }
 
 .promo-code-form button {

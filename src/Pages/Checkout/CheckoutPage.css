@@ -160,15 +160,28 @@
   border-radius: 4px;
   padding: 10px 14px;
   font-size: 0.82rem;
+  color: #1a1a1a;
   outline: none;
   margin-bottom: 0;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.form-group input::placeholder {
+  color: #9a8a7f;
+}
+
 .form-group input:focus {
   border-color: #1a1a1a;
   background: #fff;
+  color: #1a1a1a;
   box-shadow: 0 0 0 3px rgba(226, 27, 38, 0.06);
+}
+
+.checkout-page-layout .form-group input:-webkit-autofill,
+.checkout-page-layout .form-group input:-webkit-autofill:hover,
+.checkout-page-layout .form-group input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1a1a1a !important;
+  -webkit-box-shadow: 0 0 0 30px #fbfaf9 inset !important;
 }
 
 /* ── PAYMENT OPTIONS ── */

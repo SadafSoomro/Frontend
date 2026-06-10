@@ -51,6 +51,8 @@ export const deleteCouponApi = (id) => API.delete(`/coupons/${id}`);
 // Order APIs
 export const createOrderApi = (data) => API.post('/orders', data);
 export const fetchAllOrdersApi = () => API.get('/orders');
+export const fetchMyOrdersApi = () => API.get('/orders/my-orders');
+export const cancelMyOrderApi = (id) => API.put(`/orders/my-orders/${id}/cancel`);
 export const updateOrderStatusApi = (id, status) => API.put(`/orders/${id}`, { status });
 export const deleteOrderApi = (id) => API.delete(`/orders/${id}`);
 

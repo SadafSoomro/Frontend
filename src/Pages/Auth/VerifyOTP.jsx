@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { verifyOtpApi, resendOtpApi } from '../../API/api';
-import { useAuth } from '../../context/AuthContext';
 import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import './Auth.css';
 
@@ -14,7 +13,6 @@ const VerifyOTP = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const email = location.state?.email;
-    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,9 +21,13 @@ const VerifyOTP = () => {
         setLoading(true);
 
         try {
-            const { data } = await verifyOtpApi({ email, otp });
-            login(data);
-            navigate('/');
+            await verifyOtpApi({ email, otp });
+            navigate('/login', {
+                state: {
+                    email,
+                    message: 'Email verified successfully! Please sign in to continue.',
+                },
+            });
         } catch (err) {
             setError(err.response?.data?.message || err.message || 'Verification failed');
         } finally {
@@ -121,7 +123,7 @@ const VerifyOTP = () => {
                         </div>
 
                         <button type="submit" className="modern-auth-btn" disabled={loading}>
-                            {loading ? 'Verifying...' : 'Verify & Continue'} <ArrowRight size={16} />
+                            {loading ? 'Verifying...' : 'Verify Email'} <ArrowRight size={16} />
                         </button>
                     </form>
 

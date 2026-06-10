@@ -18,6 +18,7 @@ import Profile from './Pages/Profile/Profile';
 import LandingPage from './Pages/Landing/LandingPage';
 import CartPage from './Pages/Cart/CartPage';
 import CheckoutPage from './Pages/Checkout/CheckoutPage';
+import MyOrders from './Pages/MyOrders/MyOrders';
 
 const Wallet = () => <div className="animate-fade-in"><h1>Wallet</h1><p className="text-secondary">Coming soon...</p></div>;
 const Settings = () => <div className="animate-fade-in"><h1>Settings</h1><p className="text-secondary">Coming soon...</p></div>;
@@ -37,6 +38,11 @@ function App() {
         <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path="/my-orders" element={
+          <ProtectedRoute>
+            <MyOrders />
           </ProtectedRoute>
         } />
         <Route path="/admin" element={<AdminLayout />}>
