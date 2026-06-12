@@ -29,6 +29,7 @@ API.interceptors.response.use(
 
 // Auth APIs
 export const loginApi = (credentials) => API.post('/auth/login', credentials);
+export const googleLoginApi = (token) => API.post('/auth/google-login', { token });
 export const registerApi = (userData) => API.post('/auth/register', userData);
 export const verifyOtpApi = (data) => API.post('/auth/verify-otp', data);
 export const resendOtpApi = (email) => API.post('/auth/resend-otp', { email });
@@ -60,6 +61,10 @@ export const fetchMyOrdersApi = () => API.get('/orders/my-orders');
 export const cancelMyOrderApi = (id) => API.put(`/orders/my-orders/${id}/cancel`);
 export const updateOrderStatusApi = (id, status) => API.put(`/orders/${id}`, { status });
 export const deleteOrderApi = (id) => API.delete(`/orders/${id}`);
+
+// Chat APIs
+export const fetchChatHistoryApi = (userId) => API.get(`/chat/history/${userId}`);
+export const fetchChatContactsApi = () => API.get('/chat/contacts');
 
 // Banner APIs
 export const fetchBannersApi = () => API.get('/banners/get');

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { loginApi } from '../../API/api';
+import { loginApi, googleLoginApi } from '../../API/api';
 import { useAuth } from '../../context/AuthContext';
 import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import './Auth.css';
 
 const Login = () => {
@@ -19,6 +20,25 @@ const Login = () => {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        setError('');
+        setLoading(true);
+        try {
+            const { data } = await googleLoginApi(credentialResponse.credential);
+            login(data);
+            const redirectTo = location.state?.from || '/';
+            navigate(redirectTo);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Google Login failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleError = () => {
+        setError('Google Login failed. Please try again.');
     };
 
     const handleSubmit = async (e) => {
@@ -126,6 +146,13 @@ const Login = () => {
                         <button type="submit" className="modern-auth-btn" disabled={loading}>
                             {loading ? 'Signing in...' : 'Sign In'} <ArrowRight size={16} />
                         </button>
+                        
+                        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                            <GoogleLogin 
+                                onSuccess={handleGoogleSuccess}
+                                onError={handleGoogleError}
+                            />
+                        </div>
                     </form>
 
                     <div className="form-footer">

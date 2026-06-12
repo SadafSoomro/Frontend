@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Sparkles,
   Tag,
+  MessageCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
@@ -60,6 +61,7 @@ const Sidebar = () => {
     {
       title: 'Support',
       items: [
+        { id: 'chat', icon: <MessageCircle size={18} />, label: 'Chat', path: '/admin/chat' },
         { id: 'settings', icon: <Settings size={18} />, label: 'Settings', path: '/admin/settings' },
         { id: 'documentation', icon: <HelpCircle size={18} />, label: 'Documentation', path: '/admin/settings', dummy: true }
       ]

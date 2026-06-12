@@ -19,6 +19,8 @@ import LandingPage from './Pages/Landing/LandingPage';
 import CartPage from './Pages/Cart/CartPage';
 import CheckoutPage from './Pages/Checkout/CheckoutPage';
 import MyOrders from './Pages/MyOrders/MyOrders';
+import AdminChat from './Pages/AdminChat/AdminChat';
+import ChatbotWidget from './Components/ChatbotWidget/ChatbotWidget';
 
 const Wallet = () => <div className="animate-fade-in"><h1>Wallet</h1><p className="text-secondary">Coming soon...</p></div>;
 const Settings = () => <div className="animate-fade-in"><h1>Settings</h1><p className="text-secondary">Coming soon...</p></div>;
@@ -56,8 +58,10 @@ function App() {
           <Route path="coupons" element={<Coupons />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="chat" element={<AdminChat />} />
         </Route>
       </Routes>
+      <ChatbotWidget />
     </Router>
   );
 }

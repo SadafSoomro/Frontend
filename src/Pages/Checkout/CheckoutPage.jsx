@@ -59,7 +59,7 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [orderTrackingNumber, setOrderTrackingNumber] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
+  const [emailStatus, setEmailStatus] = useState('sending'); // 'sending' | 'sent' | 'failed'
   const [couponCode, setCouponCode] = useState('');
   const [couponMessage, setCouponMessage] = useState('');
   const [paymentError, setPaymentError] = useState('');
@@ -159,6 +159,7 @@ const CheckoutPage = () => {
 
     setLoading(true);
     setPaymentError('');
+    setEmailStatus('sending');
 
     try {
       let stripePaymentIntentId = '';
@@ -176,7 +177,7 @@ const CheckoutPage = () => {
         stripePaymentIntentId = paymentIntent.id;
       }
 
-      await sendOrderConfirmationApi({
+      const response = await sendOrderConfirmationApi({
         orderTrackingNumber: trackingNumber,
         cartItems,
         subtotal,
@@ -198,12 +199,17 @@ const CheckoutPage = () => {
 
       setOrderTrackingNumber(trackingNumber);
       dispatch(clearCart());
-      setEmailSent(true);
+      
+      if (response?.data?.message?.includes('could not be sent')) {
+        setEmailStatus('failed');
+      } else {
+        setEmailStatus('sent');
+      }
       setShowSuccessModal(true);
     } catch (err) {
       const message = err.response?.data?.message || err.message || 'Failed to place order';
       setPaymentError(message);
-      setEmailSent(false);
+      setEmailStatus('failed');
     } finally {
       setLoading(false);
     }
@@ -577,12 +583,12 @@ const CheckoutPage = () => {
             <p className="success-intro">Your order has been received and is currently being processed.</p>
 
             {/* Email notification status */}
-            <div className={`email-status-row ${emailSent ? 'sent' : 'sending'}`}>
+            <div className={`email-status-row ${emailStatus}`}>
               <Mail size={14} />
               <span>
-                {emailSent
-                  ? `Confirmation email sent to ${user?.email}`
-                  : 'Sending confirmation email...'}
+                {emailStatus === 'sent' && `Confirmation email sent to ${formData.email || user?.email}`}
+                {emailStatus === 'sending' && 'Sending confirmation email...'}
+                {emailStatus === 'failed' && 'Email could not be sent (Verify SMTP config)'}
               </span>
             </div>
 
