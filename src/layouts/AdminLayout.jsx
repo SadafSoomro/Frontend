@@ -28,8 +28,11 @@ const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
-    document.body.className = theme;
+    document.body.className = `admin-body ${theme}`;
     localStorage.setItem('theme', theme);
+    return () => {
+      document.body.className = '';
+    };
   }, [theme]);
 
   const toggleTheme = () => {

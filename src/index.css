@@ -66,13 +66,18 @@ body.dark {
 
 body {
   font-family: var(--font-main);
-  background-color: var(--bg-dark);
-  color: var(--text-primary);
+  background-color: #fdfcfb;
+  color: #1a1a1a;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.admin-body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
 }
 
 a {
