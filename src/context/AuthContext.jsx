@@ -72,6 +72,33 @@ export const AuthProvider = ({ children }) => {
         updateUser,
     };
 
+    if (loading) {
+        return (
+            <div style={{
+                minHeight: '100vh',
+                background: '#fdfcfb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'sans-serif'
+            }}>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{
+                        background: '#e21b26',
+                        color: '#fff',
+                        fontWeight: 800,
+                        fontSize: '1.6rem',
+                        padding: '8px 18px',
+                        borderRadius: '4px',
+                        marginBottom: '16px',
+                        display: 'inline-block'
+                    }}>makskin</div>
+                    <div style={{ color: '#999', fontSize: '0.85rem' }}>Loading...</div>
+                </div>
+            </div>
+        );
+    }
+
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import store from './Store/Store'
 import { AuthProvider } from './context/AuthContext'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import ErrorBoundary from './ErrorBoundary'
 import './index.css'
 import App from './App.jsx'
 
@@ -12,12 +13,15 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "346283855204-
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Provider store={store}>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </GoogleOAuthProvider>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </GoogleOAuthProvider>
+      </Provider>
+    </ErrorBoundary>
   </StrictMode>,
 )
+
