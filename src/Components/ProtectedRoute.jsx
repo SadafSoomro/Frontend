@@ -19,8 +19,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     }
 
     if (adminOnly && !isAdmin) {
-        // Relax restriction for demo: allow standard logged-in users to test admin dashboard features
-        // return <Navigate to="/" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return children;

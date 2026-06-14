@@ -47,7 +47,11 @@ function App() {
             <MyOrders />
           </ProtectedRoute>
         } />
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={
+          <ProtectedRoute adminOnly={true}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }>
           <Route index element={<Overview />} />
           <Route path="profile" element={<Profile />} />
           <Route path="products" element={<Products />} />

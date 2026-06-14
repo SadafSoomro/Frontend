@@ -58,6 +58,30 @@ body.dark {
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.95);
 }
 
+body.light {
+  --bg-dark: #f4f4f5;
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
+  --glass-bg: #f1f1f1;
+  --glass-border: #e4e4e7;
+  --accent-primary: #e11d48;
+  --accent-primary-light: rgba(225, 29, 72, 0.1);
+  --accent-primary-hover: #be123c;
+  --accent-pink: #e11d48;
+  --accent-cyan: #0891b2;
+  --accent-green: #16a34a;
+  --accent-yellow: #ca8a04;
+  --accent-purple: #7c3aed;
+  --accent-red: #dc2626;
+
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-muted: #888888;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -239,4 +263,29 @@ td {
 
 tr:hover td {
   background: var(--glass-bg);
+}
+
+/* ── GLOBAL RESPONSIVE STYLES ── */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  h2 {
+    font-size: 1.15rem;
+  }
+  body {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.3rem;
+  }
+  h2 {
+    font-size: 1.05rem;
+  }
+  body {
+    font-size: 14px;
+  }
 }

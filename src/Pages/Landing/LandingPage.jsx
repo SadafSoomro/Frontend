@@ -299,9 +299,11 @@ const LandingPage = () => {
                     <Link to="/my-orders" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
                       <Package size={16} /> My Orders
                     </Link>
-                    <Link to="/admin" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
-                      <User size={16} /> Admin Dashboard
-                    </Link>
+                    {user?.role === 'admin' && (
+                      <Link to="/admin" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                        <User size={16} /> Admin Dashboard
+                      </Link>
+                    )}
                     <button className="user-dropdown-item logout-item" onClick={handleLogout}>
                       <LogOut size={16} /> Logout
                     </button>

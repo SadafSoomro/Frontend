@@ -611,11 +611,12 @@
 .product-name {
   font-weight: 600;
   font-size: 0.88rem;
+  color: var(--text-primary);
 }
 
 .product-sku {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .category-tag {

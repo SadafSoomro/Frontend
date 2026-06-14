@@ -11,37 +11,62 @@ const ChatbotWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
+    const [historyLoaded, setHistoryLoaded] = useState(false);
     const socketRef = useRef(null);
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
         if (!isAuthenticated || !user?.isVerified || user?.role === 'admin') return;
 
-        // Fetch history
-        fetchChatHistoryApi(user._id).then(({ data }) => setMessages(data)).catch(console.error);
+        // Fetch history once
+        if (!historyLoaded) {
+            fetchChatHistoryApi(user._id)
+                .then(({ data }) => {
+                    setMessages(data);
+                    setHistoryLoaded(true);
+                })
+                .catch(console.error);
+        }
 
         // Connect socket
-        socketRef.current = io(API_BASE_URL);
-        
-        socketRef.current.on('connect', () => {
-            socketRef.current.emit('join_chat', user._id);
+        const socket = io(API_BASE_URL, { transports: ['websocket', 'polling'] });
+        socketRef.current = socket;
+
+        const joinRoom = () => {
+            socket.emit('join_chat', user._id);
+        };
+
+        if (socket.connected) joinRoom();
+        socket.on('connect', joinRoom);
+
+        socket.on('receive_message', (msg) => {
+            setMessages(prev => {
+                // Avoid duplicates by _id
+                if (prev.find(m => m._id?.toString() === msg._id?.toString())) return prev;
+                return [...prev, msg];
+            });
         });
 
-        socketRef.current.on('receive_message', (msg) => {
-            setMessages((prev) => [...prev, msg]);
+        socket.on('messages_seen', () => {
+            setMessages(prev => prev.map(m => 
+                (m.senderId?.toString() === user._id?.toString() && m.receiverId === 'admin') 
+                ? { ...m, isRead: true } : m
+            ));
         });
 
         return () => {
-            if (socketRef.current) socketRef.current.disconnect();
+            socket.disconnect();
         };
     }, [isAuthenticated, user?._id, user?.isVerified, user?.role]);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (isOpen) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages, isOpen]);
 
     if (!isAuthenticated || !user?.isVerified || user?.role === 'admin') {
-        return null; // Don't show for unverified users or admins
+        return null;
     }
 
     const sendMessage = (e) => {
@@ -53,9 +78,16 @@ const ChatbotWidget = () => {
             receiverId: 'admin',
             message: input
         });
-        
+
         setInput('');
     };
+
+    // Only show messages relevant to this user
+    const userMessages = messages.filter(msg =>
+        msg.senderId?.toString() === user._id?.toString() ||
+        msg.receiverId?.toString() === user._id?.toString() ||
+        msg.receiverId === 'admin' && msg.senderId?.toString() === user._id?.toString()
+    );
 
     return (
         <div className="chatbot-widget-container">
@@ -71,22 +103,39 @@ const ChatbotWidget = () => {
                         </button>
                     </div>
                     <div className="chatbot-messages">
-                        {messages.length === 0 ? (
+                        {userMessages.length === 0 ? (
                             <div className="chatbot-empty">Send a message to our admin!</div>
                         ) : (
-                            messages.map((msg, idx) => (
-                                <div key={idx} className={`chatbot-bubble ${msg.senderId === user._id ? 'sent' : 'received'}`}>
-                                    {msg.message}
-                                </div>
-                            ))
+                            userMessages.map((msg, idx) => {
+                                const isSent = msg.senderId?.toString() === user._id?.toString();
+                                return (
+                                    <div key={msg._id || idx} className={`chatbot-bubble-wrapper ${isSent ? 'sent' : 'received'}`}>
+                                        <div className={`chatbot-bubble ${isSent ? 'sent' : 'received'}`}>
+                                            {msg.message}
+                                            <div className="bubble-meta">
+                                                <span className="time">{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                {isSent && (
+                                                    <span className={`tick-marks ${msg.isRead ? 'read' : 'sent'}`}>
+                                                        <svg viewBox="0 0 18 12" width="14" height="10" fill="none">
+                                                            <path d="M1 6l4 4L12 1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                                            <path d="M6 10l4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                                            <path d="M9 6l3-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                                        </svg>
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })
                         )}
                         <div ref={messagesEndRef} />
                     </div>
                     <form className="chatbot-input-area" onSubmit={sendMessage}>
-                        <input 
-                            type="text" 
-                            placeholder="Type a message..." 
-                            value={input} 
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            value={input}
                             onChange={(e) => setInput(e.target.value)}
                         />
                         <button type="submit"><Send size={16} /></button>
