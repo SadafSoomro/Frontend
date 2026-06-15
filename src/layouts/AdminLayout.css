@@ -214,6 +214,17 @@
   .page-content {
     padding: 16px;
   }
+
+  .admin-layout.sidebar-open .sidebar {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .admin-layout .dashboard-body,
+  .admin-layout.sidebar-collapsed .dashboard-body,
+  .admin-layout.sidebar-open .dashboard-body {
+    margin-left: 0 !important;
+  }
 }
 
 @media (max-width: 900px) {

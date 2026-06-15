@@ -186,7 +186,7 @@
   opacity: 0.9;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 769px) and (max-width: 900px) {
   .sidebar {
     width: 76px;
     min-width: 76px;
@@ -208,5 +208,13 @@
   .nav-item {
     justify-content: center;
     padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 260px;
+    min-width: 260px;
   }
 }
