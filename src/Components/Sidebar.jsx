@@ -19,7 +19,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -94,6 +94,7 @@ const Sidebar = () => {
                       to={item.path}
                       end={item.end}
                       className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+                      onClick={onClose}
                     >
                       <span className="nav-icon-wrapper">{item.icon}</span>
                       <span className="nav-label">{item.label}</span>
@@ -125,7 +126,7 @@ const Sidebar = () => {
             {(user?.role || 'admin') === 'admin' ? 'Admin Role' : 'User Role'}
           </span>
         </div>
-        <button className="nav-item" onClick={handleLogout} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', color: 'inherit' }}>
+        <button className="nav-item" onClick={() => { handleLogout(); if (onClose) onClose(); }} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', color: 'inherit' }}>
           <LogOut size={18} />
           <span>Logout</span>
         </button>

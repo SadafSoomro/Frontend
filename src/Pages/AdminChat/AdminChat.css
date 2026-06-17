@@ -538,6 +538,25 @@
     40%            { transform: scale(1); opacity: 1; }
 }
 
+.chat-back-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 6px;
+    margin-right: 8px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.chat-back-btn:hover {
+    background-color: var(--glass-bg);
+    color: var(--text-primary);
+}
+
 /* Responsive */
 @media (max-width: 860px) {
     .admin-chat-container { grid-template-columns: 260px 1fr; }
@@ -548,5 +567,24 @@
         grid-template-columns: 1fr;
         height: calc(100vh - 100px);
     }
-    .chat-contacts-panel { display: none; }
+    
+    .chat-back-btn {
+        display: flex;
+    }
+
+    /* If no contact is selected, show contacts list, hide chat window */
+    .admin-chat-container:not(.has-selection) .chat-contacts-panel {
+        display: flex;
+    }
+    .admin-chat-container:not(.has-selection) .chat-window-panel {
+        display: none;
+    }
+
+    /* If a contact is selected, hide contacts list, show chat window */
+    .admin-chat-container.has-selection .chat-contacts-panel {
+        display: none;
+    }
+    .admin-chat-container.has-selection .chat-window-panel {
+        display: flex;
+    }
 }

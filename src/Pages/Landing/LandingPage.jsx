@@ -44,11 +44,13 @@ const StarRating = ({ rating }) => (
 
 const LandingPage = () => {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   const [cartOpen, setCartOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
   const userMenuRef = useRef(null);
+  const searchRef = useRef(null);
   const categoriesScrollRef = useRef(null);
   const promotionalScrollRef = useRef(null);
 
@@ -170,6 +172,10 @@ const LandingPage = () => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
         setUserMenuOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchOpen(false);
+        setSearchQuery('');
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -202,10 +208,20 @@ const LandingPage = () => {
   const totalCartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalCartPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-  // Filter products based on active tab
+  // Filter products based on active tab AND search query
   const filteredProducts = products.filter((product) => {
-    if (activeTab === 'all') return product.is_featured;
-    return product.category_id?._id === activeTab;
+    const matchesTab = searchQuery.trim()
+      ? true
+      : activeTab === 'all'
+        ? product.is_featured
+        : product.category_id?._id === activeTab;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch = !q
+      ? true
+      : product.name?.toLowerCase().includes(q) ||
+        product.brand?.toLowerCase().includes(q) ||
+        product.category_id?.name?.toLowerCase().includes(q);
+    return matchesTab && matchesSearch;
   });
 
   // Extract unique brand names from products for marquee
@@ -269,12 +285,51 @@ const LandingPage = () => {
           </nav>
 
           <div className="header-actions">
-            <div className={`landing-search-wrapper ${searchOpen ? 'open' : ''}`}>
-              <button className="action-icon-btn" onClick={() => setSearchOpen(!searchOpen)} title="Search">
+            <div className={`landing-search-wrapper ${searchOpen ? 'open' : ''}`} ref={searchRef}>
+              <button className="action-icon-btn" onClick={() => { setSearchOpen(!searchOpen); if (searchOpen) setSearchQuery(''); }} title="Search">
                 <Search size={18} />
               </button>
               {searchOpen && (
-                <input type="text" placeholder="Search products..." className="landing-search-input" autoFocus />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="landing-search-input"
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (e.target.value.trim()) {
+                      const el = document.getElementById('products-section');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                />
+              )}
+              {searchQuery.trim() && (
+                <div className="search-results-dropdown">
+                  {filteredProducts.length === 0 ? (
+                    <div className="search-no-result">No products found for "{searchQuery}"</div>
+                  ) : (
+                    filteredProducts.slice(0, 6).map((product) => (
+                      <div
+                        key={product._id}
+                        className="search-result-item"
+                        onClick={() => {
+                          handleAddToCart(product);
+                          setSearchQuery('');
+                          setSearchOpen(false);
+                        }}
+                      >
+                        <img src={assetUrl(product.main_image)} alt={product.name} className="search-result-img" />
+                        <div className="search-result-info">
+                          <span className="search-result-brand">{product.brand}</span>
+                          <span className="search-result-name">{product.name}</span>
+                          <span className="search-result-price">Rs.{product.price?.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               )}
             </div>
             {isAuthenticated ? (

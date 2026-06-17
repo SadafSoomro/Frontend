@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { io } from 'socket.io-client';
 import { fetchChatContactsApi, fetchChatHistoryApi } from '../../API/api';
 import { API_BASE_URL } from '../../config';
-import { MessageCircle, Send, Users, RefreshCw, Search, Wifi, WifiOff } from 'lucide-react';
+import { MessageCircle, Send, Users, RefreshCw, Search, Wifi, WifiOff, ArrowLeft } from 'lucide-react';
 import './AdminChat.css';
 
 const AdminChat = () => {
@@ -205,7 +205,7 @@ const AdminChat = () => {
     }, {});
 
     return (
-        <div className="admin-chat-container">
+        <div className={`admin-chat-container ${selectedContact ? 'has-selection' : ''}`}>
 
             {/* ══ Contact List Panel ══ */}
             <div className="chat-contacts-panel">
@@ -278,6 +278,9 @@ const AdminChat = () => {
                     <>
                         {/* Header */}
                         <div className="chat-window-header">
+                            <button className="chat-back-btn" onClick={() => setSelectedContact(null)} title="Back to contacts">
+                                <ArrowLeft size={18} />
+                            </button>
                             <div className="contact-avatar">{getInitials(selectedContact.name)}</div>
                             <div className="chat-user-info">
                                 <h4>{selectedContact.name}</h4>

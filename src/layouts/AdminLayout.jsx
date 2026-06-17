@@ -25,7 +25,20 @@ const GithubIcon = (props) => (
 const AdminLayout = () => {
   const { user } = useAuth();
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     document.body.className = `admin-body ${theme}`;
@@ -43,9 +56,16 @@ const AdminLayout = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth <= 768) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
     <div className={`admin-layout ${theme} ${isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
-      <Sidebar />
+      <Sidebar onClose={closeSidebarOnMobile} />
+      {isSidebarOpen && <div className="sidebar-backdrop" onClick={toggleSidebar} />}
       <div className="dashboard-body">
         <main className="main-wrapper">
           <header className="top-bar">
@@ -79,9 +99,9 @@ const AdminLayout = () => {
                   alt={user?.name || 'Profile'}
                   className="header-avatar"
                 />
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.2 }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>{user?.name || 'Guest Admin'}</span>
-                  <span style={{ fontSize: '0.65rem', color: (user?.role || 'admin') === 'admin' ? '#22c55e' : '#f59e0b', fontWeight: 700, textTransform: 'uppercase' }}>
+                <div className="header-profile-info">
+                  <span className="profile-name">{user?.name || 'Guest Admin'}</span>
+                  <span className="profile-role" style={{ color: (user?.role || 'admin') === 'admin' ? '#22c55e' : '#f59e0b' }}>
                     {user?.role || 'admin'}
                   </span>
                 </div>
