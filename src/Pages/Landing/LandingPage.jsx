@@ -298,10 +298,6 @@ const LandingPage = () => {
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
-                    if (e.target.value.trim()) {
-                      const el = document.getElementById('products-section');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }
                   }}
                 />
               )}
@@ -315,7 +311,8 @@ const LandingPage = () => {
                         key={product._id}
                         className="search-result-item"
                         onClick={() => {
-                          handleAddToCart(product);
+                          const el = document.getElementById('products-section');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
                           setSearchQuery('');
                           setSearchOpen(false);
                         }}
@@ -326,6 +323,17 @@ const LandingPage = () => {
                           <span className="search-result-name">{product.name}</span>
                           <span className="search-result-price">Rs.{product.price?.toLocaleString()}</span>
                         </div>
+                        <button
+                          className="search-add-cart-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(product);
+                            setSearchQuery('');
+                            setSearchOpen(false);
+                          }}
+                        >
+                          <ShoppingBag size={14} /> Add
+                        </button>
                       </div>
                     ))
                   )}

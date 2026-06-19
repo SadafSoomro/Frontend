@@ -21,8 +21,8 @@ import CheckoutPage from './Pages/Checkout/CheckoutPage';
 import MyOrders from './Pages/MyOrders/MyOrders';
 import AdminChat from './Pages/AdminChat/AdminChat';
 import ChatbotWidget from './Components/ChatbotWidget/ChatbotWidget';
+import Wallet from './Pages/Wallet/Wallet';
 
-const Wallet = () => <div className="animate-fade-in"><h1>Wallet</h1><p className="text-secondary">Coming soon...</p></div>;
 const Settings = () => <div className="animate-fade-in"><h1>Settings</h1><p className="text-secondary">Coming soon...</p></div>;
 
 function App() {

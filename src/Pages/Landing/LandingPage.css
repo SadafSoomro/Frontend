@@ -50,6 +50,7 @@
   align-items: center;
   justify-content: space-between;
   height: 62px;
+  position: relative;
 }
 
 .brand-logo-container {
@@ -1858,6 +1859,26 @@
   background: #c2141d;
 }
 
+.search-add-cart-btn {
+  background: #e21b26;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.2s;
+  margin-left: auto; /* push to the right */
+}
+
+.search-add-cart-btn:hover {
+  background: #c2141d;
+}
+
 /* ── RESPONSIVE MEDIA QUERIES ── */
 @media (max-width: 1200px) {
   .products-grid {
@@ -1876,6 +1897,33 @@
 }
 
 @media (max-width: 768px) {
+  .landing-search-wrapper.open {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: #151413;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+  }
+  .landing-search-wrapper.open .action-icon-btn {
+    z-index: 10;
+  }
+  .landing-search-wrapper.open .landing-search-input {
+    position: relative;
+    right: auto;
+    width: 100%;
+    margin-left: 8px;
+  }
+  .landing-search-wrapper.open .search-results-dropdown {
+    width: 100%;
+    right: 0;
+    left: 0;
+    top: calc(100% + 5px);
+  }
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
