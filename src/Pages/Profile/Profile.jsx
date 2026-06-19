@@ -72,9 +72,9 @@ const Profile = () => {
 
     if (fetching) {
         return (
-            <div className="centered-loader-wrapper" style={{ minHeight: '60vh' }}>
-                <Loader2 className="global-loading-spinner" size={40} />
-                <p className="centered-loader-text">Loading profile...</p>
+            <div className="centered-loader-wrapper" style={{ minHeight: '70vh' }}>
+                <Loader2 className="global-loading-spinner" size={64} />
+                <p className="centered-loader-text" style={{ fontSize: '1.1rem' }}>Loading...</p>
             </div>
         );
     }

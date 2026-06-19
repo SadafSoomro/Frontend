@@ -2,6 +2,7 @@
 
 .product-detail-layout {
   min-height: 100vh;
+  width: 100%;
   background: #fdfcfb;
   display: flex;
   flex-direction: column;

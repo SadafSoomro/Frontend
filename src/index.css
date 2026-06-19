@@ -308,6 +308,7 @@ tr:hover td {
   align-items: center;
   justify-content: center;
   width: 100%;
+  flex: 1;
   min-height: 50vh;
   gap: 16px;
   background: transparent;
