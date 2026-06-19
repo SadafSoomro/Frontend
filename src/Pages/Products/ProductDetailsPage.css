@@ -719,3 +719,32 @@
   50% { transform: scale(1.1); }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* ── LOADER SPINNER ── */
+.product-loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 80vh;
+  width: 100%;
+  background: #fdfcfb;
+}
+
+.loading-spinner {
+  color: #e21b26;
+  animation: spinner-rotate 1s linear infinite;
+}
+
+.loading-text {
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: #705b50;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+@keyframes spinner-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

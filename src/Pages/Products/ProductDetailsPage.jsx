@@ -7,7 +7,7 @@ import API from '../../API/api';
 import { assetUrl } from '../../config';
 import { 
   ArrowLeft, Star, ShoppingBag, Plus, Minus, CheckCircle, 
-  ShieldCheck, RotateCcw, Lock, ChevronDown, ChevronUp, AlertCircle, Sparkles 
+  ShieldCheck, RotateCcw, Lock, ChevronDown, ChevronUp, AlertCircle, Sparkles, Loader2 
 } from 'lucide-react';
 import './ProductDetailsPage.css';
 
@@ -141,7 +141,9 @@ const ProductDetailsPage = () => {
       navigate('/login', { state: { from: `/product/${id}`, message: 'Please login to add items to your cart.' } });
       return;
     }
-    const discount = product.discount_price
+    const isSaleLive = product.on_sale === true;
+    const activePrice = isSaleLive ? product.price : (product.discount_price || product.price);
+    const discount = (isSaleLive && product.discount_price)
       ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
       : 0;
 
@@ -149,8 +151,8 @@ const ProductDetailsPage = () => {
       id: product._id,
       brand: product.brand,
       name: product.name,
-      price: product.price,
-      originalPrice: product.discount_price || product.price,
+      price: activePrice,
+      originalPrice: activePrice,
       discount,
       img: assetUrl(product.main_image),
     };
@@ -165,7 +167,7 @@ const ProductDetailsPage = () => {
       brand: product.brand,
       quantity,
       img: assetUrl(product.main_image),
-      price: product.price
+      price: activePrice
     });
     setShowCartModal(true);
   };
@@ -202,8 +204,8 @@ const ProductDetailsPage = () => {
   if (loading) {
     return (
       <div className="product-detail-layout">
-        <div className="product-detail-main" style={{ textAlign: 'center', padding: '100px 20px' }}>
-          <p>Loading product details...</p>
+        <div className="product-loading-container">
+          <Loader2 className="loading-spinner" size={64} />
         </div>
       </div>
     );
@@ -286,8 +288,10 @@ const ProductDetailsPage = () => {
             )}
 
             <div className="detail-price-row">
-              <span className="detail-price">Rs.{product.price?.toLocaleString()} PKR</span>
-              {product.discount_price && (
+              <span className="detail-price">
+                Rs.{(product.on_sale === true ? product.price : (product.discount_price || product.price))?.toLocaleString()} PKR
+              </span>
+              {(product.on_sale === true && product.discount_price) && (
                 <>
                   <span className="detail-original-price">Rs.{product.discount_price?.toLocaleString()}</span>
                   <span className="detail-discount-tag">

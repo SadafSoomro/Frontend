@@ -8,6 +8,32 @@
   color: #1a1a1a;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ── BENEFIT RIBBON ── */
+.benefit-ribbon {
+  background: #fdfcfb;
+  border-bottom: 1px solid #ebdcd3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #705b50;
+  flex-wrap: wrap;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.benefit-item svg {
+  color: #e21b26;
 }
 
 .checkout-header-title {
@@ -164,6 +190,8 @@
   outline: none;
   margin-bottom: 0;
   transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group input::placeholder {
@@ -695,5 +723,32 @@
   
   .back-cart-text {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-main-container {
+    padding: 16px 8px 30px;
+  }
+
+  .form-section-card,
+  .order-summary-card {
+    padding: 14px 12px;
+    border-radius: 6px;
+  }
+
+  .form-grid-inputs {
+    gap: 12px;
+  }
+
+  .form-group input {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .benefit-ribbon {
+    gap: 12px;
+    padding: 6px 8px;
+    font-size: 0.7rem;
   }
 }

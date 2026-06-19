@@ -240,15 +240,18 @@ const LandingPage = () => {
       navigate('/login', { state: { from: '/', message: 'Please login to add items to your cart.' } });
       return;
     }
-    const discount = product.discount_price
+    const isSaleLive = product.on_sale === true;
+    const activePrice = isSaleLive ? product.price : (product.discount_price || product.price);
+    const discount = (isSaleLive && product.discount_price)
       ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
       : 0;
+
     dispatch(addToCart({
       id: product._id,
       brand: product.brand,
       name: product.name,
-      price: product.price,
-      originalPrice: product.discount_price || product.price,
+      price: activePrice,
+      originalPrice: activePrice,
       discount,
       img: assetUrl(product.main_image),
     }));
@@ -321,7 +324,7 @@ const LandingPage = () => {
                         <div className="search-result-info">
                           <span className="search-result-brand">{product.brand}</span>
                           <span className="search-result-name">{product.name}</span>
-                          <span className="search-result-price">Rs.{product.price?.toLocaleString()}</span>
+                          <span className="search-result-price">Rs.{(product.on_sale === true ? product.price : (product.discount_price || product.price))?.toLocaleString()}</span>
                         </div>
                         <button
                           className="search-add-cart-btn"
@@ -528,10 +531,12 @@ const LandingPage = () => {
               </div>
             ) : (
               filteredProducts.map((product) => {
-                const discount = product.discount_price
+                const isSaleLive = product.on_sale === true;
+                const activePrice = isSaleLive ? product.price : (product.discount_price || product.price);
+                const discount = (isSaleLive && product.discount_price)
                   ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
                   : 0;
-                const installment = Math.round(product.price / 3);
+                const installment = Math.round(activePrice / 3);
                 return (
                   <div className="product-card" key={product._id}>
                     {discount > 0 && (
@@ -554,8 +559,8 @@ const LandingPage = () => {
                         )}
                       </div>
                       <div className="product-price-row">
-                        <span className="product-price">Rs.{product.price.toLocaleString()} PKR</span>
-                        {product.discount_price && (
+                        <span className="product-price">Rs.{activePrice.toLocaleString()} PKR</span>
+                        {(isSaleLive && product.discount_price) && (
                           <>
                             <span className="product-original-price">Rs.{product.discount_price.toLocaleString()}</span>
                             <span className="product-off-label">{discount}% OFF</span>
