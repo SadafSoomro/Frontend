@@ -9,6 +9,7 @@ import Users from './Pages/Users/Users';
 import Banners from './Pages/Banners/Banners';
 import Coupons from './Pages/Coupons/Coupons';
 import Orders from './Pages/Orders/Orders';
+import Sales from './Pages/Sales/Sales';
 import Login from './Pages/Auth/Login';
 import Signup from './Pages/Auth/Signup';
 import ForgotPassword from './Pages/Auth/ForgotPassword';
@@ -18,6 +19,7 @@ import Profile from './Pages/Profile/Profile';
 import LandingPage from './Pages/Landing/LandingPage';
 import CartPage from './Pages/Cart/CartPage';
 import CheckoutPage from './Pages/Checkout/CheckoutPage';
+import ProductDetailsPage from './Pages/Products/ProductDetailsPage';
 import MyOrders from './Pages/MyOrders/MyOrders';
 import AdminChat from './Pages/AdminChat/AdminChat';
 import ChatbotWidget from './Components/ChatbotWidget/ChatbotWidget';
@@ -36,6 +38,7 @@ function App() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/profile" element={
           <ProtectedRoute>
@@ -60,6 +63,7 @@ function App() {
           <Route path="banners" element={<Banners />} />
           <Route path="orders" element={<Orders />} />
           <Route path="coupons" element={<Coupons />} />
+          <Route path="sales" element={<Sales />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="settings" element={<Settings />} />
           <Route path="chat" element={<AdminChat />} />

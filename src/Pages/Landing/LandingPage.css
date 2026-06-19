@@ -1938,21 +1938,21 @@
     padding: 0 12px;
   }
   .categories-grid {
-    gap: 12px;
+    gap: 16px;
   }
   .category-item {
-    width: 76px;
+    width: 100px;
   }
   .category-label {
-    font-size: 0.75rem;
+    font-size: 0.82rem;
   }
   .category-circle {
-    width: 60px;
-    height: 60px;
+    width: 90px;
+    height: 90px;
   }
   .category-circle-inner-bg {
-    width: 52px;
-    height: 52px;
+    width: 82px;
+    height: 82px;
   }
   .wide-promo-banner {
     grid-template-columns: 1fr;
@@ -2017,5 +2017,19 @@
   }
   .product-price {
     font-size: 0.75rem;
+  }
+  .category-item {
+    width: 88px;
+  }
+  .category-circle {
+    width: 78px;
+    height: 78px;
+  }
+  .category-circle-inner-bg {
+    width: 70px;
+    height: 70px;
+  }
+  .category-label {
+    font-size: 0.78rem;
   }
 }

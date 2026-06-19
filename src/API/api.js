@@ -96,4 +96,10 @@ export const updateProductApi = (id, formData) => API.put(`/products/update/${id
 });
 export const deleteProductApi = (id) => API.delete(`/products/delete/${id}`);
 
+// Sale Campaign APIs
+export const fetchAllSalesApi = () => API.get('/sales');
+export const createSaleApi = (data) => API.post('/sales', data);
+export const updateSaleApi = (id, data) => API.put(`/sales/${id}`, data);
+export const deleteSaleApi = (id) => API.delete(`/sales/${id}`);
+
 export default API;

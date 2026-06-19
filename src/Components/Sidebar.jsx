@@ -55,6 +55,7 @@ const Sidebar = ({ onClose }) => {
         { id: 'users', icon: <Users size={18} />, label: 'Users', path: '/admin/users' },
         { id: 'orders', icon: <ShoppingCart size={18} />, label: 'Orders', path: '/admin/orders' },
         { id: 'coupons', icon: <Tag size={18} />, label: 'Coupons', path: '/admin/coupons' },
+        { id: 'sales', icon: <Sparkles size={18} />, label: 'Sales', path: '/admin/sales' },
         { id: 'wallet', icon: <Wallet size={18} />, label: 'Wallet', path: '/admin/wallet' }
       ]
     },

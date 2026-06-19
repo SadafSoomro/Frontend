@@ -537,12 +537,16 @@ const LandingPage = () => {
                     {discount > 0 && (
                       <span className="product-discount-badge">{discount}% OFF</span>
                     )}
-                    <div className="product-img-wrapper">
-                      <img src={assetUrl(product.main_image)} alt={product.name} />
-                    </div>
+                    <Link to={`/product/${product._id}`} style={{ display: 'block', color: 'inherit', textDecoration: 'none' }}>
+                      <div className="product-img-wrapper">
+                        <img src={assetUrl(product.main_image)} alt={product.name} />
+                      </div>
+                    </Link>
                     <div className="product-info">
-                      <span className="product-brand">{product.brand}</span>
-                      <p className="product-name">{product.name}</p>
+                      <Link to={`/product/${product._id}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block', marginBottom: '8px' }}>
+                        <span className="product-brand">{product.brand}</span>
+                        <p className="product-name" style={{ margin: '4px 0 0' }}>{product.name}</p>
+                      </Link>
                       <div className="product-rating-row">
                         <StarRating rating={product.rating || 0} />
                         {product.reviews > 0 && (

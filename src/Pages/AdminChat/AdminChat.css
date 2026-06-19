@@ -95,7 +95,7 @@
     padding: 9px 12px 9px 34px;
     border: 1px solid var(--glass-border);
     border-radius: 24px;
-    font-size: 0.82rem;
+    font-size: 16px;
     outline: none;
     background: var(--glass-bg);
     color: var(--text-primary);
@@ -441,7 +441,7 @@
     padding: 12px 18px;
     border: 1.5px solid var(--glass-border);
     border-radius: 26px;
-    font-size: 0.875rem;
+    font-size: 16px;
     outline: none;
     background: var(--glass-bg);
     color: var(--text-primary);
