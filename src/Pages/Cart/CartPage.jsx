@@ -15,6 +15,7 @@ import {
   Minus,
   Sparkles,
   ShoppingBag,
+  Loader2,
 } from 'lucide-react';
 import './CartPage.css';
 
@@ -222,8 +223,13 @@ const CartPage = () => {
                       onChange={(e) => setPromoCode(e.target.value)}
                       disabled={discountPercent > 0}
                     />
-                     <button type="submit" disabled={discountPercent > 0 || promoLoading}>
-                      {promoLoading ? 'Checking...' : 'Apply'}
+                     <button type="submit" disabled={discountPercent > 0 || promoLoading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      {promoLoading ? (
+                        <>
+                          <Loader2 className="global-loading-spinner" size={14} />
+                          Checking...
+                        </>
+                      ) : 'Apply'}
                     </button>
                   </div>
                   {promoError && <p className="promo-msg error">{promoError}</p>}

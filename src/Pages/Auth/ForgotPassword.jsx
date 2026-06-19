@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { forgotPasswordApi } from '../../API/api';
-import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import './Auth.css';
 
 const ForgotPassword = () => {
@@ -78,8 +78,17 @@ const ForgotPassword = () => {
                             />
                         </div>
 
-                        <button type="submit" className="modern-auth-btn" disabled={loading}>
-                            {loading ? 'Sending...' : 'Send Reset Code'} <ArrowRight size={16} />
+                        <button type="submit" className="modern-auth-btn" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="global-loading-spinner" size={16} />
+                                    Sending...
+                                </>
+                            ) : (
+                                <>
+                                    Send Reset Code <ArrowRight size={16} />
+                                </>
+                            )}
                         </button>
                     </form>
 

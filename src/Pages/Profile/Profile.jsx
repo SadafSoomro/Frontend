@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, User, Mail, Phone, Lock } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Lock, Loader2 } from 'lucide-react';
 import { getProfileApi, updateProfileApi } from '../../API/api';
 import { useAuth } from '../../context/AuthContext';
 import '../Auth/Auth.css';
@@ -72,8 +72,9 @@ const Profile = () => {
 
     if (fetching) {
         return (
-            <div style={{ padding: '2rem', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <p>Loading profile...</p>
+            <div className="centered-loader-wrapper" style={{ minHeight: '60vh' }}>
+                <Loader2 className="global-loading-spinner" size={40} />
+                <p className="centered-loader-text">Loading profile...</p>
             </div>
         );
     }
@@ -176,8 +177,15 @@ const Profile = () => {
                             />
                         </div>
 
-                        <button type="submit" className="modern-auth-btn" disabled={loading} style={{ marginTop: '10px' }}>
-                            {loading ? 'Updating...' : 'Update Profile'}
+                        <button type="submit" className="modern-auth-btn" disabled={loading} style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="global-loading-spinner" size={16} />
+                                    Updating...
+                                </>
+                            ) : (
+                                'Update Profile'
+                            )}
                         </button>
                     </form>
                 </div>

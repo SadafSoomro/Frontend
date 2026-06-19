@@ -205,7 +205,8 @@ const ProductDetailsPage = () => {
     return (
       <div className="product-detail-layout">
         <div className="product-loading-container">
-          <Loader2 className="loading-spinner" size={64} />
+          <Loader2 className="loading-spinner" size={48} />
+          <p className="loading-text" style={{ marginTop: '16px' }}>Loading product details...</p>
         </div>
       </div>
     );
