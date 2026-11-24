@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 import { addToCart, removeFromCart, updateQuantity } from '../../Store/Slices/CartSlice';
@@ -63,7 +63,18 @@ const StarRating = ({ rating }) => (
 const LandingPage = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
+  const { search, hash } = useLocation();
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(search);
+    const department = departments.find(item => item.id === params.get('department'));
+    return department ? `department:${department.id}` : (params.get('category') || 'all');
+  });
+
+  useEffect(() => {
+    if (hash !== '#products-section') return;
+    const frame = window.requestAnimationFrame(() => document.getElementById('products-section')?.scrollIntoView());
+    return () => window.cancelAnimationFrame(frame);
+  }, [hash]);
   const [savedIds, setSavedIds] = useState(() => {
     try {
       const ids = JSON.parse(localStorage.getItem('makskin-favourites'));
@@ -77,7 +88,6 @@ const LandingPage = () => {
   const [activeBanner, setActiveBanner] = useState(0);
   const userMenuRef = useRef(null);
   const searchRef = useRef(null);
-  const [showCategories, setShowCategories] = useState(false);
   const promotionalScrollRef = useRef(null);
   const categoryRowRef = useRef(null);
   const categoryInteraction = useRef(0);
@@ -87,7 +97,6 @@ const LandingPage = () => {
     let frame;
     let previousTime = performance.now();
     let position;
-    let direction = 1;
 
     const advance = (now) => {
       const row = categoryRowRef.current;
@@ -100,12 +109,13 @@ const LandingPage = () => {
         return;
       }
 
-      const end = row.scrollWidth - row.clientWidth;
-      if (end < 2) return;
+      const first = row.children[0];
+      const duplicate = row.children[departments.length];
+      if (!first || !duplicate) return;
+      const cycle = duplicate.offsetLeft - first.offsetLeft;
+      if (cycle < 1) return;
       if (position === undefined || Math.abs(position - row.scrollLeft) > 2) position = row.scrollLeft;
-      if (position >= end) direction = -1;
-      if (position <= 0) direction = 1;
-      position = Math.max(0, Math.min(end, position + travelled * direction));
+      position = (position + travelled) % cycle;
       row.scrollLeft = position;
     };
 
@@ -477,26 +487,25 @@ const LandingPage = () => {
       <section className="summer-categories" id="summer-categories">
         <div className="summer-category-header">
           <h2><Leaf aria-hidden="true" /> Shop By Category</h2>
-          <button type="button" aria-expanded={showCategories} aria-controls="summer-all-categories" onClick={() => setShowCategories(!showCategories)}>
-            {showCategories ? 'Hide Categories' : 'View All Categories'} <ArrowRight size={23} />
-          </button>
+          <Link to="/categories">View All Categories <ArrowRight size={23} /></Link>
         </div>
         <div className="summer-category-carousel">
           <button className="summer-category-arrow" type="button" onClick={() => moveCategories(-1)} aria-label="Scroll categories left" aria-controls="summer-category-row"><ChevronLeft size={21} /></button>
           <div className="summer-category-grid" id="summer-category-row" ref={categoryRowRef} onTouchStart={delayCategoryScroll} onTouchEnd={delayCategoryScroll} onWheel={delayCategoryScroll}>
-          {departments.map(department => (
-            <button type="button" className="summer-category" key={department.id} aria-pressed={selectedDepartment?.id === department.id} onClick={() => shopDepartment(department)}>
-              <img src={`/summer/${department.id}.jpg`} alt="" width="443" height="443" />
-              <span>{department.name}</span>
-            </button>
-          ))}
-        </div>
+            {[...departments, ...departments].map((department, index) => {
+              const duplicate = index >= departments.length;
+              return (
+                <button type="button" className="summer-category" key={`${department.id}-${index}`}
+                  aria-pressed={selectedDepartment?.id === department.id}
+                  aria-hidden={duplicate || undefined} tabIndex={duplicate ? -1 : undefined}
+                  onClick={() => shopDepartment(department)}>
+                  <img src={`/summer/${department.id}.jpg`} alt="" width="443" height="443" />
+                  <span>{department.name}</span>
+                </button>
+              );
+            })}
+          </div>
           <button className="summer-category-arrow" type="button" onClick={() => moveCategories(1)} aria-label="Scroll categories right" aria-controls="summer-category-row"><ChevronRight size={21} /></button>
-        </div>
-        <div id="summer-all-categories" className="summer-all-categories" hidden={!showCategories}>
-          {categories.length ? categories.map(category => (
-            <button key={category._id} type="button" onClick={() => handleNavClick(category._id, 'products-section')}>{category.name}</button>
-          )) : <p>Categories are currently unavailable.</p>}
         </div>
       </section>
       </div>

@@ -17,6 +17,7 @@ import ResetPassword from './Pages/Auth/ResetPassword';
 import VerifyOTP from './Pages/Auth/VerifyOTP';
 import Profile from './Pages/Profile/Profile';
 import LandingPage from './Pages/Landing/LandingPage';
+import CategoriesPage from './Pages/Landing/CategoriesPage';
 import CartPage from './Pages/Cart/CartPage';
 import CheckoutPage from './Pages/Checkout/CheckoutPage';
 import ProductDetailsPage from './Pages/Products/ProductDetailsPage';
@@ -41,6 +42,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/" element={<LandingPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
