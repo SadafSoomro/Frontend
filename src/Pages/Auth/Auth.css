@@ -93,7 +93,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('https://images.unsplash.com/photo-1615397323114-11855dd4e908?q=80&w=1200&auto=format&fit=crop') center/cover;
+  background: url('/summer/hero.jpg') center/cover;
   opacity: 0.4;
   z-index: 0;
   border-radius: 24px;

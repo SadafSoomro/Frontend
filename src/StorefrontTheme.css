@@ -1,0 +1,54 @@
+﻿:root {
+  --makskin-wine: #690923;
+  --makskin-deep: #51061c;
+  --makskin-paper: #fdf8f9;
+  --makskin-line: #eed3d9;
+  --makskin-muted: #654853;
+}
+
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout, .product-detail-layout) {
+  background: var(--makskin-paper);
+  font-family: var(--font-main);
+  color: #230e15;
+}
+
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .landing-header {
+  background: #fffafa;
+  box-shadow: 0 1px 0 var(--makskin-line);
+}
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .logo-text-box {
+  color: var(--makskin-wine);
+  background: transparent;
+  padding-inline: 0;
+  font-size: clamp(1.15rem, 2.6vw, 1.9rem);
+  letter-spacing: -.055em;
+}
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) :is(.cart-header-title, .checkout-header-title, .my-orders-header-title, .action-icon-btn) { color: var(--makskin-wine); }
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) :is(.back-store-btn, .back-cart-btn) { color: var(--makskin-muted); }
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-ribbon { background: var(--makskin-wine); color: white; border: 0; }
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-item,
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-item svg { color: white; }
+
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout, .product-detail-layout) :is(.form-section-card, .order-summary-card, .summary-card, .my-order-card, .cart-page-item-card, .main-image-viewport) {
+  background: #fffafa;
+  border: 1px solid var(--makskin-line);
+  border-radius: 15px;
+  box-shadow: 0 3px 12px #6909230d;
+}
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .simplified-footer { background: var(--makskin-deep); color: white; border-color: var(--makskin-deep); }
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .simplified-footer :is(.footer-bottom-info, .footer-logo) { color: white; }
+
+.auth-split-layout { color: #230e15; background: radial-gradient(ellipse at top right, #f8dbe3, var(--makskin-paper) 62%); }
+.auth-split-layout .auth-graphic-panel { background: var(--makskin-deep); }
+.auth-split-layout .auth-graphic-panel::before { background-position: 78% center; opacity: .55; }
+.auth-split-layout .graphic-overlay { background: linear-gradient(transparent, var(--makskin-deep)); }
+.auth-split-layout .back-home-btn { background: #fffafa; color: var(--makskin-wine); border-color: var(--makskin-line); }
+.auth-split-layout .form-container { color: #230e15; background: #fffafa; border-color: var(--makskin-line); box-shadow: 0 12px 42px #69092315; }
+.auth-split-layout .form-header h2 { color: var(--makskin-wine); -webkit-text-fill-color: currentColor; background: none; }
+.auth-split-layout :is(.form-header p, .form-footer) { color: var(--makskin-muted); }
+.auth-split-layout .modern-form-group label { color: #39222a; }
+.auth-split-layout .modern-form-group :is(input, select) { background: #fff; color: #230e15; border-color: var(--makskin-line); }
+.auth-split-layout .modern-form-group input::placeholder { color: #795b66; }
+.auth-split-layout .modern-auth-btn { color: #fff; background: var(--makskin-wine); }
+.auth-split-layout .modern-auth-btn:hover:not(:disabled) { background: var(--makskin-deep); }
+.auth-split-layout .error-msg { color: #8c1534; }

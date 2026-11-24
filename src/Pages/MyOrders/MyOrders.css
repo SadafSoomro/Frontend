@@ -1,7 +1,7 @@
 .my-orders-page-layout {
   min-height: 100vh;
   width: 100%;
-  background: #fdfcfb;
+  background: #fdf8f9;
   color: #1a1a1a;
   display: flex;
   flex-direction: column;
@@ -49,7 +49,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #151413;
+  background: #540819;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -83,7 +83,7 @@
   text-align: center;
   padding: 80px 24px;
   background: #fff;
-  border: 1px solid #ebdcd3;
+  border: 1px solid #efd4db;
   border-radius: 12px;
   width: 100%;
   box-sizing: border-box;
@@ -107,7 +107,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #e21b26;
+  background: #690923;
   color: #fff;
   text-decoration: none;
   padding: 12px 20px;
@@ -135,7 +135,7 @@
 
 .my-order-card {
   background: #fff;
-  border: 1px solid #ebdcd3;
+  border: 1px solid #efd4db;
   border-radius: 10px;
   padding: 16px 18px;
 }
@@ -164,7 +164,7 @@
 .my-order-tracking {
   font-family: monospace;
   font-weight: 700;
-  color: #e21b26;
+  color: #690923;
   letter-spacing: 0.4px;
 }
 

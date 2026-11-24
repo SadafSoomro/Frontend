@@ -24,6 +24,7 @@ import MyOrders from './Pages/MyOrders/MyOrders';
 import AdminChat from './Pages/AdminChat/AdminChat';
 import ChatbotWidget from './Components/ChatbotWidget/ChatbotWidget';
 import Wallet from './Pages/Wallet/Wallet';
+import './StorefrontTheme.css';
 
 const Settings = () => <div className="animate-fade-in"><h1>Settings</h1><p className="text-secondary">Coming soon...</p></div>;
 

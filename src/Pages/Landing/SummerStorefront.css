@@ -1,0 +1,316 @@
+﻿.summer-storefront {
+  --summer-wine: #690923;
+  --summer-ink: #18090b;
+  --summer-blush: #f8d1d7;
+  background: #fdfafb;
+  color: var(--summer-ink);
+  font-family: var(--font-main);
+}
+
+.summer-storefront .benefit-ribbon {
+  min-height: 48px;
+  padding: 8px 20px;
+  gap: 24px;
+  background: #640a23;
+  border: 0;
+}
+
+.summer-storefront .benefit-item { color: #fff; font-size: .88rem; font-weight: 650; gap: 10px; }
+.summer-storefront .benefit-item + .benefit-item { border-left: 1px solid #e7b4c2; padding-left: 24px; }
+.summer-storefront .benefit-item svg { color: inherit; }
+
+.summer-storefront .landing-header { background: #fffafa; box-shadow: none; position: relative; }
+.summer-storefront .header-container {
+  height: 77px;
+  max-width: 1680px;
+  padding-inline: clamp(24px, 3.7vw, 62px);
+  gap: clamp(12px, 1.4vw, 24px);
+}
+.summer-storefront .brand-logo-container { margin: 0; }
+.summer-storefront .logo-text-box {
+  display: flex;
+  padding: 0;
+  align-items: center;
+  gap: 9px;
+  background: transparent;
+  color: #460510;
+  font-size: clamp(1.55rem, 2.25vw, 2.38rem);
+  letter-spacing: -.055em;
+}
+.summer-storefront .logo-text-box svg { width: 1.2em; height: 1.2em; color: var(--summer-wine); fill: var(--summer-wine); stroke: #fffafa; }
+.summer-storefront .header-nav ul { gap: clamp(8px, 1.45vw, 24px); }
+.summer-storefront .nav-link-btn { color: var(--summer-ink); font-size: clamp(.72rem, .94vw, .97rem); font-weight: 750; padding: 4px 0; }
+.summer-storefront .summer-home, .summer-storefront .sale-badge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px clamp(10px, 1.2vw, 21px);
+  border-radius: 26px;
+}
+.summer-storefront .summer-home { color: #fff; background: var(--summer-wine); }
+.summer-storefront .sale-badge-btn { color: #460510; background: #f9c9d1; }
+.summer-storefront .sale-badge-btn:hover { background: #f0afbb; }
+.summer-menu { position: relative; }
+.summer-menu summary { display: flex; align-items: center; gap: 3px; list-style: none; cursor: pointer; }
+.summer-menu summary::-webkit-details-marker { display: none; }
+.summer-menu-options {
+  position: absolute;
+  min-width: 155px;
+  background: #fffafa;
+  border: 1px solid #ebccd4;
+  border-radius: 10px;
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  box-shadow: 0 5px 16px #69092318;
+}
+.summer-menu-options > * { text-align: left; }
+.summer-storefront .header-actions { gap: clamp(2px, .55vw, 9px); }
+.summer-storefront .header-actions .action-icon-btn, .summer-storefront .user-menu-btn { color: var(--summer-ink); padding: 5px; }
+.summer-storefront .header-actions .action-icon-btn:hover, .summer-storefront .user-menu-btn:hover { background: #f9e2e6; }
+.summer-storefront .user-greeting { display: none; }
+.summer-storefront .landing-search-wrapper { display: flex; position: relative; align-items: center; }
+.summer-storefront .landing-search-wrapper > button { position: absolute; right: 9px; }
+.summer-storefront .landing-search-input {
+  position: static;
+  margin: 0;
+  width: clamp(145px, 15.8vw, 264px);
+  height: 39px;
+  border: 1px solid #bf8996;
+  border-radius: 25px;
+  background: transparent;
+  color: var(--summer-ink);
+  padding: 0 39px 0 16px;
+  font-size: .81rem;
+}
+
+.summer-hero { position: relative; isolation: isolate; min-height: clamp(392px, 28.25vw, 530px); overflow: hidden; background: #f9e2db; }
+.summer-hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transition: opacity .45s ease; }
+.summer-hero-image.active { opacity: 1; }
+.summer-hero-shade { position: absolute; inset: 0; background: linear-gradient(90deg, #fff3ee42, #fff3ee42 30%, transparent 45%); }
+.summer-copy { position: relative; width: min(100% - clamp(48px, 15.3vw, 256px), 1416px); margin: auto; padding: clamp(31px, 2.9vw, 49px) 0 46px; }
+.summer-storefront .hero-tag { display: inline-flex; background: #f6cbd2; color: #59091b; padding: 4px 12px 4px 7px; font-size: clamp(.74rem, .93vw, 1rem); letter-spacing: 0; border: 0; border-radius: 30px; }
+.summer-storefront .hero-headline { color: var(--summer-ink); font-size: clamp(2.3rem, 3.24vw, 3.55rem); font-weight: 450; line-height: 1.08; letter-spacing: -.045em; margin: 15px 0 12px; }
+.summer-storefront .hero-highlight { color: var(--summer-wine); font-family: Georgia, 'Times New Roman', serif; font-size: 1.18em; font-weight: 700; }
+.summer-storefront .hero-sub { color: var(--summer-ink); max-width: 384px; font-size: clamp(.94rem, 1.18vw, 1.26rem); font-weight: 500; line-height: 1.37; }
+.summer-storefront .hero-cta-group { margin-top: 19px; gap: clamp(9px, 1.6vw, 27px); }
+.summer-storefront .hero-cta-primary, .summer-storefront .hero-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 49px;
+  padding: 10px clamp(16px, 2.35vw, 41px);
+  border: 1.5px solid var(--summer-wine);
+  border-radius: 30px;
+  font-size: clamp(.86rem, 1.08vw, 1.15rem);
+  font-weight: 750;
+}
+.summer-storefront .hero-cta-primary { background: var(--summer-wine); color: #fff; }
+.summer-storefront .hero-cta-primary:hover { background: #51061c; }
+.summer-storefront .hero-cta-secondary { background: #ffeced9e; color: var(--summer-ink); }
+.summer-storefront .hero-cta-secondary svg { color: var(--summer-wine); }
+.summer-dots { display: flex; align-items: center; gap: 9px; margin-top: 27px; }
+.summer-dots button { width: 14px; height: 14px; background: #dfaab4; border: 0; border-radius: 50%; cursor: pointer; }
+.summer-dots button[aria-pressed="true"] { background: var(--summer-wine); }
+
+.summer-benefits {
+  width: min(calc(100% - 8.6vw), 1540px);
+  min-height: 84px;
+  position: relative;
+  margin: -28px auto 0;
+  padding: 14px 32px;
+  border-radius: 60px;
+  background: #fcf3f1;
+  box-shadow: 0 3px 9px #50102720;
+  display: grid;
+  grid-template-columns: 1.13fr .92fr 1.02fr 1fr;
+  align-items: center;
+}
+.summer-benefits > div { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 1.4vw, 24px); padding: 0 10px; }
+.summer-benefits > div + div { border-left: 1px solid #e2a8b4; }
+.summer-benefits svg { width: clamp(28px, 3vw, 48px); height: clamp(28px, 3vw, 48px); flex: none; color: var(--summer-wine); stroke-width: 1.65; }
+.summer-benefits strong, .summer-benefits small { display: block; }
+.summer-benefits strong { font-size: clamp(.83rem, 1.08vw, 1.12rem); }
+.summer-benefits small { margin-top: 4px; font-size: clamp(.7rem, .9vw, .94rem); }
+
+.summer-categories { width: min(calc(100% - 7.4vw), 1560px); margin: 0 auto; padding: 27px 0 30px; }
+.summer-category-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 12px 22px; }
+.summer-category-header h2 { display: flex; align-items: center; gap: 12px; color: #59071a; font-size: clamp(1.3rem, 1.88vw, 2rem); letter-spacing: -.03em; }
+.summer-category-header h2 svg { color: var(--summer-wine); width: 1.35em; height: 1.35em; fill: var(--summer-wine); stroke: #fffafa; }
+.summer-category-header button { display: inline-flex; align-items: center; gap: 13px; border: 0; color: var(--summer-wine); background: transparent; cursor: pointer; font: inherit; font-size: clamp(.75rem, 1.08vw, 1.12rem); font-weight: 750; }
+.summer-category-grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: clamp(10px, 1.65vw, 28px); }
+.summer-category { display: flex; flex-direction: column; align-items: stretch; border: none; background: transparent; padding: 0; border-radius: clamp(14px, 1.85vw, 32px) clamp(14px, 1.85vw, 32px) 25px 25px; cursor: pointer; font-family: inherit; color: #160d0d; }
+.summer-category img { display: block; width: 100%; height: auto; aspect-ratio: 1.32; object-fit: cover; border-radius: clamp(14px, 1.85vw, 32px); background: #f9e8e9; }
+.summer-category span { display: grid; min-height: 39px; place-items: center; padding: 5px 3px; font-size: clamp(.74rem, 1vw, 1.06rem); font-weight: 750; }
+.summer-category:first-child, .summer-category:hover, .summer-category:focus-visible { background: var(--summer-wine); color: #fff; }
+.summer-all-categories:not([hidden]) { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+.summer-all-categories button { font: inherit; padding: 6px 12px; cursor: pointer; border: 1px solid #e3bac3; border-radius: 20px; background: #fff5f5; color: var(--summer-wine); }
+
+@media (max-width: 1250px) {
+  .summer-storefront .header-container { flex-wrap: wrap; min-height: 77px; height: auto; padding-block: 9px; gap: 7px 18px; }
+  .summer-storefront .header-nav { order: 3; width: 100%; display: block; }
+  .summer-storefront .header-nav ul { justify-content: center; flex-wrap: wrap; }
+}
+
+@media (max-width: 720px) {
+  .summer-storefront .benefit-ribbon { flex-wrap: wrap; gap: 7px 12px; }
+  .summer-storefront .benefit-item { font-size: .64rem; gap: 5px; }
+  .summer-storefront .benefit-item + .benefit-item { border: 0; padding-left: 0; }
+  .summer-storefront .benefit-item svg { width: 14px; height: 14px; }
+  .summer-storefront .header-container { padding-inline: 12px; }
+  .summer-storefront .header-actions .action-icon-btn { padding: 3px; }
+  .summer-storefront .header-actions .action-icon-btn svg { width: 18px; height: 18px; }
+  .summer-storefront .landing-search-input { width: clamp(120px, 33vw, 220px); height: 33px; font-size: .68rem; padding-right: 29px; padding-left: 8px; }
+  .summer-storefront .landing-search-wrapper > button { right: 4px; }
+  .summer-storefront .search-results-dropdown { width: min(300px, 92vw); right: -60px; }
+  .summer-hero { min-height: 460px; }
+  .summer-hero-image { top: 44%; height: 56%; object-position: 78% center; }
+  .summer-hero-shade { background: linear-gradient(#f9e2db 40%, transparent 56%); }
+  .summer-copy { width: calc(100% - 32px); padding: 20px 0; }
+  .summer-storefront .hero-headline { font-size: clamp(1.9rem, 6.2vw, 2.6rem); margin-block: 9px; }
+  .summer-storefront .hero-sub { max-width: 330px; }
+  .summer-storefront .hero-cta-group { margin-top: 11px; }
+  .summer-storefront .hero-cta-primary, .summer-storefront .hero-cta-secondary { min-height: 36px; padding: 5px 12px; }
+  .summer-dots { margin-top: 11px; }
+  .summer-dots button { width: 10px; height: 10px; }
+  .summer-benefits { width: calc(100% - 24px); grid-template-columns: repeat(2, 1fr); gap: 11px 5px; padding: 12px; border-radius: 20px; }
+  .summer-benefits > div { justify-content: flex-start; padding: 0 3px; }
+  .summer-benefits > div + div { border: 0; }
+  .summer-categories { width: calc(100% - 24px); padding-top: 18px; }
+  .summer-category-header { margin: 0 0 13px; }
+  .summer-category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summer-hero-image { transition: none; }
+}
+
+.summer-main, .summer-footer {
+  --summer-wine: #690923;
+  --summer-red: #be1033;
+  font-family: var(--font-main);
+}
+
+.landing-layout:has(.summer-main) { background: #fcf6f6; }
+.landing-layout .summer-main { max-width: 1560px; padding-inline: clamp(16px, 2.15vw, 36px); }
+
+.summer-main .bestsellers-section {
+  padding: 35px 0 28px;
+  background: radial-gradient(ellipse 37% 18% at 99% 106%, #e5a4a9 65%, #f8e2e3 66%, transparent 83%);
+}
+.summer-main .section-header-row { margin-bottom: 34px; gap: 15px 22px; }
+.summer-bestsellers-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+.summer-main .section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  color: #5f0a1c;
+  font: 700 clamp(1.85rem, 2.5vw, 2.65rem)/1.1 Georgia, serif;
+  letter-spacing: -.04em;
+}
+.summer-main .section-title::before { content: none; }
+.summer-main .section-title svg { width: 1.15em; height: 1.15em; fill: var(--summer-wine); stroke: #fcf6f6; stroke-width: 1.45; }
+.summer-most-loved { display: flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 22px; background: #f5dbdd; color: #73071d; font-size: .86rem; font-weight: 650; }
+.summer-main .category-tabs-container { flex: 0 1 auto; min-width: 0; max-width: 100%; gap: 3px; overflow-x: auto; padding: 0; border-radius: 17px; background: #f9eaea; box-shadow: 0 2px 4px #ab42572b; }
+.summer-main .tab-btn { flex-shrink: 0; color: #180b0e; white-space: nowrap; border-radius: 16px; padding: 15px clamp(10px, 1.35vw, 24px); font-size: clamp(.75rem, .94vw, 1rem); }
+.summer-main .tab-btn.active { background: var(--summer-wine); color: #fff; }
+.summer-main .products-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); grid-auto-rows: auto; gap: 17px; }
+.summer-main .product-card { border: 1px solid #f6dfe1; border-radius: 19px; background: #fffafa; box-shadow: 0 1px 4px #993a4210; }
+.summer-main .product-img-wrapper { height: auto; aspect-ratio: 1.48; border-radius: 17px 17px 9px 9px; background: #f6e0dd; }
+.summer-main .product-img-wrapper img { mix-blend-mode: multiply; }
+.summer-main .product-discount-badge { top: 14px; left: 16px; padding: 5px 9px; border-radius: 11px 10px 10px 2px; background: #bd112c; font-size: .96rem; line-height: 1.1; }
+.summer-save-product { position: absolute; z-index: 3; right: 13px; top: 13px; display: grid; place-items: center; width: 37px; height: 37px; border-radius: 50%; border: 0; background: #fffafa; color: var(--summer-wine); cursor: pointer; }
+.summer-save-product[aria-pressed="true"] svg { fill: var(--summer-wine); }
+.summer-main .product-info { padding: 6px clamp(9px, 1.1vw, 19px) 14px; gap: 8px; }
+.summer-main .product-info > a { margin-bottom: 0 !important; }
+.summer-main .product-brand { color: #660b1e; font-size: .78rem; letter-spacing: 0; }
+.summer-main .product-name { font-size: clamp(.84rem, 1.01vw, 1.08rem); font-weight: 800; line-height: 1.24; height: 2.48em; min-height: 2.48em; }
+.summer-main .star-rating svg { width: 15px; height: 15px; }
+.summer-main .product-review-count { color: #676363; font-size: .8rem; }
+.summer-main .product-price-row { margin: 0; gap: 7px 12px; }
+.summer-main .product-price { color: #a30720; font-size: clamp(.91rem, 1.16vw, 1.23rem); font-weight: 850; }
+.summer-main .product-original-price { color: #6f696a; font-size: .87rem; font-weight: 650; }
+.summer-main .product-installment { background: #f1eef8; min-height: 30px; border-radius: 9px; }
+.summer-main .installment-label, .summer-main .installment-price { color: #0037b8; font-size: clamp(.65rem, .82vw, .86rem); }
+.summer-main .installment-badge { background: #0037b8; height: 18px; width: 18px; border-radius: 6px; font-size: .79rem; }
+.summer-main .add-to-cart-btn { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 41px; margin-top: auto; border-radius: 10px; background: var(--summer-wine); font-size: .94rem; }
+.summer-main .add-to-cart-btn:hover { background: #8a0e2b; }
+
+.summer-main .summer-sale {
+  overflow: hidden;
+  min-height: 420px;
+  margin: 0 auto 47px;
+  color: #fff;
+  border-radius: 23px;
+  background: linear-gradient(90deg, #520619 0%, #520619b5 36%, transparent 67%), url('/summer/sale.jpg') center/cover no-repeat, #520619;
+  box-shadow: 0 8px 14px #54102524;
+}
+.summer-sale-content { padding: clamp(26px, 3.35vw, 59px) clamp(23px, 4vw, 70px); }
+.summer-sale-label { display: inline-flex; align-items: center; gap: 9px; border-radius: 25px; padding: 8px 15px; background: var(--summer-red); font-weight: 800; font-size: .92rem; }
+.summer-sale-content h2 { font: 700 clamp(2rem, 3.35vw, 3.65rem)/1.05 Georgia, serif; margin: 17px 0 10px; }
+.summer-sale-content h2 span { color: #f02e55; }
+.summer-sale-content h3 { font-size: clamp(1.1rem, 1.44vw, 1.55rem); margin: 0 0 19px; }
+.summer-sale-content h3 span { color: #ff6685; }
+.summer-sale-content p { max-width: 530px; font-size: 1rem; line-height: 1.65; }
+.summer-sale-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 13px 29px; margin-top: 26px; }
+.summer-sale-actions button { display: inline-flex; align-items: center; gap: 12px; min-height: 50px; padding: 10px 27px; border: 0; border-radius: 15px; background: var(--summer-red); color: #fff; font: inherit; font-weight: 750; cursor: pointer; }
+.summer-sale-actions button:hover { background: #d31442; }
+.summer-sale-actions span { display: inline-flex; align-items: center; gap: 10px; border-left: 1px solid #ffffff60; padding: 5px 0 5px 25px; font-size: .92rem; }
+
+.landing-layout .summer-footer { color: #fff; padding: 0; border: 0; background: radial-gradient(ellipse 31% 52% at 103% 112%, #8a0c31 64%, transparent 66%), radial-gradient(ellipse 32% 53% at -6% 113%, #7d0b2a 62%, transparent 64%), #510517; }
+.summer-footer .footer-container, .summer-footer-bar { width: min(calc(100% - 9vw), 1508px); margin: 0 auto; }
+.summer-footer .footer-container { display: grid; grid-template-columns: 1.1fr .95fr .9fr 1.28fr; max-width: none; gap: 0; padding: 35px 0 44px; border: 0; }
+.summer-footer .footer-container > div { padding-inline: clamp(13px, 3vw, 52px); }
+.summer-footer .footer-container > div:first-child { padding-left: 0; }
+.summer-footer .footer-container > div:last-child { padding-right: 0; }
+.summer-footer .footer-container > div + div { border-left: 1px solid #ffbec966; }
+.summer-footer .footer-logo { display: flex; align-items: center; gap: 8px; font-size: clamp(1.65rem, 2.5vw, 2.6rem); line-height: 1.1; }
+.summer-footer .footer-logo svg { width: 1.03em; height: 1.03em; fill: #fff; stroke: #510517; stroke-width: 1.5; }
+.summer-footer .footer-brand p, .summer-footer .footer-contact p { max-width: 365px; margin-top: 5px; font-size: .96rem; }
+.summer-footer .footer-links-col h4, .summer-footer .footer-contact h4 { font-size: 1rem; font-weight: 850; letter-spacing: 0; }
+.summer-footer .footer-links-col a, .summer-footer .footer-nav-btn { color: #fff; font-size: .91rem; }
+.summer-footer .footer-links-col a { display: inline-flex; align-items: center; gap: 11px; }
+.summer-footer .footer-links-col a:hover, .summer-footer .footer-nav-btn:hover { color: #ffb9c8; }
+.summer-footer .subscribe-form { display: flex; align-items: center; gap: 0; border: 1px solid #ffb8c067; border-radius: 13px; background: #ffffff15; }
+.summer-footer .subscribe-form > svg { flex: none; margin-left: 13px; }
+.summer-footer .subscribe-form input { min-width: 0; border: 0; background: transparent; color: #fff; font: inherit; font-size: .9rem; }
+.summer-footer .subscribe-form input::placeholder { color: #f3ced5; }
+.summer-footer .subscribe-form button { min-height: 47px; min-width: 72px; border-radius: 0 11px 11px 0; background: var(--summer-red); }
+.summer-footer .footer-bottom { max-width: none; margin: 0; border-top: 1px solid #8b1d35; background: #400412b5; color: #fff; font-size: .86rem; }
+.summer-footer-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px 23px; padding-block: 23px; }
+.summer-footer-benefits { display: flex; align-items: center; flex-wrap: wrap; gap: 10px clamp(11px, 1.7vw, 29px); }
+.summer-footer-benefits span { display: inline-flex; align-items: center; gap: 9px; font-weight: 700; }
+.summer-footer-benefits span + span { border-left: 1px solid #f5c6d0a0; padding-left: clamp(11px, 1.7vw, 29px); }
+
+@media (max-width: 1120px) {
+  .summer-main .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .summer-footer .footer-container { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .summer-footer .footer-container > div { padding: 0; border: 0; }
+  .summer-footer .footer-container > div + div { border: 0; }
+}
+
+@media (max-width: 800px) {
+  .summer-main .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .summer-main .bestsellers-section { padding-top: 16px; }
+  .summer-main .section-header-row { margin-bottom: 18px; }
+  .summer-main .category-tabs-container { width: 100%; }
+  .summer-main .summer-sale { background-position: 65% center; min-height: 0; }
+  .summer-sale-content { background: linear-gradient(90deg, #520619b8 15%, #52061960 76%, transparent); }
+}
+
+@media (max-width: 560px) {
+  .summer-main .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .summer-main .product-discount-badge { top: 8px; left: 8px; font-size: .76rem; }
+  .summer-save-product { width: 29px; height: 29px; right: 7px; top: 7px; }
+  .summer-save-product svg { width: 20px; height: 20px; }
+  .summer-main .product-info { padding: 6px 8px 9px; }
+  .summer-main .product-installment { padding: 4px; }
+  .summer-main .add-to-cart-btn { font-size: .82rem; min-height: 36px; }
+  .summer-sale-actions span { border: 0; padding-left: 0; }
+  .summer-footer .footer-container { grid-template-columns: 1fr 1fr; }
+  .summer-footer .footer-brand, .summer-footer .footer-contact { grid-column: 1 / -1; }
+  .summer-footer-benefits span + span { border: 0; padding-left: 0; }
+  .summer-footer-benefits span { font-size: .76rem; }
+}

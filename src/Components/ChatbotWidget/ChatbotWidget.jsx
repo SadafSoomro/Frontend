@@ -1,153 +1,157 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../../context/AuthContext';
+﻿import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { MessageCircle, X, Send, Headphones, Sparkles } from 'lucide-react';
 import { io } from 'socket.io-client';
-import { fetchChatHistoryApi } from '../../API/api';
+import { useAuth } from '../../context/AuthContext';
+import { fetchChatHistoryApi, fetchProductsApi } from '../../API/api';
 import { API_BASE_URL } from '../../config';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { getShoppingReply, shortcuts } from './shoppingReplies';
 import './ChatbotWidget.css';
 
-const ChatbotWidget = () => {
-    const { isAuthenticated, user } = useAuth();
-    const [isOpen, setIsOpen] = useState(false);
+function SupportChat({ userId }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
-    const [historyLoaded, setHistoryLoaded] = useState(false);
+    const [connected, setConnected] = useState(false);
+    const [status, setStatus] = useState('');
     const socketRef = useRef(null);
-    const messagesEndRef = useRef(null);
+    const endRef = useRef(null);
 
     useEffect(() => {
-        if (!isAuthenticated || !user?.isVerified || user?.role === 'admin') return;
-
-        // Fetch history once
-        if (!historyLoaded) {
-            fetchChatHistoryApi(user._id)
-                .then(({ data }) => {
-                    setMessages(data);
-                    setHistoryLoaded(true);
-                })
-                .catch(console.error);
-        }
-
-        // Connect socket
+        let cancelled = false;
         const socket = io(API_BASE_URL, { transports: ['websocket', 'polling'] });
         socketRef.current = socket;
-
-        const joinRoom = () => {
-            socket.emit('join_chat', user._id);
-        };
-
-        if (socket.connected) joinRoom();
-        socket.on('connect', joinRoom);
-
-        socket.on('receive_message', (msg) => {
-            setMessages(prev => {
-                // Avoid duplicates by _id
-                if (prev.find(m => m._id?.toString() === msg._id?.toString())) return prev;
-                return [...prev, msg];
-            });
+        socket.on('connect', () => {
+            socket.emit('join_chat', userId);
+            setConnected(true);
         });
-
+        socket.on('disconnect', () => setConnected(false));
+        socket.on('receive_message', message => {
+            setMessages(previous => previous.some(item => item._id === message._id) ? previous : [...previous, message]);
+        });
         socket.on('messages_seen', () => {
-            setMessages(prev => prev.map(m => 
-                (m.senderId?.toString() === user._id?.toString() && m.receiverId === 'admin') 
-                ? { ...m, isRead: true } : m
-            ));
+            setMessages(previous => previous.map(message => String(message.senderId) === userId ? { ...message, isRead: true } : message));
         });
-
+        fetchChatHistoryApi(userId).then(({ data }) => {
+            if (!cancelled) setMessages(previous => [...data, ...previous.filter(message => !data.some(item => item._id === message._id))]);
+        }).catch(() => {
+            if (!cancelled) setStatus('Chat history could not be loaded.');
+        });
         return () => {
+            cancelled = true;
             socket.disconnect();
         };
-    }, [isAuthenticated, user?._id, user?.isVerified, user?.role]);
+    }, [userId]);
 
-    useEffect(() => {
-        if (isOpen) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [messages, isOpen]);
+    useEffect(() => { endRef.current?.scrollIntoView({ block: 'nearest' }); }, [messages]);
 
-    if (!isAuthenticated || !user?.isVerified || user?.role === 'admin') {
-        return null;
-    }
-
-    const sendMessage = (e) => {
-        e.preventDefault();
-        if (!input.trim() || !socketRef.current) return;
-
-        socketRef.current.emit('send_message', {
-            senderId: user._id,
-            receiverId: 'admin',
-            message: input
-        });
-
+    const send = event => {
+        event.preventDefault();
+        const text = input.trim();
+        if (!text || !socketRef.current?.connected) return;
+        socketRef.current.emit('send_message', { senderId: userId, receiverId: 'admin', message: text });
         setInput('');
     };
 
-    // Only show messages relevant to this user
-    const userMessages = messages.filter(msg =>
-        msg.senderId?.toString() === user._id?.toString() ||
-        msg.receiverId?.toString() === user._id?.toString() ||
-        msg.receiverId === 'admin' && msg.senderId?.toString() === user._id?.toString()
-    );
-
-    return (
-        <div className="chatbot-widget-container">
-            {isOpen ? (
-                <div className="chatbot-window">
-                    <div className="chatbot-header">
-                        <div className="chatbot-title">
-                            <MessageCircle size={18} />
-                            <span>Support Chat</span>
-                        </div>
-                        <button onClick={() => setIsOpen(false)} className="chatbot-close-btn">
-                            <X size={18} />
-                        </button>
-                    </div>
-                    <div className="chatbot-messages">
-                        {userMessages.length === 0 ? (
-                            <div className="chatbot-empty">Send a message to our admin!</div>
-                        ) : (
-                            userMessages.map((msg, idx) => {
-                                const isSent = msg.senderId?.toString() === user._id?.toString();
-                                return (
-                                    <div key={msg._id || idx} className={`chatbot-bubble-wrapper ${isSent ? 'sent' : 'received'}`}>
-                                        <div className={`chatbot-bubble ${isSent ? 'sent' : 'received'}`}>
-                                            {msg.message}
-                                            <div className="bubble-meta">
-                                                <span className="time">{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                                {isSent && (
-                                                    <span className={`tick-marks ${msg.isRead ? 'read' : 'sent'}`}>
-                                                        <svg viewBox="0 0 18 12" width="14" height="10" fill="none">
-                                                            <path d="M1 6l4 4L12 1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                                                            <path d="M6 10l4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                                                            <path d="M9 6l3-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                                                        </svg>
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
-                    <form className="chatbot-input-area" onSubmit={sendMessage}>
-                        <input
-                            type="text"
-                            placeholder="Type a message..."
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                        />
-                        <button type="submit"><Send size={16} /></button>
-                    </form>
-                </div>
-            ) : (
-                <button className="chatbot-toggle-btn" onClick={() => setIsOpen(true)}>
-                    <MessageCircle size={24} />
-                </button>
-            )}
+    return <>
+        <div className="chatbot-messages" role="log">
+            <p className="chatbot-note">{connected ? 'Message the Makskin support team.' : 'Connecting to support. You can still use the shopping assistant.'}</p>
+            {status && <p className="chatbot-note">{status}</p>}
+            {messages.filter(message => String(message.senderId) === userId || String(message.receiverId) === userId).map(message => {
+                const sent = String(message.senderId) === userId;
+                return <div key={message._id} className={`chatbot-bubble ${sent ? 'sent' : 'received'}`}>
+                    {message.message}
+                    {sent && <small>{message.isRead ? 'Seen' : 'Sent'}</small>}
+                </div>;
+            })}
+            <div ref={endRef} />
         </div>
-    );
-};
+        <form className="chatbot-input-area" onSubmit={send}>
+            <input value={input} onChange={event => setInput(event.target.value)} placeholder="Message support" aria-label="Message support" maxLength={500} />
+            <button type="submit" disabled={!connected || !input.trim()} aria-label="Send support message"><Send size={17} /></button>
+        </form>
+    </>;
+}
 
-export default ChatbotWidget;
+export default function ChatbotWidget() {
+    const { isAuthenticated, user } = useAuth();
+    const { pathname } = useLocation();
+    const [isOpen, setIsOpen] = useState(false);
+    const [tab, setTab] = useState('assistant');
+    const [input, setInput] = useState('');
+    const [busy, setBusy] = useState(false);
+    const [replies, setReplies] = useState([]);
+    const catalogRef = useRef(null);
+    const endRef = useRef(null);
+
+    useEffect(() => {
+        if (isOpen && tab === 'assistant') endRef.current?.scrollIntoView({ block: 'nearest' });
+    }, [isOpen, tab, replies, busy]);
+
+    const ask = async question => {
+        const text = question.trim();
+        if (!text || busy) return;
+        setInput('');
+        setBusy(true);
+        setReplies(previous => [...previous, { question: text }]);
+        const reply = await getShoppingReply(text, async () => {
+            if (!catalogRef.current) {
+                catalogRef.current = fetchProductsApi().then(({ data }) => data).catch(error => {
+                    catalogRef.current = null;
+                    throw error;
+                });
+            }
+            return catalogRef.current;
+        });
+        setReplies(previous => previous.map((item, index) => index === previous.length - 1 ? { ...item, reply } : item));
+        setBusy(false);
+    };
+
+    if (pathname === '/admin' || pathname.startsWith('/admin/') || user?.role === 'admin') return null;
+
+    return <div className="chatbot-widget-container">
+        {isOpen && <section className="chatbot-window" aria-label="Makskin help" onKeyDown={event => {
+            if (event.key === 'Escape') setIsOpen(false);
+        }}>
+            <header className="chatbot-header">
+                <div className="chatbot-title"><MessageCircle size={20} /><div><strong>Makskin Help</strong><small>Shopping and order support</small></div></div>
+                <button className="chatbot-close-btn" onClick={() => setIsOpen(false)} aria-label="Close chat"><X size={20} /></button>
+            </header>
+            <div className="chatbot-tabs" aria-label="Help mode">
+                <button type="button" aria-pressed={tab === 'assistant'} onClick={() => setTab('assistant')}><Sparkles size={15} /> Assistant</button>
+                <button type="button" aria-pressed={tab === 'support'} onClick={() => setTab('support')}><Headphones size={15} /> Support</button>
+            </div>
+            {tab === 'support' ? (
+                isAuthenticated && user?.isVerified && user?._id
+                    ? <SupportChat key={user._id} userId={String(user._id)} />
+                    : <div className="chatbot-messages"><p className="chatbot-note">Sign in with a verified account to message the Makskin team.</p><Link className="chatbot-link" to="/login" onClick={() => setIsOpen(false)}>Sign in</Link></div>
+            ) : <>
+                <div className="chatbot-messages" role="log">
+                    <div className="chatbot-bubble received">Hi! Ask me about products, orders, delivery or payments.</div>
+                    {replies.length === 0 && <div className="chatbot-shortcuts">
+                        {shortcuts.map(question => <button type="button" key={question} onClick={() => ask(question)}>{question}</button>)}
+                    </div>}
+                    {replies.map(({ question, reply }, index) => <div className="chatbot-exchange" key={index}>
+                        <div className="chatbot-bubble sent">{question}</div>
+                        {reply && <div className="chatbot-bubble received">
+                            {reply.text}
+                            {reply.link && <Link className="chatbot-link" to={reply.link} onClick={() => setIsOpen(false)}>{reply.label}</Link>}
+                            {reply.products?.map(product => <Link key={product.id} className="chatbot-link chatbot-product-link" to={`/product/${product.id}`} onClick={() => setIsOpen(false)}>
+                                {product.name}<small>Rs. {product.price.toLocaleString()} PKR</small>
+                            </Link>)}
+                            {reply.support && <button className="chatbot-link" type="button" onClick={() => setTab('support')}>Open support</button>}
+                        </div>}
+                    </div>)}
+                    {busy && <p className="chatbot-note">Checking the catalog…</p>}
+                    <div ref={endRef} />
+                </div>
+                <form className="chatbot-input-area" onSubmit={event => { event.preventDefault(); ask(input); }}>
+                    <input value={input} onChange={event => setInput(event.target.value)} placeholder="Ask about Makskin" aria-label="Ask the shopping assistant" maxLength={300} />
+                    <button type="submit" disabled={busy || !input.trim()} aria-label="Send question"><Send size={17} /></button>
+                </form>
+            </>}
+        </section>}
+        <button type="button" className="chatbot-toggle-btn" onClick={() => setIsOpen(!isOpen)} aria-expanded={isOpen} aria-label={isOpen ? 'Minimize Makskin help' : 'Open Makskin help'}>
+            {isOpen ? <X size={23} /> : <MessageCircle size={25} />}
+        </button>
+    </div>;
+}

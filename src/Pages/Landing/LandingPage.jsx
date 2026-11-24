@@ -10,13 +10,19 @@ import { assetUrl } from '../../config';
 import {
   ShieldCheck,
   RotateCcw,
-  Lock,
+  CreditCard,
+  Truck,
+  Leaf,
+  Tag,
+  Heart,
+  ShoppingCart,
+  ChevronDown,
   Search,
   User,
   ShoppingBag,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
+  Mail,
+  CircleHelp,
+  Phone,
   ArrowRight,
   Star,
   X,
@@ -28,6 +34,25 @@ import {
   Package,
 } from 'lucide-react';
 import './LandingPage.css';
+import './SummerStorefront.css';
+
+const departments = [
+  { id: 'skincare', name: 'Skincare', match: /skin.?care|cleanser|face wash|serum|mask|peel/ },
+  { id: 'makeup', name: 'Makeup', match: /make.?up|lipstick|foundation|mascara|primer|concealer|lip liner/ },
+  { id: 'hair', name: 'Hair Care', match: /hair|shampoo|conditioner/ },
+  { id: 'body', name: 'Body Care', match: /body|bath/ },
+  { id: 'sunscreen', name: 'Sunscreen', match: /sunscreen|sunblock|spf/ },
+  { id: 'fragrance', name: 'Fragrance', match: /fragrance|perfume|cologne/ },
+  { id: 'baby', name: 'Baby Care', match: /baby/ },
+  { id: 'tools', name: 'Tools & Accessories', match: /tool|accessor|brush|sponge/ },
+];
+
+const benefits = [
+  { icon: ShieldCheck, short: 'Authentic Products', title: '100% Authentic Products', detail: 'Guaranteed original & trusted brands' },
+  { icon: Truck, short: 'Fast & Secure Delivery', title: 'Fast Delivery', detail: 'Across Pakistan' },
+  { icon: RotateCcw, short: 'Easy Returns (7 Days)', title: 'Easy Returns', detail: '7-day hassle-free returns' },
+  { icon: CreditCard, short: 'Secure Payment', title: 'Secure Payment', detail: 'Multiple safe payment options' },
+];
 
 const StarRating = ({ rating }) => (
   <div className="star-rating">
@@ -46,12 +71,20 @@ const LandingPage = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const [savedIds, setSavedIds] = useState(() => {
+    try {
+      const ids = JSON.parse(localStorage.getItem('makskin-favourites'));
+      return Array.isArray(ids) ? ids : [];
+    } catch {
+      return [];
+    }
+  });
   const [cartOpen, setCartOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
   const userMenuRef = useRef(null);
   const searchRef = useRef(null);
-  const categoriesScrollRef = useRef(null);
+  const [showCategories, setShowCategories] = useState(false);
   const promotionalScrollRef = useRef(null);
 
   // Auto-scroll logic for Promotional Banners
@@ -100,52 +133,6 @@ const LandingPage = () => {
     };
   }, []);
 
-  // Auto-scroll logic for Shop By Category
-  useEffect(() => {
-    const scrollContainer = categoriesScrollRef.current;
-    if (!scrollContainer) return;
-
-    let animationId;
-    let isHovering = false;
-
-    const startScroll = () => {
-      isHovering = false;
-      animationId = requestAnimationFrame(scrollLoop);
-    };
-
-    const stopScroll = () => {
-      isHovering = true;
-      cancelAnimationFrame(animationId);
-    };
-
-    const scrollLoop = () => {
-      if (!isHovering && scrollContainer) {
-        scrollContainer.scrollLeft += 0.8;
-        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
-          scrollContainer.scrollLeft = 0;
-        }
-      }
-      animationId = requestAnimationFrame(scrollLoop);
-    };
-
-    animationId = requestAnimationFrame(scrollLoop);
-
-    scrollContainer.addEventListener('mouseenter', stopScroll);
-    scrollContainer.addEventListener('mouseleave', startScroll);
-    scrollContainer.addEventListener('touchstart', stopScroll);
-    scrollContainer.addEventListener('touchend', startScroll);
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('mouseenter', stopScroll);
-        scrollContainer.removeEventListener('mouseleave', startScroll);
-        scrollContainer.removeEventListener('touchstart', stopScroll);
-        scrollContainer.removeEventListener('touchend', startScroll);
-      }
-    };
-  }, []);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
@@ -181,14 +168,10 @@ const LandingPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Hero banner auto-advance
-  useEffect(() => {
-    if (banners.length === 0) return;
-    const interval = setInterval(() => {
-      setActiveBanner((prev) => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [banners.length]);
+  const heroSlides = [
+    { id: 'summer', image: '/summer/hero.jpg', title: 'Summer Collection 2026' },
+    ...banners.slice(0, 2).map(banner => ({ id: banner._id, image: assetUrl(banner.image), title: banner.title })),
+  ];
 
   const handleLogout = () => {
     logout();
@@ -210,11 +193,11 @@ const LandingPage = () => {
 
   // Filter products based on active tab AND search query
   const filteredProducts = products.filter((product) => {
-    const matchesTab = searchQuery.trim()
-      ? true
-      : activeTab === 'all'
-        ? product.is_featured
-        : product.category_id?._id === activeTab;
+    const matchesTab = searchQuery.trim() ||
+      (activeTab === 'all' && product.is_featured) ||
+      (activeTab === 'saved' && savedIds.includes(product._id)) ||
+      (activeTab === 'sale' && product.on_sale === true) ||
+      product.category_id?._id === activeTab;
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch = !q
       ? true
@@ -233,6 +216,12 @@ const LandingPage = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const toggleSaved = (id) => {
+    const next = savedIds.includes(id) ? savedIds.filter(savedId => savedId !== id) : [...savedIds, id];
+    localStorage.setItem('makskin-favourites', JSON.stringify(next));
+    setSavedIds(next);
   };
 
   const handleAddToCart = (product) => {
@@ -258,53 +247,75 @@ const LandingPage = () => {
     setCartOpen(true);
   };
 
+  const departmentOptions = (department) => categories.filter(category => department.match.test(category.name.toLowerCase()));
+  const shopDepartment = (department) => {
+    const options = departmentOptions(department);
+    const stocked = options.find(category => products.some(product => product.category_id?._id === category._id));
+    if (stocked || options[0]) {
+      handleNavClick((stocked || options[0])._id, 'products-section');
+    } else {
+      setShowCategories(true);
+      document.getElementById('summer-categories')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="landing-layout">
+      <div className="summer-storefront">
 
       {/* ── BENEFIT RIBBON ── */}
       <div className="benefit-ribbon">
-        <div className="benefit-item"><ShieldCheck size={14} /><span>Authentic Products</span></div>
-        <div className="benefit-item"><RotateCcw size={14} /><span>Easy Returns</span></div>
-        <div className="benefit-item"><Lock size={14} /><span>Secure Payment</span></div>
+        {benefits.map(({ icon, short }) => (
+          <div className="benefit-item" key={short}>{React.createElement(icon, { size: 21, 'aria-hidden': true })}<span>{short}</span></div>
+        ))}
       </div>
 
       {/* ── STICKY DARK HEADER ── */}
       <header className="landing-header">
         <div className="header-container">
           <Link to="/" className="brand-logo-container">
-            <span className="logo-text-box">makskin</span>
+            <span className="logo-text-box"><Leaf aria-hidden="true" />makskin</span>
           </Link>
 
           <nav className="header-nav">
             <ul>
-              <li><button onClick={() => handleNavClick('all', 'products-section')} className="nav-link-btn sale-badge-btn">Sale</button></li>
-              {displayCategories.map((cat) => (
-                <li key={cat._id}>
-                  <button onClick={() => handleNavClick(cat._id, 'products-section')} className="nav-link-btn">{cat.name}</button>
+              <li><Link className="nav-link-btn summer-home" to="/" aria-current="page" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home</Link></li>
+              {departments.slice(0, 4).map(department => (
+                <li key={department.id}>
+                  <details className="summer-menu">
+                    <summary className="nav-link-btn">{department.name}<ChevronDown size={13} aria-hidden="true" /></summary>
+                    <div className="summer-menu-options">
+                      {departmentOptions(department).length > 0 ? departmentOptions(department).map(category => (
+                        <button key={category._id} className="nav-link-btn" onClick={event => {
+                          event.currentTarget.closest('details').open = false;
+                          handleNavClick(category._id, 'products-section');
+                        }}>{category.name}</button>
+                      )) : <span>No categories available</span>}
+                    </div>
+                  </details>
                 </li>
               ))}
+              <li><button className="nav-link-btn" onClick={() => shopDepartment(departments[5])}>Fragrance</button></li>
               <li><a href="#brands" className="nav-link-btn">Shop All Brands</a></li>
+              <li><button onClick={() => handleNavClick('sale', 'products-section')} className="nav-link-btn sale-badge-btn">Sale <Tag size={14} aria-hidden="true" /></button></li>
             </ul>
           </nav>
 
           <div className="header-actions">
             <div className={`landing-search-wrapper ${searchOpen ? 'open' : ''}`} ref={searchRef}>
-              <button className="action-icon-btn" onClick={() => { setSearchOpen(!searchOpen); if (searchOpen) setSearchQuery(''); }} title="Search">
+              <button className="action-icon-btn" onClick={() => searchRef.current?.querySelector('input')?.focus()} title="Search">
                 <Search size={18} />
               </button>
-              {searchOpen && (
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="landing-search-input"
-                  autoFocus
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                  }}
-                />
-              )}
-              {searchQuery.trim() && (
+              <input
+                type="search"
+                placeholder="Search for products, brands..."
+                aria-label="Search products and brands"
+                className="landing-search-input"
+                value={searchQuery}
+                onFocus={() => setSearchOpen(true)}
+                onChange={event => setSearchQuery(event.target.value)}
+              />
+              {searchOpen && searchQuery.trim() && (
                 <div className="search-results-dropdown">
                   {filteredProducts.length === 0 ? (
                     <div className="search-no-result">No products found for "{searchQuery}"</div>
@@ -379,8 +390,9 @@ const LandingPage = () => {
             ) : (
               <Link to="/login" className="action-icon-btn" title="My Account"><User size={18} /></Link>
             )}
+            <button className="action-icon-btn" title="Favourites" aria-label="Favourites" onClick={() => handleNavClick('saved', 'products-section')}><Heart size={26} /></button>
             <button className="action-icon-btn bag-btn-wrapper" title="Shopping Bag" onClick={() => setCartOpen(true)}>
-              <ShoppingBag size={18} />
+              <ShoppingCart size={26} />
               {totalCartQuantity > 0 && (
                 <span className="cart-badge-dot">{totalCartQuantity}</span>
               )}
@@ -390,119 +402,70 @@ const LandingPage = () => {
       </header>
 
       {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
-      <section className="hero-banner" style={{ position: 'relative', overflow: 'hidden' }}>
-        {/* Stacked banner images with fade transition */}
-        {banners.map((banner, index) => (
-          <img
-            key={banner._id}
-            src={assetUrl(banner.image)}
-            alt={banner.title || `Hero Banner ${index + 1}`}
-            className="hero-bg-img"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              opacity: activeBanner === index ? 1 : 0,
-              transition: 'opacity 1s ease-in-out',
-              zIndex: 1,
-            }}
-          />
+      <section className="summer-hero" aria-label="Summer collection">
+        {heroSlides.map((slide, index) => (
+          <img key={slide.id} src={slide.image} alt="" className={`summer-hero-image ${activeBanner === index ? 'active' : ''}`} fetchPriority={index === 0 ? 'high' : 'low'} />
         ))}
-        <div className="hero-gradient-overlay" style={{ position: 'relative', zIndex: 2 }} />
-        <div className="hero-content" style={{ position: 'relative', zIndex: 3 }}>
-          <div className="hero-tag">
-            <Sparkles size={14} />
-            <span>SUMMER COLLECTION 2026</span>
-          </div>
-          <h1 className="hero-headline">
-            Discover Your<br />
-            <span className="hero-highlight">Perfect Skincare</span>
-          </h1>
-          <p className="hero-sub">
-            Shop 150+ authentic beauty brands with guaranteed delivery,
-            easy returns, and exclusive members‑only discounts.
-          </p>
+        <div className="summer-hero-shade" />
+        <div className="summer-copy">
+          <div className="hero-tag"><Leaf size={19} aria-hidden="true" /> SUMMER COLLECTION 2026</div>
+          <h1 className="hero-headline">Discover Your<br /><span className="hero-highlight">Perfect Skincare</span></h1>
+          <p className="hero-sub">Shop 150+ authentic beauty brands with guaranteed delivery, easy returns, and exclusive member-only discounts.</p>
           <div className="hero-cta-group">
-            <button className="hero-cta-primary" onClick={() => handleNavClick('all', 'products-section')}>
-              Shop Now <ArrowRight size={16} />
-            </button>
-            <button className="hero-cta-secondary" onClick={() => handleNavClick('all', 'products-section')}>
-              Flat 30% OFF →
-            </button>
+            <button className="hero-cta-primary" onClick={() => shopDepartment(departments[0])}>Shop Now <ArrowRight size={23} /></button>
+            <button className="hero-cta-secondary" onClick={() => handleNavClick('sale', 'products-section')}><Tag size={23} /> Flat 30% OFF</button>
           </div>
-        </div>
-        {/* Dot indicators */}
-        {banners.length > 1 && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '20px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              display: 'flex',
-              gap: '10px',
-              zIndex: 4,
-            }}
-          >
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveBanner(index)}
-                aria-label={`Go to banner ${index + 1}`}
-                style={{
-                  width: activeBanner === index ? '28px' : '10px',
-                  height: '10px',
-                  borderRadius: '5px',
-                  border: 'none',
-                  background: activeBanner === index ? '#fff' : 'rgba(255,255,255,0.5)',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  padding: 0,
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* ── SHOP BY CATEGORY SECTION ── */}
-      <section className="categories-section">
-        <div className="categories-header-container">
-          <h2 className="categories-title">Shop By Category</h2>
-        </div>
-        <div className="categories-grid-wrapper" ref={categoriesScrollRef}>
-          <div className="categories-grid">
-            {[...categories, ...categories].map((cat, idx) => (
-              <div
-                className="category-item"
-                key={`${cat._id}-${idx}`}
-                onClick={() => handleNavClick(cat._id, 'products-section')}
-              >
-                <div className="category-circle">
-                  <div className="category-circle-inner-bg">
-                    <img src={assetUrl(cat.image)} alt={cat.name} className="category-img" />
-                  </div>
-                </div>
-                <span className="category-label">{cat.name}</span>
-              </div>
-            ))}
-          </div>
+          {heroSlides.length > 1 && (
+            <div className="summer-dots" aria-label="Select a banner">
+              {heroSlides.map((slide, index) => (
+                <button key={slide.id} type="button" aria-label={slide.title || `Banner ${index + 1}`} aria-pressed={index === activeBanner} onClick={() => setActiveBanner(index)} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      <main className="landing-main">
+      <div className="summer-benefits">
+        {benefits.map(({ icon, title, detail }) => (
+          <div key={title}>{React.createElement(icon, { 'aria-hidden': true })}<span><strong>{title}</strong><small>{detail}</small></span></div>
+        ))}
+      </div>
+
+      <section className="summer-categories" id="summer-categories">
+        <div className="summer-category-header">
+          <h2><Leaf aria-hidden="true" /> Shop By Category</h2>
+          <button type="button" aria-expanded={showCategories} aria-controls="summer-all-categories" onClick={() => setShowCategories(!showCategories)}>
+            {showCategories ? 'Hide Categories' : 'View All Categories'} <ArrowRight size={23} />
+          </button>
+        </div>
+        <div className="summer-category-grid">
+          {departments.map(department => (
+            <button type="button" className="summer-category" key={department.id} onClick={() => shopDepartment(department)}>
+              <img src={`/summer/${department.id}.jpg`} alt="" width="443" height="443" />
+              <span>{department.name}</span>
+            </button>
+          ))}
+        </div>
+        <div id="summer-all-categories" className="summer-all-categories" hidden={!showCategories}>
+          {categories.length ? categories.map(category => (
+            <button key={category._id} type="button" onClick={() => handleNavClick(category._id, 'products-section')}>{category.name}</button>
+          )) : <p>Categories are currently unavailable.</p>}
+        </div>
+      </section>
+      </div>
+
+      <main className="landing-main summer-main">
 
         {/* ── PRODUCTS SECTION WITH TABS ── */}
         <section className="bestsellers-section" id="products-section">
           <div className="section-header-row">
-            <h2 className="section-title">
-              {activeTab === 'all' 
-                ? 'Bestsellers' 
-                : categories.find(c => c._id === activeTab)?.name || 'Products'}
-            </h2>
+            <div className="summer-bestsellers-heading">
+              <h2 className="section-title">
+                <Leaf aria-hidden="true" />
+                {activeTab === 'all' ? 'Bestsellers' : activeTab === 'saved' ? 'Favourites' : activeTab === 'sale' ? 'Sale' : categories.find(category => category._id === activeTab)?.name || 'Products'}
+              </h2>
+              {activeTab === 'all' && <span className="summer-most-loved"><Heart size={18} aria-hidden="true" /> Most Loved Products</span>}
+            </div>
             <div className="category-tabs-container">
               <button
                 className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
@@ -540,8 +503,11 @@ const LandingPage = () => {
                 return (
                   <div className="product-card" key={product._id}>
                     {discount > 0 && (
-                      <span className="product-discount-badge">{discount}% OFF</span>
+                      <span className="product-discount-badge">-{discount}%</span>
                     )}
+                    <button className="summer-save-product" type="button" aria-label={`Save ${product.name} to favourites`} aria-pressed={savedIds.includes(product._id)} onClick={() => toggleSaved(product._id)}>
+                      <Heart size={27} aria-hidden="true" />
+                    </button>
                     <Link to={`/product/${product._id}`} style={{ display: 'block', color: 'inherit', textDecoration: 'none' }}>
                       <div className="product-img-wrapper">
                         <img src={assetUrl(product.main_image)} alt={product.name} />
@@ -555,7 +521,7 @@ const LandingPage = () => {
                       <div className="product-rating-row">
                         <StarRating rating={product.rating || 0} />
                         {product.reviews > 0 && (
-                          <span className="product-review-count">{product.reviews} reviews</span>
+                          <span className="product-review-count">({product.reviews})</span>
                         )}
                       </div>
                       <div className="product-price-row">
@@ -563,7 +529,6 @@ const LandingPage = () => {
                         {(isSaleLive && product.discount_price) && (
                           <>
                             <span className="product-original-price">Rs.{product.discount_price.toLocaleString()}</span>
-                            <span className="product-off-label">{discount}% OFF</span>
                           </>
                         )}
                       </div>
@@ -574,7 +539,7 @@ const LandingPage = () => {
                         <span className="installment-label">now</span>
                       </div>
                       <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
-                        Add to Cart
+                        <ShoppingCart size={21} aria-hidden="true" /> Add to Cart
                       </button>
                     </div>
                   </div>
@@ -624,30 +589,15 @@ const LandingPage = () => {
         </section>
 
         {/* ── PROMO BANNER ── */}
-        <section className="promo-banner-section">
-          <div className="wide-promo-banner">
-            <div className="promo-gradient-overlay" />
-            <div className="promo-content">
-              <div className="promo-tag">
-                <Sparkles size={16} />
-                <span>LIMITED TIME EXCLUSIVE</span>
-              </div>
-              <h2>SUPER SUMMER SALE</h2>
-              <h3>Flat 30% Off on Premium Skincare Routine Kits</h3>
-              <p>
-                Upgrade your summer beauty ritual with dermatologically tested bundles
-                designed for ultimate hydration, brightening, and barrier repair.
-              </p>
-              <div className="promo-actions">
-                <button className="promo-shop-btn" onClick={() => handleNavClick('all', 'products-section')}>Shop The Sale <ArrowRight size={16} /></button>
-                <span className="promo-shipping-notice">Free shipping on orders over Rs. 2,000</span>
-              </div>
-            </div>
-            <div className="promo-image-pane">
-              <img
-                src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=600&h=450&fit=crop"
-                alt="Summer Sale"
-              />
+        <section className="promo-banner-section summer-sale">
+          <div className="summer-sale-content">
+            <div className="summer-sale-label"><Leaf size={23} aria-hidden="true" /> LIMITED TIME OFFER</div>
+            <h2>SUPER <span>SUMMER</span> SALE</h2>
+            <h3>Flat <span>30%</span> Off on Premium Skincare Routine Kits</h3>
+            <p>Upgrade your summer beauty ritual with dermatologically tested bundles designed for ultimate hydration, brightening, and barrier repair.</p>
+            <div className="summer-sale-actions">
+              <button type="button" onClick={() => handleNavClick('sale', 'products-section')}>Shop The Sale <ArrowRight size={20} /></button>
+              <span><Truck size={24} aria-hidden="true" /> Free shipping on orders over Rs. 2,000</span>
             </div>
           </div>
         </section>
@@ -754,10 +704,10 @@ const LandingPage = () => {
       </div>
 
       {/* ── FOOTER ── */}
-      <footer className="landing-footer">
+      <footer className="landing-footer summer-footer">
         <div className="footer-container">
           <div className="footer-brand">
-            <span className="footer-logo">makskin</span>
+            <span className="footer-logo"><Leaf aria-hidden="true" /> makskin</span>
             <p>Your one‑stop destination for authentic cosmetics, clean skincare, and premium beauty essentials.</p>
           </div>
           <div className="footer-links-col">
@@ -773,23 +723,29 @@ const LandingPage = () => {
           <div className="footer-links-col">
             <h4>Support</h4>
             <ul>
-              <li><a href="#returns">Easy Returns</a></li>
-              <li><a href="#shipping">Shipping Policy</a></li>
-              <li><a href="#faq">FAQ</a></li>
-              <li><a href="#contact">Contact Us</a></li>
+              <li><a href="#returns"><RotateCcw size={21} aria-hidden="true" /> Easy Returns</a></li>
+              <li><a href="#shipping"><Truck size={21} aria-hidden="true" /> Shipping Policy</a></li>
+              <li><a href="#faq"><CircleHelp size={21} aria-hidden="true" /> FAQ</a></li>
+              <li><a href="#contact"><Phone size={21} aria-hidden="true" /> Contact Us</a></li>
             </ul>
           </div>
           <div className="footer-contact">
             <h4>Newsletter</h4>
             <p>Subscribe for sales notifications, beauty tips, and product releases.</p>
             <div className="subscribe-form">
+              <Mail size={21} aria-hidden="true" />
               <input type="email" placeholder="Your email address" aria-label="Email" />
               <button type="button">Join</button>
             </div>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>© 2026 Makskin. All rights reserved. Authentic Products, Guaranteed.</p>
+          <div className="summer-footer-bar">
+            <div className="summer-footer-benefits">
+              {benefits.map(({ icon, short }) => <span key={short}>{React.createElement(icon, { size: 24, 'aria-hidden': true })} {short}</span>)}
+            </div>
+            <p>? 2026 Makskin. All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </div>

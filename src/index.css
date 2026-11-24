@@ -6,9 +6,9 @@
   --card-bg: #1e1e1e; /* Slightly lighter black for cards */
   --glass-bg: #212121; /* Glass effect base */
   --glass-border: #333333; /* Subtle border */
-  --accent-primary: #ff4d4f; /* Red accent */
-  --accent-primary-light: rgba(255, 77, 79, 0.15);
-  --accent-primary-hover: #e04445;
+  --accent-primary: #a21c40; /* Red accent */
+  --accent-primary-light: rgba(162, 28, 64, 0.14);
+  --accent-primary-hover: #801131;
   --accent-pink: #ff4d4f; /* keeping same */
   --accent-cyan: #00f0ff; /* unchanged */
   --accent-green: #52c41a; /* unchanged */
@@ -40,9 +40,9 @@ body.dark {
   --card-bg: #0c0c0e; /* Card background */
   --glass-bg: #141416;
   --glass-border: #1f1f23; /* Border color */
-  --accent-primary: #ff2a85; /* Neon Pink */
-  --accent-primary-light: rgba(255, 42, 133, 0.15);
-  --accent-primary-hover: #e01a6f;
+  --accent-primary: #f07b9e;
+  --accent-primary-light: rgba(162, 28, 64, 0.14);
+  --accent-primary-hover: #801131;
   --accent-pink: #ff2a85;
   --accent-cyan: #00f0ff;
   --accent-green: #39ff14;
@@ -64,9 +64,9 @@ body.light {
   --card-bg: #ffffff;
   --glass-bg: #f1f1f1;
   --glass-border: #e4e4e7;
-  --accent-primary: #e11d48;
-  --accent-primary-light: rgba(225, 29, 72, 0.1);
-  --accent-primary-hover: #be123c;
+  --accent-primary: #a21c40;
+  --accent-primary-light: rgba(162, 28, 64, 0.14);
+  --accent-primary-hover: #801131;
   --accent-pink: #e11d48;
   --accent-cyan: #0891b2;
   --accent-green: #16a34a;
