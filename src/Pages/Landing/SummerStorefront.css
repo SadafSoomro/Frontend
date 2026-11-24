@@ -342,3 +342,8 @@
   .summer-footer-benefits span + span { border: 0; padding-left: 0; }
   .summer-footer-benefits span { font-size: .76rem; }
 }
+
+.summer-main .summer-upcoming-card { cursor: default; }
+.summer-main .summer-upcoming-card:hover { transform: none; }
+.summer-main .summer-upcoming-card:hover img { transform: none; }
+.summer-upcoming-label { align-self: flex-start; padding: 5px 9px; border-radius: 20px; background: #e4efda; color: #355530; font-size: .78rem; font-weight: 700; }

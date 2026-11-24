@@ -36,6 +36,7 @@ import {
   Package,
 } from 'lucide-react';
 import { categoryDepartment, departments, productDepartment } from './catalogDepartments';
+import { upcomingProducts } from './upcomingProducts';
 import './LandingPage.css';
 import './SummerStorefront.css';
 
@@ -252,6 +253,10 @@ const LandingPage = () => {
         product.category_id?.name?.toLowerCase().includes(q);
     return matchesTab && matchesSearch;
   });
+
+  const catalogNames = new Set(filteredProducts.map(product => product.name.trim().toLowerCase()));
+  const upcomingNames = (upcomingProducts[selectedDepartment?.id] || [])
+    .filter(name => !catalogNames.has(name.toLowerCase()) && name.toLowerCase().includes(searchQuery.trim().toLowerCase()));
 
   // Extract unique brand names from products for marquee
   const brandNames = [...new Set(products.map((p) => p.brand))];
@@ -528,7 +533,7 @@ const LandingPage = () => {
           </div>
 
           <div className="products-grid">
-            {filteredProducts.length === 0 ? (
+            {filteredProducts.length === 0 && upcomingNames.length === 0 ? (
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: '#888' }}>
                 <ShoppingBag size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
                 <p style={{ fontSize: '18px', fontWeight: 500 }}>No products found</p>
@@ -588,6 +593,18 @@ const LandingPage = () => {
                 );
               })
             )}
+            {upcomingNames.map(name => (
+              <article className="product-card summer-upcoming-card" key={name}>
+                <div className="product-img-wrapper">
+                  <img src={`/summer/${selectedDepartment.id}.jpg`} alt="" width="443" height="443" loading="lazy" />
+                </div>
+                <div className="product-info">
+                  <span className="product-brand">{selectedDepartment.name}</span>
+                  <h3 className="product-name">{name}</h3>
+                  <span className="summer-upcoming-label">Coming soon</span>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
