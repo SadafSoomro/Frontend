@@ -234,7 +234,7 @@
   gap: 10px;
   padding: 0;
   color: #355530;
-  font: 700 clamp(1.85rem, 2.5vw, 2.65rem)/1.1 Georgia, serif;
+  font: 700 clamp(1.4rem, 1.85vw, 1.95rem)/1.1 Georgia, serif;
   letter-spacing: -.04em;
 }
 .summer-main .section-title::before { content: none; }
@@ -362,3 +362,5 @@
   .category-directory { padding: 25px 13px 50px; }
   .category-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 }
+
+.summer-dots .summer-hero-pause { display: inline-grid; place-items: center; width: 25px; height: 25px; margin-left: 3px; background: #edf4e8; color: var(--summer-green); }

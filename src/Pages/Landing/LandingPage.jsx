@@ -19,6 +19,8 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Pause,
+  Play,
   Search,
   User,
   ShoppingBag,
@@ -39,6 +41,12 @@ import { categoryDepartment, departments, productDepartment } from './catalogDep
 import { upcomingProducts } from './upcomingProducts';
 import './LandingPage.css';
 import './SummerStorefront.css';
+
+const heroSlides = [
+  { image: '/summer/hero.jpg', title: 'Discover Your', highlight: 'Perfect Skincare', description: 'Shop 150+ authentic beauty brands with guaranteed delivery, easy returns, and exclusive member-only discounts.', department: 'skincare' },
+  { image: '/summer/hero-makeup.jpg', title: 'Find Your', highlight: 'Signature Makeup', description: 'Explore lip colours, eyeshadow and everyday makeup essentials.', department: 'makeup' },
+  { image: '/summer/hero-routine.jpg', title: 'Build Your', highlight: 'Beauty Routine', description: 'Find skincare staples and makeup favourites for your daily routine.' },
+];
 
 const benefits = [
   { icon: ShieldCheck, short: 'Authentic Products', title: '100% Authentic Products', detail: 'Guaranteed original & trusted brands' },
@@ -86,6 +94,19 @@ const LandingPage = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
+  const [heroPaused, setHeroPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const heroRef = useRef(null);
+  const activeSlide = heroSlides[activeBanner];
+
+  useEffect(() => {
+    if (heroPaused) return;
+    const timer = window.setInterval(() => {
+      if (!document.hidden && !heroRef.current?.matches(':hover, :focus-within')) {
+        setActiveBanner(index => (index + 1) % heroSlides.length);
+      }
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [heroPaused, activeBanner]);
   const userMenuRef = useRef(null);
   const searchRef = useRef(null);
   const promotionalScrollRef = useRef(null);
@@ -219,11 +240,6 @@ const LandingPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const heroSlides = [
-    { id: 'summer', image: '/summer/hero.jpg', title: 'Summer Collection 2026' },
-    ...banners.slice(0, 2).map(banner => ({ id: banner._id, image: assetUrl(banner.image), title: banner.title })),
-  ];
-
   const handleLogout = () => {
     logout();
     setUserMenuOpen(false);
@@ -231,6 +247,9 @@ const LandingPage = () => {
   };
 
   const promoBanners = [
+    ...banners.filter(banner => banner.image).map(banner => ({
+      img: assetUrl(banner.image), brand: banner.title || 'Makskin promotion',
+    })),
     { img: products.length > 0 && products[0].main_image ? assetUrl(products[0].main_image) : "/hero-model.png", brand: "KRYOLAN", title: "PROFESSIONAL MAKE-UP", discount: "15%" },
     { img: products.length > 1 && products[1].main_image ? assetUrl(products[1].main_image) : "/hero-model.png", brand: "ESTELIN", title: "SKINCARE", discount: "20%" },
     { img: products.length > 2 && products[2].main_image ? assetUrl(products[2].main_image) : "/hero-model.png", brand: "FRAMESI", title: "HAIR FASHION", discount: "15%" },
@@ -455,24 +474,27 @@ const LandingPage = () => {
       </header>
 
       {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
-      <section className="summer-hero" aria-label="Summer collection">
+      <section className="summer-hero" aria-label="Summer collection" ref={heroRef}>
         {heroSlides.map((slide, index) => (
-          <img key={slide.id} src={slide.image} alt="" className={`summer-hero-image ${activeBanner === index ? 'active' : ''}`} fetchPriority={index === 0 ? 'high' : 'low'} />
+          <img key={slide.image} src={slide.image} alt="" className={`summer-hero-image ${activeBanner === index ? 'active' : ''}`} fetchPriority={index === 0 ? 'high' : 'low'} />
         ))}
         <div className="summer-hero-shade" />
         <div className="summer-copy">
           <div className="hero-tag"><Leaf size={19} aria-hidden="true" /> SUMMER COLLECTION 2026</div>
-          <h1 className="hero-headline">Discover Your<br /><span className="hero-highlight">Perfect Skincare</span></h1>
-          <p className="hero-sub">Shop 150+ authentic beauty brands with guaranteed delivery, easy returns, and exclusive member-only discounts.</p>
+          <h1 className="hero-headline">{activeSlide.title}<br /><span className="hero-highlight">{activeSlide.highlight}</span></h1>
+          <p className="hero-sub">{activeSlide.description}</p>
           <div className="hero-cta-group">
-            <button className="hero-cta-primary" onClick={() => shopDepartment(departments[0])}>Shop Now <ArrowRight size={23} /></button>
+            <button className="hero-cta-primary" onClick={() => handleNavClick(activeSlide.department ? `department:${activeSlide.department}` : 'all', 'products-section')}>Shop Now <ArrowRight size={23} /></button>
             <button className="hero-cta-secondary" onClick={() => handleNavClick('sale', 'products-section')}><Tag size={23} /> Flat 30% OFF</button>
           </div>
           {heroSlides.length > 1 && (
             <div className="summer-dots" aria-label="Select a banner">
               {heroSlides.map((slide, index) => (
-                <button key={slide.id} type="button" aria-label={slide.title || `Banner ${index + 1}`} aria-pressed={index === activeBanner} onClick={() => setActiveBanner(index)} />
+                <button key={slide.image} type="button" aria-label={slide.highlight} aria-pressed={index === activeBanner} onClick={() => setActiveBanner(index)} />
               ))}
+              <button className="summer-hero-pause" type="button" aria-label={heroPaused ? 'Play banner rotation' : 'Pause banner rotation'} onClick={() => setHeroPaused(!heroPaused)}>
+                {heroPaused ? <Play size={13} /> : <Pause size={13} />}
+              </button>
             </div>
           )}
         </div>
@@ -639,7 +661,7 @@ const LandingPage = () => {
               {[...promoBanners, ...promoBanners].map((banner, i) => (
                 <div key={`promo-${i}`} className="promo-banner-card">
                   <img src={banner.img} alt={banner.brand} className="promo-banner-img" />
-                  <div className="promo-banner-overlay">
+                  {banner.discount && <div className="promo-banner-overlay">
                     <div className="promo-banner-brand-text">
                       <h4>{banner.brand}</h4>
                       <p>{banner.title}</p>
@@ -649,7 +671,7 @@ const LandingPage = () => {
                       <strong className="discount-val">{banner.discount}</strong>
                       <span className="off-text">OFF</span>
                     </div>
-                  </div>
+                  </div>}
                 </div>
               ))}
             </div>
