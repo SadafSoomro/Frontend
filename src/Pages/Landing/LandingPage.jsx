@@ -487,7 +487,7 @@ const LandingPage = () => {
       <section className="summer-categories" id="summer-categories">
         <div className="summer-category-header">
           <h2><Leaf aria-hidden="true" /> Shop By Category</h2>
-          <Link to="/categories">View All Categories <ArrowRight size={23} /></Link>
+          <Link to="/categories" aria-label="View all categories" title="View all categories"><ArrowRight size={19} aria-hidden="true" /></Link>
         </div>
         <div className="summer-category-carousel">
           <button className="summer-category-arrow" type="button" onClick={() => moveCategories(-1)} aria-label="Scroll categories left" aria-controls="summer-category-row"><ChevronLeft size={21} /></button>

@@ -135,9 +135,10 @@
 
 .summer-categories { width: min(calc(100% - 7.4vw), 1560px); margin: 0 auto; padding: 27px 0 30px; }
 .summer-category-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 12px 22px; }
-.summer-category-header h2 { display: flex; align-items: center; gap: 12px; color: #2d512c; font-size: clamp(1.3rem, 1.88vw, 2rem); letter-spacing: -.03em; }
+.summer-category-header h2 { display: flex; align-items: center; gap: 12px; color: #2d512c; font-size: clamp(1.12rem, 1.55vw, 1.65rem); letter-spacing: -.03em; }
 .summer-category-header h2 svg { color: var(--summer-green); width: 1.35em; height: 1.35em; fill: var(--summer-green); stroke: #fbfdf8; }
-.summer-category-header a { display: inline-flex; align-items: center; gap: 13px; border: 0; color: var(--summer-green); background: transparent; cursor: pointer; font: inherit; font-size: clamp(.75rem, 1.08vw, 1.12rem); font-weight: 750; }
+.summer-category-header a { display: inline-grid; place-items: center; width: 32px; height: 32px; color: var(--summer-green); border-radius: 50%; }
+.summer-category-header a:hover { background: #dfecd7; }
 .summer-category-carousel { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 9px; width: 100%; }
 .summer-category-grid {
   display: grid;
