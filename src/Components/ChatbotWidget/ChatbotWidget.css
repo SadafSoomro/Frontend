@@ -53,3 +53,12 @@
 .chatbot-input-area button { width: 36px; min-height: 35px; border-radius: 9px; }
 .chatbot-input-area button:disabled { opacity: .45; cursor: default; }
 .chatbot-widget-container :focus-visible { outline: 2px solid #555e70; outline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .chatbot-widget-container {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .chatbot-window { max-height: calc(100dvh - 84px - env(safe-area-inset-bottom)); }
+  .chatbot-input-area input { font-size: 16px; }
+}

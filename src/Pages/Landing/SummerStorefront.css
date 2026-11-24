@@ -377,3 +377,44 @@
   .summer-storefront .hero-cta-group svg { width: 17px; height: 17px; }
   .summer-main .product-installment { flex-wrap: wrap; }
 }
+
+@media (max-width: 720px) {
+  .summer-storefront .search-results-dropdown { max-height: min(45dvh, 330px); overflow-y: auto; }
+  .summer-storefront .summer-menu-options { max-height: 38dvh; overflow-y: auto; }
+  .summer-storefront .summer-menu .nav-link-btn { min-height: 29px; }
+  .summer-storefront .landing-search-input { font-size: 16px; }
+  .summer-storefront .hero-cta-primary, .summer-storefront .hero-cta-secondary { min-height: 42px; }
+  .summer-category-carousel { min-width: 0; }
+  .summer-category-grid { min-width: 0; }
+  .summer-category { -webkit-tap-highlight-color: #bcd4aa66; }
+  .summer-main .product-info { min-width: 0; }
+  .summer-main .add-to-cart-btn { min-height: 42px; }
+  .summer-main .product-price-row { gap: 4px 8px; }
+  .landing-layout .cart-drawer-header, .landing-layout .cart-drawer-items-wrapper,
+  .landing-layout .cart-drawer-footer { padding-inline: 14px; }
+  .landing-layout .cart-drawer-footer { padding-bottom: max(15px, env(safe-area-inset-bottom)); }
+  .landing-layout .cart-drawer-items-wrapper { min-height: 0; overscroll-behavior: contain; }
+  .landing-layout .cart-drawer-item { min-width: 0; gap: 8px; }
+}
+
+@media (max-width: 420px) {
+  .summer-storefront .landing-search-input::placeholder { font-size: .75rem; }
+  .summer-storefront .hero-tag { font-size: .67rem; }
+  .summer-storefront .hero-sub { line-height: 1.4; }
+  .summer-benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .summer-benefits > div { gap: 6px; overflow-wrap: anywhere; }
+  .summer-benefits svg { width: 23px; height: 23px; }
+  .summer-benefits strong { font-size: .74rem; }
+  .summer-benefits small { font-size: .66rem; }
+  .summer-main .product-info { gap: 6px; }
+  .summer-main .add-to-cart-btn { gap: 5px; padding-inline: 5px; }
+  .summer-main .add-to-cart-btn svg { width: 17px; height: 17px; }
+  .summer-footer .footer-container { width: calc(100% - 28px); gap: 23px 12px; }
+  .summer-footer .subscribe-form input { font-size: 16px; }
+}
+
+@media (max-width: 350px) {
+  .summer-main .product-review-count { font-size: .7rem; }
+  .summer-main .star-rating svg { width: 12px; height: 12px; }
+  .summer-main .product-installment { column-gap: 3px; }
+}
