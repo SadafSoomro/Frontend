@@ -96,15 +96,33 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (categoryPaused) return;
-    const timer = window.setInterval(() => {
+    let frame;
+    let previousTime = performance.now();
+    let position;
+    let direction = 1;
+
+    const advance = (now) => {
       const row = categoryRowRef.current;
-      if (!row || document.hidden || row.matches(':hover, :focus-within') || Date.now() < categoryInteraction.current) return;
+      const travelled = Math.min(now - previousTime, 50) * 0.035;
+      previousTime = now;
+      frame = window.requestAnimationFrame(advance);
+
+      if (!row || document.hidden || row.matches(':hover, :focus-within') || Date.now() < categoryInteraction.current) {
+        position = undefined;
+        return;
+      }
+
       const end = row.scrollWidth - row.clientWidth;
       if (end < 2) return;
-      const step = row.firstElementChild.getBoundingClientRect().width + parseFloat(getComputedStyle(row).columnGap);
-      row.scrollTo({ left: row.scrollLeft >= end - 2 ? 0 : Math.min(end, row.scrollLeft + step), behavior: 'smooth' });
-    }, 3200);
-    return () => window.clearInterval(timer);
+      if (position === undefined || Math.abs(position - row.scrollLeft) > 2) position = row.scrollLeft;
+      if (position >= end) direction = -1;
+      if (position <= 0) direction = 1;
+      position = Math.max(0, Math.min(end, position + travelled * direction));
+      row.scrollLeft = position;
+    };
+
+    frame = window.requestAnimationFrame(advance);
+    return () => window.cancelAnimationFrame(frame);
   }, [categoryPaused]);
 
   const delayCategoryScroll = () => {
