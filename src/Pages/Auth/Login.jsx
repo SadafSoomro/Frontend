@@ -13,7 +13,7 @@ const Login = () => {
         password: ''
     });
     const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
+    const successMessage = location.state?.message || '';
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
@@ -65,7 +65,7 @@ const Login = () => {
     };
 
     return (
-        <div className="auth-split-layout">
+        <div className="auth-split-layout store-login-page">
             <Link to="/" className="back-home-btn">
                 <ArrowLeft size={16} /> Back to Store
             </Link>

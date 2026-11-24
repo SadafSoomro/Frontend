@@ -110,3 +110,12 @@
   .product-detail-layout .detail-actions-row { flex-wrap: wrap; }
   .product-detail-layout .detail-add-to-cart-btn { flex: 1 1 100%; }
 }
+
+@media (max-width: 900px) {
+  .auth-split-layout.store-login-page {
+    min-height: 100svh;
+    padding: max(58px, env(safe-area-inset-top)) clamp(12px, 4vw, 24px) max(58px, env(safe-area-inset-bottom));
+    align-items: center;
+  }
+  .store-login-page .auth-form-panel { padding: 0; }
+}

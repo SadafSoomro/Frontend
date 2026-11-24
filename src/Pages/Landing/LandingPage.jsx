@@ -403,7 +403,7 @@ const LandingPage = () => {
           </nav>
 
           <div className="header-actions">
-            <div className={`landing-search-wrapper ${searchOpen ? 'open' : ''}`} ref={searchRef}>
+            <div className="landing-search-wrapper" ref={searchRef}>
               <button className="action-icon-btn" onClick={() => searchRef.current?.querySelector('input')?.focus()} title="Search">
                 <Search size={18} />
               </button>

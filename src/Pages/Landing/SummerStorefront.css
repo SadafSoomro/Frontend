@@ -494,3 +494,23 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
   .summer-category-header { margin-bottom: 7px; }
   .summer-main .section-header-row { margin-bottom: 14px; }
 }
+
+.summer-storefront .landing-search-wrapper .search-results-dropdown {
+  color: var(--summer-ink);
+  background: #fbfdf8;
+  border: 1px solid #cedfc6;
+  box-shadow: 0 12px 28px #2f4c2a2b;
+}
+.summer-storefront .search-result-item { border-bottom-color: #e0ead9; }
+.summer-storefront .search-result-img { background: #eaf1e2; }
+.summer-storefront .search-result-brand, .summer-storefront .search-no-result { color: #52694b; }
+.summer-storefront .search-result-name { color: var(--summer-ink); }
+.summer-storefront .search-result-price { color: #345a30; }
+.summer-storefront .search-add-cart-btn { flex-shrink: 0; margin-left: auto; }
+@media (max-width: 900px) {
+  .summer-storefront .landing-search-wrapper .search-results-dropdown { top: calc(100% + 5px); }
+}
+@media (max-width: 420px) {
+  .summer-storefront .search-result-item { gap: 8px; padding: 8px 9px; }
+  .summer-storefront .search-result-img { width: 37px; height: 37px; }
+}
