@@ -17,6 +17,10 @@ import {
   Heart,
   ShoppingCart,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
   Search,
   User,
   ShoppingBag,
@@ -86,6 +90,37 @@ const LandingPage = () => {
   const searchRef = useRef(null);
   const [showCategories, setShowCategories] = useState(false);
   const promotionalScrollRef = useRef(null);
+  const categoryRowRef = useRef(null);
+  const categoryInteraction = useRef(0);
+  const [categoryPaused, setCategoryPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  useEffect(() => {
+    if (categoryPaused) return;
+    const timer = window.setInterval(() => {
+      const row = categoryRowRef.current;
+      if (!row || document.hidden || row.matches(':hover, :focus-within') || Date.now() < categoryInteraction.current) return;
+      const end = row.scrollWidth - row.clientWidth;
+      if (end < 2) return;
+      const step = row.firstElementChild.getBoundingClientRect().width + parseFloat(getComputedStyle(row).columnGap);
+      row.scrollTo({ left: row.scrollLeft >= end - 2 ? 0 : Math.min(end, row.scrollLeft + step), behavior: 'smooth' });
+    }, 3200);
+    return () => window.clearInterval(timer);
+  }, [categoryPaused]);
+
+  const delayCategoryScroll = () => {
+    categoryInteraction.current = Date.now() + 6500;
+  };
+
+  const moveCategories = (direction) => {
+    const row = categoryRowRef.current;
+    if (!row?.firstElementChild) return;
+    delayCategoryScroll();
+    const end = row.scrollWidth - row.clientWidth;
+    const step = row.firstElementChild.getBoundingClientRect().width + parseFloat(getComputedStyle(row).columnGap);
+    const atEdge = direction > 0 ? row.scrollLeft >= end - 2 : row.scrollLeft <= 2;
+    const left = atEdge ? (direction > 0 ? 0 : end) : Math.max(0, Math.min(end, row.scrollLeft + direction * step));
+    row.scrollTo({ left, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  };
 
   // Auto-scroll logic for Promotional Banners
   useEffect(() => {
@@ -438,7 +473,9 @@ const LandingPage = () => {
             {showCategories ? 'Hide Categories' : 'View All Categories'} <ArrowRight size={23} />
           </button>
         </div>
-        <div className="summer-category-grid">
+        <div className="summer-category-carousel">
+          <button className="summer-category-arrow" type="button" onClick={() => moveCategories(-1)} aria-label="Scroll categories left" aria-controls="summer-category-row"><ChevronLeft size={21} /></button>
+          <div className="summer-category-grid" id="summer-category-row" ref={categoryRowRef} onTouchStart={delayCategoryScroll} onTouchEnd={delayCategoryScroll} onWheel={delayCategoryScroll}>
           {departments.map(department => (
             <button type="button" className="summer-category" key={department.id} onClick={() => shopDepartment(department)}>
               <img src={`/summer/${department.id}.jpg`} alt="" width="443" height="443" />
@@ -446,6 +483,11 @@ const LandingPage = () => {
             </button>
           ))}
         </div>
+          <button className="summer-category-arrow" type="button" onClick={() => moveCategories(1)} aria-label="Scroll categories right" aria-controls="summer-category-row"><ChevronRight size={21} /></button>
+        </div>
+        <button className="summer-category-pause" type="button" onClick={() => setCategoryPaused(!categoryPaused)} aria-label={categoryPaused ? 'Play category auto-scroll' : 'Pause category auto-scroll'} aria-controls="summer-category-row">
+          {categoryPaused ? <Play size={14} /> : <Pause size={14} />}
+        </button>
         <div id="summer-all-categories" className="summer-all-categories" hidden={!showCategories}>
           {categories.length ? categories.map(category => (
             <button key={category._id} type="button" onClick={() => handleNavClick(category._id, 'products-section')}>{category.name}</button>
