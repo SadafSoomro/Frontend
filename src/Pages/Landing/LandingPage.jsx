@@ -19,8 +19,6 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Pause,
-  Play,
   Search,
   User,
   ShoppingBag,
@@ -37,19 +35,9 @@ import {
   Settings,
   Package,
 } from 'lucide-react';
+import { categoryDepartment, departments, productDepartment } from './catalogDepartments';
 import './LandingPage.css';
 import './SummerStorefront.css';
-
-const departments = [
-  { id: 'skincare', name: 'Skincare', match: /skin.?care|cleanser|face wash|serum|mask|peel/ },
-  { id: 'makeup', name: 'Makeup', match: /make.?up|lipstick|foundation|mascara|primer|concealer|lip liner/ },
-  { id: 'hair', name: 'Hair Care', match: /hair|shampoo|conditioner/ },
-  { id: 'body', name: 'Body Care', match: /body|bath/ },
-  { id: 'sunscreen', name: 'Sunscreen', match: /sunscreen|sunblock|spf/ },
-  { id: 'fragrance', name: 'Fragrance', match: /fragrance|perfume|cologne/ },
-  { id: 'baby', name: 'Baby Care', match: /baby/ },
-  { id: 'tools', name: 'Tools & Accessories', match: /tool|accessor|brush|sponge/ },
-];
 
 const benefits = [
   { icon: ShieldCheck, short: 'Authentic Products', title: '100% Authentic Products', detail: 'Guaranteed original & trusted brands' },
@@ -92,10 +80,9 @@ const LandingPage = () => {
   const promotionalScrollRef = useRef(null);
   const categoryRowRef = useRef(null);
   const categoryInteraction = useRef(0);
-  const [categoryPaused, setCategoryPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   useEffect(() => {
-    if (categoryPaused) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let frame;
     let previousTime = performance.now();
     let position;
@@ -107,7 +94,7 @@ const LandingPage = () => {
       previousTime = now;
       frame = window.requestAnimationFrame(advance);
 
-      if (!row || document.hidden || row.matches(':hover, :focus-within') || Date.now() < categoryInteraction.current) {
+      if (!row || reducedMotion.matches || document.hidden || row.matches(':hover, :focus-within') || Date.now() < categoryInteraction.current) {
         position = undefined;
         return;
       }
@@ -123,7 +110,7 @@ const LandingPage = () => {
 
     frame = window.requestAnimationFrame(advance);
     return () => window.cancelAnimationFrame(frame);
-  }, [categoryPaused]);
+  }, []);
 
   const delayCategoryScroll = () => {
     categoryInteraction.current = Date.now() + 6500;
@@ -245,12 +232,18 @@ const LandingPage = () => {
   const totalCartPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   // Filter products based on active tab AND search query
+  const categoriesById = new Map(categories.map(category => [category._id, category]));
+  const selectedDepartment = departments.find(department => activeTab === `department:${department.id}`);
   const filteredProducts = products.filter((product) => {
+    const categoryId = product.category_id?._id ?? product.category_id;
+    const matchesDepartment = selectedDepartment &&
+      productDepartment(product, categoriesById.get(categoryId))?.id === selectedDepartment.id;
     const matchesTab = searchQuery.trim() ||
+      matchesDepartment ||
       (activeTab === 'all' && product.is_featured) ||
       (activeTab === 'saved' && savedIds.includes(product._id)) ||
       (activeTab === 'sale' && product.on_sale === true) ||
-      product.category_id?._id === activeTab;
+      categoryId === activeTab;
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch = !q
       ? true
@@ -264,6 +257,7 @@ const LandingPage = () => {
   const brandNames = [...new Set(products.map((p) => p.brand))];
 
   const handleNavClick = (tabId, sectionId) => {
+    setSearchQuery('');
     setActiveTab(tabId);
     const element = document.getElementById(sectionId);
     if (element) {
@@ -300,17 +294,8 @@ const LandingPage = () => {
     setCartOpen(true);
   };
 
-  const departmentOptions = (department) => categories.filter(category => department.match.test(category.name.toLowerCase()));
-  const shopDepartment = (department) => {
-    const options = departmentOptions(department);
-    const stocked = options.find(category => products.some(product => product.category_id?._id === category._id));
-    if (stocked || options[0]) {
-      handleNavClick((stocked || options[0])._id, 'products-section');
-    } else {
-      setShowCategories(true);
-      document.getElementById('summer-categories')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const departmentOptions = (department) => categories.filter(category => categoryDepartment(category)?.id === department.id);
+  const shopDepartment = (department) => handleNavClick(`department:${department.id}`, 'products-section');
 
   return (
     <div className="landing-layout">
@@ -495,7 +480,7 @@ const LandingPage = () => {
           <button className="summer-category-arrow" type="button" onClick={() => moveCategories(-1)} aria-label="Scroll categories left" aria-controls="summer-category-row"><ChevronLeft size={21} /></button>
           <div className="summer-category-grid" id="summer-category-row" ref={categoryRowRef} onTouchStart={delayCategoryScroll} onTouchEnd={delayCategoryScroll} onWheel={delayCategoryScroll}>
           {departments.map(department => (
-            <button type="button" className="summer-category" key={department.id} onClick={() => shopDepartment(department)}>
+            <button type="button" className="summer-category" key={department.id} aria-pressed={selectedDepartment?.id === department.id} onClick={() => shopDepartment(department)}>
               <img src={`/summer/${department.id}.jpg`} alt="" width="443" height="443" />
               <span>{department.name}</span>
             </button>
@@ -503,9 +488,6 @@ const LandingPage = () => {
         </div>
           <button className="summer-category-arrow" type="button" onClick={() => moveCategories(1)} aria-label="Scroll categories right" aria-controls="summer-category-row"><ChevronRight size={21} /></button>
         </div>
-        <button className="summer-category-pause" type="button" onClick={() => setCategoryPaused(!categoryPaused)} aria-label={categoryPaused ? 'Play category auto-scroll' : 'Pause category auto-scroll'} aria-controls="summer-category-row">
-          {categoryPaused ? <Play size={14} /> : <Pause size={14} />}
-        </button>
         <div id="summer-all-categories" className="summer-all-categories" hidden={!showCategories}>
           {categories.length ? categories.map(category => (
             <button key={category._id} type="button" onClick={() => handleNavClick(category._id, 'products-section')}>{category.name}</button>
@@ -522,7 +504,7 @@ const LandingPage = () => {
             <div className="summer-bestsellers-heading">
               <h2 className="section-title">
                 <Leaf aria-hidden="true" />
-                {activeTab === 'all' ? 'Bestsellers' : activeTab === 'saved' ? 'Favourites' : activeTab === 'sale' ? 'Sale' : categories.find(category => category._id === activeTab)?.name || 'Products'}
+                {activeTab === 'all' ? 'Bestsellers' : activeTab === 'saved' ? 'Favourites' : activeTab === 'sale' ? 'Sale' : selectedDepartment?.name || categories.find(category => category._id === activeTab)?.name || 'Products'}
               </h2>
               {activeTab === 'all' && <span className="summer-most-loved"><Heart size={18} aria-hidden="true" /> Most Loved Products</span>}
             </div>
@@ -550,7 +532,7 @@ const LandingPage = () => {
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: '#888' }}>
                 <ShoppingBag size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
                 <p style={{ fontSize: '18px', fontWeight: 500 }}>No products found</p>
-                <p style={{ fontSize: '14px', marginTop: '8px' }}>Try selecting a different category.</p>
+                <p style={{ fontSize: '14px', marginTop: '8px' }}>{selectedDepartment ? 'This category has no products yet.' : 'Try selecting a different category.'}</p>
               </div>
             ) : (
               filteredProducts.map((product) => {
