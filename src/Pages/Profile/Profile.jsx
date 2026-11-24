@@ -92,19 +92,19 @@ const Profile = () => {
                     <div className="form-header" style={{ alignItems: 'center', marginBottom: '20px' }}>
                         <div style={{
                             width: 56, height: 56, borderRadius: '12px',
-                            background: 'rgba(226, 27, 38, 0.15)',
+                            background: 'var(--accent-primary-light)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            border: '1px solid rgba(226, 27, 38, 0.25)',
+                            border: '1px solid var(--store-border)',
                             margin: '0 auto 10px'
                         }}>
-                            <User size={24} style={{ color: 'var(--accent-primary, #e21b26)' }} />
+                            <User size={24} style={{ color: 'var(--accent-primary)' }} />
                         </div>
                         <h2 style={{ fontSize: '1.8rem' }}>Edit Profile</h2>
                         <p>Manage your account settings</p>
                     </div>
 
                     {message && (
-                        <div className="error-msg" style={{ background: 'rgba(34, 197, 94, 0.15)', borderColor: 'rgba(34, 197, 94, 0.4)', color: '#81c784' }}>
+                        <div className="error-msg" style={{ background: 'rgba(34, 197, 94, 0.15)', borderColor: 'rgba(34, 197, 94, 0.4)', color: isStoreProfile ? 'var(--store-green)' : '#81c784' }}>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
@@ -137,7 +137,7 @@ const Profile = () => {
                         <div className="modern-form-group">
                             <div className="label-row">
                                 <label htmlFor="email">Email Address</label>
-                                <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>(cannot be changed)</span>
+                                <span style={{ fontSize: '0.75rem', color: isStoreProfile ? 'var(--store-muted)' : '#aaa' }}>(cannot be changed)</span>
                             </div>
                             <input
                                 id="email"

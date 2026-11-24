@@ -6,7 +6,7 @@
   justify-content: center;
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #000000 0%, #111111 50%, #0a0a0a 100%);
+  background: linear-gradient(135deg, var(--store-paper), #edf1e6);
   position: relative;
   transition: background-color 0.3s ease;
   padding: 20px;
@@ -18,7 +18,7 @@
   position: absolute;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(255, 42, 133, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(53, 94, 33, 0.1) 0%, transparent 70%);
   border-radius: 50%;
   top: -100px;
   right: -100px;
@@ -30,7 +30,7 @@
   position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(57, 255, 20, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(87, 131, 63, 0.08) 0%, transparent 70%);
   border-radius: 50%;
   bottom: -80px;
   left: -80px;
@@ -80,7 +80,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(226, 27, 38, 0.15) 0%, rgba(10, 10, 10, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(53, 94, 33, 0.15) 0%, rgba(10, 10, 10, 0.8) 100%);
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 40px;
   min-height: calc(100vh - 40px);
@@ -93,7 +93,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('https://images.unsplash.com/photo-1615397323114-11855dd4e908?q=80&w=1200&auto=format&fit=crop') center/cover;
+  background: url('/banners/beauty-routine.jpg') center/cover;
   opacity: 0.4;
   z-index: 0;
   border-radius: 24px;
@@ -127,7 +127,7 @@
 
 .promo-pill {
   display: inline-block;
-  background: rgba(226, 27, 38, 0.8);
+  background: rgba(53, 94, 33, 0.8);
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -175,9 +175,9 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
-  background: rgba(15, 15, 15, 0.85);
+  background: var(--store-paper);
   backdrop-filter: blur(25px);
-  border: 1px solid rgba(226, 27, 38, 0.15);
+  border: 1px solid rgba(53, 94, 33, 0.15);
   padding: 50px 42px;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
@@ -208,9 +208,6 @@
   color: #ffffff;
   margin: 0;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
@@ -265,7 +262,7 @@
 .modern-form-group select:focus {
   border-color: var(--accent-primary);
   background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 4px rgba(255, 42, 133, 0.2);
+  box-shadow: 0 0 0 4px rgba(53, 94, 33, 0.2);
 }
 
 .label-row {
@@ -288,7 +285,7 @@
 }
 
 .modern-auth-btn {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, rgba(255, 42, 133, 0.85) 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, rgba(53, 94, 33, 0.85) 100%);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -302,13 +299,13 @@
   gap: 10px;
   margin-top: 10px;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(255, 42, 133, 0.3);
+  box-shadow: 0 8px 20px rgba(53, 94, 33, 0.3);
 }
 
 .modern-auth-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--accent-primary-hover) 0%, rgba(255, 42, 133, 0.8) 100%);
+  background: linear-gradient(135deg, var(--accent-primary-hover) 0%, rgba(53, 94, 33, 0.8) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(255, 42, 133, 0.4);
+  box-shadow: 0 12px 30px rgba(53, 94, 33, 0.4);
 }
 
 .modern-auth-btn:active:not(:disabled) {
@@ -336,7 +333,7 @@
 }
 
 .form-footer a:hover {
-  color: rgba(226, 27, 38, 0.95);
+  color: rgba(53, 94, 33, 0.95);
   text-decoration: underline;
 }
 
@@ -451,3 +448,17 @@
     font-size: 0.9rem;
   }
 }
+
+.auth-split-layout .back-home-btn { background: var(--store-cream); border-color: var(--store-border); color: var(--store-forest); }
+.auth-graphic-panel { background: var(--store-forest); }
+.graphic-overlay { background: linear-gradient(to top, var(--store-forest), transparent); }
+.auth-split-layout .form-container { background: var(--store-paper); border-color: var(--store-border); color: #131810; box-shadow: 0 12px 36px #2038171a; }
+.auth-split-layout .form-header h2 { color: #131810; -webkit-text-fill-color: currentColor; background: none; }
+.auth-split-layout .form-header p, .auth-split-layout .form-footer { color: var(--store-muted); }
+.auth-split-layout .modern-form-group label { color: #263421; }
+.auth-split-layout .modern-form-group input, .auth-split-layout .modern-form-group select { color: #131810; background: white; border-color: var(--store-border); }
+.auth-split-layout .modern-form-group input::placeholder { color: var(--store-muted); }
+.auth-split-layout .modern-form-group input:focus, .auth-split-layout .modern-form-group select:focus { border-color: var(--store-green); }
+.auth-split-layout .modern-auth-btn { background: var(--store-green); }
+.auth-split-layout .modern-auth-btn:hover:not(:disabled) { background: var(--store-green-hover); }
+.auth-split-layout .error-msg { color: #a61b29; }

@@ -7,6 +7,7 @@ import { sendOrderConfirmationApi, validateCouponApi, getPaymentConfigApi, creat
 import StripeCardPayment from '../../Components/StripeCardPayment';
 import { STRIPE_PUBLISHABLE_KEY } from '../../config';
 import {
+  Leaf,
   ShieldCheck,
   RotateCcw,
   Lock,
@@ -228,7 +229,7 @@ const CheckoutPage = () => {
       <header className="landing-header">
         <div className="header-container">
           <Link to="/" className="brand-logo-container">
-            <span className="logo-text-box">makskin</span>
+            <span className="logo-text-box"><Leaf aria-hidden="true" />makskin</span>
           </Link>
           <div className="checkout-header-title">
             <Lock size={14} className="lock-icon" />
