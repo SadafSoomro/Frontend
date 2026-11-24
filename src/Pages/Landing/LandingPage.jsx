@@ -112,9 +112,11 @@ const LandingPage = () => {
   const promotionalScrollRef = useRef(null);
   const categoryRowRef = useRef(null);
   const categoryInteraction = useRef(0);
+  const categoryTouching = useRef(false);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const canHover = window.matchMedia('(hover: hover)');
     let frame;
     let previousTime = performance.now();
     let position;
@@ -125,7 +127,9 @@ const LandingPage = () => {
       previousTime = now;
       frame = window.requestAnimationFrame(advance);
 
-      if (!row || reducedMotion.matches || document.hidden || row.matches(':hover, :focus-within') || Date.now() < categoryInteraction.current) {
+      if (!row || reducedMotion.matches || document.hidden || categoryTouching.current ||
+        (canHover.matches && row.matches(':hover')) || row.matches(':has(:focus-visible)') ||
+        Date.now() < categoryInteraction.current) {
         position = undefined;
         return;
       }
@@ -146,6 +150,12 @@ const LandingPage = () => {
 
   const delayCategoryScroll = () => {
     categoryInteraction.current = Date.now() + 6500;
+  };
+
+  const finishCategoryTouch = (event) => {
+    if (event.touches.length) return;
+    categoryTouching.current = false;
+    delayCategoryScroll();
   };
 
   const moveCategories = (direction) => {
@@ -509,11 +519,11 @@ const LandingPage = () => {
       <section className="summer-categories" id="summer-categories">
         <div className="summer-category-header">
           <h2><Leaf aria-hidden="true" /> Shop By Category</h2>
-          <Link to="/categories" aria-label="View all categories" title="View all categories"><ArrowRight size={19} aria-hidden="true" /></Link>
         </div>
         <div className="summer-category-carousel">
           <button className="summer-category-arrow" type="button" onClick={() => moveCategories(-1)} aria-label="Scroll categories left" aria-controls="summer-category-row"><ChevronLeft size={21} /></button>
-          <div className="summer-category-grid" id="summer-category-row" ref={categoryRowRef} onTouchStart={delayCategoryScroll} onTouchEnd={delayCategoryScroll} onWheel={delayCategoryScroll}>
+          <div className="summer-category-grid" id="summer-category-row" ref={categoryRowRef} onTouchStart={() => { categoryTouching.current = true; }}
+            onTouchEnd={finishCategoryTouch} onTouchCancel={finishCategoryTouch} onWheel={delayCategoryScroll}>
             {[...departments, ...departments].map((department, index) => {
               const duplicate = index >= departments.length;
               return (

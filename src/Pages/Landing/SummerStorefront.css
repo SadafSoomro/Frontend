@@ -137,8 +137,6 @@
 .summer-category-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 12px 22px; }
 .summer-category-header h2 { display: flex; align-items: center; gap: 12px; color: #2d512c; font-size: clamp(1.12rem, 1.55vw, 1.65rem); letter-spacing: -.03em; }
 .summer-category-header h2 svg { color: var(--summer-green); width: 1.35em; height: 1.35em; fill: var(--summer-green); stroke: #fbfdf8; }
-.summer-category-header a { display: inline-grid; place-items: center; width: 32px; height: 32px; color: var(--summer-green); border-radius: 50%; }
-.summer-category-header a:hover { background: #dfecd7; }
 .summer-category-carousel { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 9px; width: 100%; }
 .summer-category-grid {
   display: grid;
@@ -147,6 +145,7 @@
   gap: 12px;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
+  touch-action: pan-x pan-y;
   padding: 3px 3px 7px;
   scrollbar-width: none;
 }
@@ -205,8 +204,8 @@
   .summer-categories { width: calc(100% - 24px); padding-top: 18px; }
   .summer-category-header { margin: 0 0 13px; }
   .summer-category-carousel { gap: 5px; }
-  .summer-category-grid { grid-auto-columns: clamp(69px, 20vw, 93px); gap: 9px; }
-  .summer-category-arrow { width: 26px; height: 26px; }
+  .summer-category-grid { grid-auto-columns: clamp(78px, 23vw, 120px); gap: 10px; }
+  .summer-category-arrow { width: 29px; height: 36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -364,3 +363,17 @@
 }
 
 .summer-dots .summer-hero-pause { display: inline-grid; place-items: center; width: 25px; height: 25px; margin-left: 3px; background: #edf4e8; color: var(--summer-green); }
+
+@media (max-width: 420px) {
+  .summer-storefront .header-container { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 6px; }
+  .summer-storefront .header-actions { width: 100%; justify-content: center; gap: 5px; }
+  .summer-storefront .landing-search-wrapper { flex: 1; min-width: 0; }
+  .summer-storefront .landing-search-input { width: 100%; }
+  .summer-storefront .search-results-dropdown { right: auto; left: 0; }
+  .summer-storefront .header-nav ul { column-gap: 10px; row-gap: 3px; }
+  .summer-storefront .hero-headline { font-size: clamp(1.65rem, 7vw, 2.1rem); }
+  .summer-storefront .hero-sub { font-size: .88rem; }
+  .summer-storefront .hero-cta-group { gap: 7px; }
+  .summer-storefront .hero-cta-group svg { width: 17px; height: 17px; }
+  .summer-main .product-installment { flex-wrap: wrap; }
+}
