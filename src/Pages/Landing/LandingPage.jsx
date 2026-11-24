@@ -14,10 +14,9 @@ import {
   Search,
   User,
   ShoppingBag,
-  Truck,
-  Leaf,
-  ShoppingCart,
-  Heart,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
   ArrowRight,
   Star,
   X,
@@ -28,19 +27,7 @@ import {
   Settings,
   Package,
 } from 'lucide-react';
-import HeroCarousel from './HeroCarousel';
 import './LandingPage.css';
-
-const collections = [
-  { key: 'skincare', name: 'Skincare', match: /skin\s*care|serum|cleanser|face wash|peel/ },
-  { key: 'makeup', name: 'Makeup', match: /make[ -]?up|lipstick|lip liner|foundation|mascara|concealer|primer|nail polish/ },
-  { key: 'haircare', name: 'Hair Care', match: /hair|shampoo|conditioner/ },
-  { key: 'bodycare', name: 'Body Care', match: /body|bath/ },
-  { key: 'babycare', name: 'Baby Care', match: /baby/ },
-  { key: 'sunscreen', name: 'Sunscreen', match: /sunscreen|sun care|sunblock|spf/ },
-  { key: 'fragrance', name: 'Fragrance', match: /fragrance|perfume|cologne/ },
-  { key: 'tools', name: 'Tools & Accessories', match: /tools|accessor|brush|sponge/ },
-];
 
 const StarRating = ({ rating }) => (
   <div className="star-rating">
@@ -56,20 +43,109 @@ const StarRating = ({ rating }) => (
 );
 
 const LandingPage = () => {
+  const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   const [cartOpen, setCartOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [savedIds, setSavedIds] = useState(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('makskin-favourites'));
-      return Array.isArray(stored) ? stored : [];
-    } catch {
-      return [];
-    }
-  });
+  const [activeBanner, setActiveBanner] = useState(0);
   const userMenuRef = useRef(null);
   const searchRef = useRef(null);
+  const categoriesScrollRef = useRef(null);
+  const promotionalScrollRef = useRef(null);
+
+  // Auto-scroll logic for Promotional Banners
+  useEffect(() => {
+    const promoContainer = promotionalScrollRef.current;
+    if (!promoContainer) return;
+
+    let promoAnimationId;
+    let promoIsHovering = false;
+
+    const startPromoScroll = () => {
+      promoIsHovering = false;
+      promoAnimationId = requestAnimationFrame(promoScrollLoop);
+    };
+
+    const stopPromoScroll = () => {
+      promoIsHovering = true;
+      cancelAnimationFrame(promoAnimationId);
+    };
+
+    const promoScrollLoop = () => {
+      if (!promoIsHovering && promoContainer) {
+        promoContainer.scrollLeft += 1;
+        if (promoContainer.scrollLeft >= promoContainer.scrollWidth / 2) {
+          promoContainer.scrollLeft = 0;
+        }
+      }
+      promoAnimationId = requestAnimationFrame(promoScrollLoop);
+    };
+
+    promoAnimationId = requestAnimationFrame(promoScrollLoop);
+
+    promoContainer.addEventListener('mouseenter', stopPromoScroll);
+    promoContainer.addEventListener('mouseleave', startPromoScroll);
+    promoContainer.addEventListener('touchstart', stopPromoScroll);
+    promoContainer.addEventListener('touchend', startPromoScroll);
+
+    return () => {
+      cancelAnimationFrame(promoAnimationId);
+      if (promoContainer) {
+        promoContainer.removeEventListener('mouseenter', stopPromoScroll);
+        promoContainer.removeEventListener('mouseleave', startPromoScroll);
+        promoContainer.removeEventListener('touchstart', stopPromoScroll);
+        promoContainer.removeEventListener('touchend', startPromoScroll);
+      }
+    };
+  }, []);
+
+  // Auto-scroll logic for Shop By Category
+  useEffect(() => {
+    const scrollContainer = categoriesScrollRef.current;
+    if (!scrollContainer) return;
+
+    let animationId;
+    let isHovering = false;
+
+    const startScroll = () => {
+      isHovering = false;
+      animationId = requestAnimationFrame(scrollLoop);
+    };
+
+    const stopScroll = () => {
+      isHovering = true;
+      cancelAnimationFrame(animationId);
+    };
+
+    const scrollLoop = () => {
+      if (!isHovering && scrollContainer) {
+        scrollContainer.scrollLeft += 0.8;
+        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 2) {
+          scrollContainer.scrollLeft = 0;
+        }
+      }
+      animationId = requestAnimationFrame(scrollLoop);
+    };
+
+    animationId = requestAnimationFrame(scrollLoop);
+
+    scrollContainer.addEventListener('mouseenter', stopScroll);
+    scrollContainer.addEventListener('mouseleave', startScroll);
+    scrollContainer.addEventListener('touchstart', stopScroll);
+    scrollContainer.addEventListener('touchend', startScroll);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('mouseenter', stopScroll);
+        scrollContainer.removeEventListener('mouseleave', startScroll);
+        scrollContainer.removeEventListener('touchstart', stopScroll);
+        scrollContainer.removeEventListener('touchend', startScroll);
+      }
+    };
+  }, []);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
@@ -85,26 +161,10 @@ const LandingPage = () => {
     dispatch(getBanners());
   }, [dispatch]);
 
-  const collectionsWithCategories = collections.map(collection => ({
-    ...collection,
-    categories: categories.filter(category => {
-      const name = category.name.toLowerCase();
-      if (collection.key === 'makeup' && name.includes('remover')) return false;
-      if (collection.key === 'haircare' && name.includes('baby')) return false;
-      return collection.match.test(name) || category.description?.trim().toLowerCase() === collection.key;
-    }),
-  }));
-  const displayCategories = collectionsWithCategories.slice(0, 4);
-  const categoryTiles = [
-    ...collectionsWithCategories.filter(collection => collection.categories.length).map(collection => ({
-      _id: collection.key,
-      name: collection.name,
-      image: collection.categories.find(category => category.image)?.image,
-    })),
-    ...categories.filter(category => !collectionsWithCategories.some(collection =>
-      collection.categories.some(member => member._id === category._id))),
-  ];
-  const selectedCollection = collectionsWithCategories.find(collection => collection.key === activeTab);
+  // Only show top 5 categories that have products
+  const displayCategories = categories.filter(cat => 
+    products.some(p => p.category_id?._id === cat._id)
+  ).slice(0, 5);
 
   // Close user menu on outside click
   useEffect(() => {
@@ -113,6 +173,7 @@ const LandingPage = () => {
         setUserMenuOpen(false);
       }
       if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchOpen(false);
         setSearchQuery('');
       }
     };
@@ -120,24 +181,40 @@ const LandingPage = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Hero banner auto-advance
+  useEffect(() => {
+    if (banners.length === 0) return;
+    const interval = setInterval(() => {
+      setActiveBanner((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners.length]);
+
   const handleLogout = () => {
     logout();
     setUserMenuOpen(false);
     navigate('/');
   };
 
+  const promoBanners = [
+    { img: products.length > 0 && products[0].main_image ? assetUrl(products[0].main_image) : "/hero-model.png", brand: "KRYOLAN", title: "PROFESSIONAL MAKE-UP", discount: "15%" },
+    { img: products.length > 1 && products[1].main_image ? assetUrl(products[1].main_image) : "/hero-model.png", brand: "ESTELIN", title: "SKINCARE", discount: "20%" },
+    { img: products.length > 2 && products[2].main_image ? assetUrl(products[2].main_image) : "/hero-model.png", brand: "FRAMESI", title: "HAIR FASHION", discount: "15%" },
+    { img: products.length > 3 && products[3].main_image ? assetUrl(products[3].main_image) : "/hero-model.png", brand: "LUSCIOUS", title: "LIVE NOW", discount: "20%" },
+    { img: products.length > 4 && products[4].main_image ? assetUrl(products[4].main_image) : "/hero-model.png", brand: "L'ORÉAL", title: "PARIS", discount: "20%" },
+    { img: products.length > 5 && products[5].main_image ? assetUrl(products[5].main_image) : "/hero-model.png", brand: "ONESKIN", title: "SKIN", discount: "15%" },
+  ];
+
   const totalCartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalCartPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
   // Filter products based on active tab AND search query
-  const hasFeaturedProducts = products.some(product => product.is_featured);
   const filteredProducts = products.filter((product) => {
-    const matchesTab = searchQuery.trim() || activeTab === 'catalog' ||
-      (activeTab === 'all' && (product.is_featured || !hasFeaturedProducts)) ||
-      (activeTab === 'sale' && product.on_sale === true) ||
-      (activeTab === 'saved' && savedIds.includes(product._id)) ||
-      selectedCollection?.categories.some(category => category._id === product.category_id?._id) ||
-      product.category_id?._id === activeTab;
+    const matchesTab = searchQuery.trim()
+      ? true
+      : activeTab === 'all'
+        ? product.is_featured
+        : product.category_id?._id === activeTab;
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch = !q
       ? true
@@ -148,21 +225,14 @@ const LandingPage = () => {
   });
 
   // Extract unique brand names from products for marquee
-  const brandNames = [...new Set(products.map((p) => p.brand).filter(Boolean))];
+  const brandNames = [...new Set(products.map((p) => p.brand))];
 
   const handleNavClick = (tabId, sectionId) => {
-    setSearchQuery('');
     setActiveTab(tabId);
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  const toggleSaved = (id) => {
-    const next = savedIds.includes(id) ? savedIds.filter(savedId => savedId !== id) : [...savedIds, id];
-    setSavedIds(next);
-    localStorage.setItem('makskin-favourites', JSON.stringify(next));
   };
 
   const handleAddToCart = (product) => {
@@ -194,7 +264,6 @@ const LandingPage = () => {
       {/* ── BENEFIT RIBBON ── */}
       <div className="benefit-ribbon">
         <div className="benefit-item"><ShieldCheck size={14} /><span>Authentic Products</span></div>
-        <div className="benefit-item"><Truck size={14} /><span>Fast &amp; Secure Delivery</span></div>
         <div className="benefit-item"><RotateCcw size={14} /><span>Easy Returns</span></div>
         <div className="benefit-item"><Lock size={14} /><span>Secure Payment</span></div>
       </div>
@@ -203,54 +272,67 @@ const LandingPage = () => {
       <header className="landing-header">
         <div className="header-container">
           <Link to="/" className="brand-logo-container">
-            <span className="logo-text-box"><Leaf aria-hidden="true" />makskin</span>
+            <span className="logo-text-box">makskin</span>
           </Link>
 
           <nav className="header-nav">
             <ul>
-              <li><Link to="/" className="nav-link-btn home-nav-link" onClick={() => { setSearchQuery(''); setActiveTab('all'); window.scrollTo(0, 0); }}>Home</Link></li>
+              <li><button onClick={() => handleNavClick('all', 'products-section')} className="nav-link-btn sale-badge-btn">Sale</button></li>
               {displayCategories.map((cat) => (
-                <li key={cat._id || cat.key}>
-                  <button onClick={() => handleNavClick(cat._id || cat.key, 'products-section')} className="nav-link-btn">{cat.name}</button>
+                <li key={cat._id}>
+                  <button onClick={() => handleNavClick(cat._id, 'products-section')} className="nav-link-btn">{cat.name}</button>
                 </li>
               ))}
               <li><a href="#brands" className="nav-link-btn">Shop All Brands</a></li>
-              <li><button onClick={() => handleNavClick('sale', 'products-section')} className="nav-link-btn sale-badge-btn">Sale</button></li>
             </ul>
           </nav>
 
           <div className="header-actions">
-            <div className="landing-search-wrapper" ref={searchRef}>
-              <button className="action-icon-btn" onClick={() => { searchRef.current?.querySelector('input')?.focus(); }} title="Search">
+            <div className={`landing-search-wrapper ${searchOpen ? 'open' : ''}`} ref={searchRef}>
+              <button className="action-icon-btn" onClick={() => { setSearchOpen(!searchOpen); if (searchOpen) setSearchQuery(''); }} title="Search">
                 <Search size={18} />
               </button>
-              <input
-                type="search"
-                placeholder="Search for products, brands..."
-                aria-label="Search products and brands"
-                className="landing-search-input"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-              />
+              {searchOpen && (
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="landing-search-input"
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                  }}
+                />
+              )}
               {searchQuery.trim() && (
                 <div className="search-results-dropdown">
                   {filteredProducts.length === 0 ? (
                     <div className="search-no-result">No products found for "{searchQuery}"</div>
                   ) : (
                     filteredProducts.slice(0, 6).map((product) => (
-                      <div key={product._id} className="search-result-item">
+                      <div
+                        key={product._id}
+                        className="search-result-item"
+                        onClick={() => {
+                          const el = document.getElementById('products-section');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          setSearchQuery('');
+                          setSearchOpen(false);
+                        }}
+                      >
                         <img src={assetUrl(product.main_image)} alt={product.name} className="search-result-img" />
-                        <Link className="search-result-info" to={`/product/${product._id}`}>
+                        <div className="search-result-info">
                           <span className="search-result-brand">{product.brand}</span>
                           <span className="search-result-name">{product.name}</span>
                           <span className="search-result-price">Rs.{(product.on_sale === true ? product.price : (product.discount_price || product.price))?.toLocaleString()}</span>
-                        </Link>
+                        </div>
                         <button
                           className="search-add-cart-btn"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleAddToCart(product);
                             setSearchQuery('');
+                            setSearchOpen(false);
                           }}
                         >
                           <ShoppingBag size={14} /> Add
@@ -297,9 +379,8 @@ const LandingPage = () => {
             ) : (
               <Link to="/login" className="action-icon-btn" title="My Account"><User size={18} /></Link>
             )}
-            <button className="action-icon-btn" aria-label="Favourites" onClick={() => handleNavClick('saved', 'products-section')}><Heart size={22} /></button>
             <button className="action-icon-btn bag-btn-wrapper" title="Shopping Bag" onClick={() => setCartOpen(true)}>
-              <ShoppingCart size={22} />
+              <ShoppingBag size={18} />
               {totalCartQuantity > 0 && (
                 <span className="cart-badge-dot">{totalCartQuantity}</span>
               )}
@@ -309,36 +390,104 @@ const LandingPage = () => {
       </header>
 
       {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
-      <HeroCarousel onShop={(category) => handleNavClick(category, 'products-section')} />
-      <div className="store-assurances">
-        <div><Leaf /><span><strong>100% Authentic Products</strong><small>Original products from trusted brands</small></span></div>
-        <div><Truck /><span><strong>Fast Delivery</strong><small>Across Pakistan</small></span></div>
-        <div><RotateCcw /><span><strong>Easy Returns</strong><small>Hassle-free returns</small></span></div>
-        <div><ShieldCheck /><span><strong>Secure Payment</strong><small>Multiple payment options</small></span></div>
-      </div>
+      <section className="hero-banner" style={{ position: 'relative', overflow: 'hidden' }}>
+        {/* Stacked banner images with fade transition */}
+        {banners.map((banner, index) => (
+          <img
+            key={banner._id}
+            src={assetUrl(banner.image)}
+            alt={banner.title || `Hero Banner ${index + 1}`}
+            className="hero-bg-img"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: activeBanner === index ? 1 : 0,
+              transition: 'opacity 1s ease-in-out',
+              zIndex: 1,
+            }}
+          />
+        ))}
+        <div className="hero-gradient-overlay" style={{ position: 'relative', zIndex: 2 }} />
+        <div className="hero-content" style={{ position: 'relative', zIndex: 3 }}>
+          <div className="hero-tag">
+            <Sparkles size={14} />
+            <span>SUMMER COLLECTION 2026</span>
+          </div>
+          <h1 className="hero-headline">
+            Discover Your<br />
+            <span className="hero-highlight">Perfect Skincare</span>
+          </h1>
+          <p className="hero-sub">
+            Shop 150+ authentic beauty brands with guaranteed delivery,
+            easy returns, and exclusive members‑only discounts.
+          </p>
+          <div className="hero-cta-group">
+            <button className="hero-cta-primary" onClick={() => handleNavClick('all', 'products-section')}>
+              Shop Now <ArrowRight size={16} />
+            </button>
+            <button className="hero-cta-secondary" onClick={() => handleNavClick('all', 'products-section')}>
+              Flat 30% OFF →
+            </button>
+          </div>
+        </div>
+        {/* Dot indicators */}
+        {banners.length > 1 && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              gap: '10px',
+              zIndex: 4,
+            }}
+          >
+            {banners.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveBanner(index)}
+                aria-label={`Go to banner ${index + 1}`}
+                style={{
+                  width: activeBanner === index ? '28px' : '10px',
+                  height: '10px',
+                  borderRadius: '5px',
+                  border: 'none',
+                  background: activeBanner === index ? '#fff' : 'rgba(255,255,255,0.5)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  padding: 0,
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* ── SHOP BY CATEGORY SECTION ── */}
       <section className="categories-section">
         <div className="categories-header-container">
-          <h2 className="categories-title"><Leaf size={21} /> Shop By Category</h2>
-          <button className="store-text-button" onClick={() => handleNavClick('catalog', 'products-section')}>View All Products <ArrowRight size={16} /></button>
+          <h2 className="categories-title">Shop By Category</h2>
         </div>
-        <div className="categories-grid-wrapper">
+        <div className="categories-grid-wrapper" ref={categoriesScrollRef}>
           <div className="categories-grid">
-            {categoryTiles.map((cat) => (
-              <button
-                type="button"
-                className={`category-item ${activeTab === (cat._id || cat.key) ? "selected" : ""}`}
-                key={cat._id}
-                onClick={() => handleNavClick(cat._id || cat.key, 'products-section')}
+            {[...categories, ...categories].map((cat, idx) => (
+              <div
+                className="category-item"
+                key={`${cat._id}-${idx}`}
+                onClick={() => handleNavClick(cat._id, 'products-section')}
               >
                 <div className="category-circle">
                   <div className="category-circle-inner-bg">
-                    {cat.image ? <img src={assetUrl(cat.image)} alt="" className="category-img" /> : <Leaf size={25} aria-hidden="true" />}
+                    <img src={assetUrl(cat.image)} alt={cat.name} className="category-img" />
                   </div>
                 </div>
                 <span className="category-label">{cat.name}</span>
-              </button>
+              </div>
             ))}
           </div>
         </div>
@@ -352,7 +501,7 @@ const LandingPage = () => {
             <h2 className="section-title">
               {activeTab === 'all' 
                 ? 'Bestsellers' 
-                : ({ sale: 'Sale', saved: 'Favourites' })[activeTab] || selectedCollection?.name || categories.find(c => c._id === activeTab)?.name || 'Products'}
+                : categories.find(c => c._id === activeTab)?.name || 'Products'}
             </h2>
             <div className="category-tabs-container">
               <button
@@ -364,8 +513,8 @@ const LandingPage = () => {
               {displayCategories.map(cat => (
                 <button
                   key={cat._id}
-                  className={`tab-btn ${activeTab === (cat._id || cat.key) ? 'active' : ''}`}
-                  onClick={() => setActiveTab(cat._id || cat.key)}
+                  className={`tab-btn ${activeTab === cat._id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(cat._id)}
                 >
                   {cat.name}
                 </button>
@@ -387,11 +536,9 @@ const LandingPage = () => {
                 const discount = (isSaleLive && product.discount_price)
                   ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
                   : 0;
+                const installment = Math.round(activePrice / 3);
                 return (
                   <div className="product-card" key={product._id}>
-                    <button className="product-save" type="button" aria-label={`Save ${product.name}`} aria-pressed={savedIds.includes(product._id)} onClick={() => toggleSaved(product._id)}>
-                      <Heart size={16} fill={savedIds.includes(product._id) ? 'currentColor' : 'none'} />
-                    </button>
                     {discount > 0 && (
                       <span className="product-discount-badge">{discount}% OFF</span>
                     )}
@@ -420,8 +567,14 @@ const LandingPage = () => {
                           </>
                         )}
                       </div>
+                      <div className="product-installment">
+                        <span className="installment-badge">B</span>
+                        <span className="installment-label">Pay only</span>
+                        <strong className="installment-price">Rs.{installment.toLocaleString()}</strong>
+                        <span className="installment-label">now</span>
+                      </div>
                       <button className="add-to-cart-btn" onClick={() => handleAddToCart(product)}>
-                        <ShoppingCart size={16} /> Add to Cart
+                        Add to Cart
                       </button>
                     </div>
                   </div>
@@ -447,13 +600,57 @@ const LandingPage = () => {
         </section>
 
         {/* ── PROMOTIONAL BANNERS CAROUSEL ── */}
-        {banners.length > 0 && (
-          <section className="store-campaigns" aria-label="Store promotions">
-            {banners.map(banner => (
-              <img key={banner._id} src={assetUrl(banner.image)} alt={banner.title || 'Makskin promotion'} loading="lazy" />
-            ))}
-          </section>
-        )}
+        <section className="promotional-banners-section">
+          <div className="promo-banners-wrapper" ref={promotionalScrollRef}>
+            <div className="promo-banners-track">
+              {[...promoBanners, ...promoBanners].map((banner, i) => (
+                <div key={`promo-${i}`} className="promo-banner-card">
+                  <img src={banner.img} alt={banner.brand} className="promo-banner-img" />
+                  <div className="promo-banner-overlay">
+                    <div className="promo-banner-brand-text">
+                      <h4>{banner.brand}</h4>
+                      <p>{banner.title}</p>
+                    </div>
+                    <div className="promo-banner-discount">
+                      <span className="flat-text">FLAT</span>
+                      <strong className="discount-val">{banner.discount}</strong>
+                      <span className="off-text">OFF</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── PROMO BANNER ── */}
+        <section className="promo-banner-section">
+          <div className="wide-promo-banner">
+            <div className="promo-gradient-overlay" />
+            <div className="promo-content">
+              <div className="promo-tag">
+                <Sparkles size={16} />
+                <span>LIMITED TIME EXCLUSIVE</span>
+              </div>
+              <h2>SUPER SUMMER SALE</h2>
+              <h3>Flat 30% Off on Premium Skincare Routine Kits</h3>
+              <p>
+                Upgrade your summer beauty ritual with dermatologically tested bundles
+                designed for ultimate hydration, brightening, and barrier repair.
+              </p>
+              <div className="promo-actions">
+                <button className="promo-shop-btn" onClick={() => handleNavClick('all', 'products-section')}>Shop The Sale <ArrowRight size={16} /></button>
+                <span className="promo-shipping-notice">Free shipping on orders over Rs. 2,000</span>
+              </div>
+            </div>
+            <div className="promo-image-pane">
+              <img
+                src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=600&h=450&fit=crop"
+                alt="Summer Sale"
+              />
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* ── SLIDE-OUT CART DRAWER ── */}
@@ -568,7 +765,7 @@ const LandingPage = () => {
             <ul>
               {displayCategories.map(cat => (
                 <li key={cat._id}>
-                  <button onClick={() => handleNavClick(cat._id || cat.key, 'products-section')} className="footer-nav-btn">{cat.name}</button>
+                  <button onClick={() => handleNavClick(cat._id, 'products-section')} className="footer-nav-btn">{cat.name}</button>
                 </li>
               ))}
             </ul>

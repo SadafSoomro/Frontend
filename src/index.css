@@ -1,22 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --store-paper: #faf9f6;
-  --store-cream: #f2f0e8;
-  --store-border: #e1e3d8;
-  --store-forest: #203817;
-  --store-green: #355e21;
-  --store-green-hover: #244714;
-  --store-muted: #56604f;
   --bg-dark: #000000; /* Black background */
   --sidebar-bg: #1a1a1a; /* Dark gray */
   --card-bg: #1e1e1e; /* Slightly lighter black for cards */
   --glass-bg: #212121; /* Glass effect base */
   --glass-border: #333333; /* Subtle border */
-  --accent-primary: var(--store-green); /* Red accent */
-  --accent-primary-light: rgba(53, 94, 33, 0.14);
-  --accent-primary-hover: var(--store-green-hover);
-  --accent-pink: var(--accent-primary); /* keeping same */
+  --accent-primary: #ff4d4f; /* Red accent */
+  --accent-primary-light: rgba(255, 77, 79, 0.15);
+  --accent-primary-hover: #e04445;
+  --accent-pink: #ff4d4f; /* keeping same */
   --accent-cyan: #00f0ff; /* unchanged */
   --accent-green: #52c41a; /* unchanged */
   --accent-yellow: #faad14; /* unchanged */
@@ -42,17 +35,15 @@
 
 
 body.dark {
-  --store-green: #9bc77c;
-  --store-green-hover: #b7d99c;
   --bg-dark: #000000; /* Pure black for premium look */
   --sidebar-bg: #09090b; /* Very dark slate for sidebar distinction */
   --card-bg: #0c0c0e; /* Card background */
   --glass-bg: #141416;
   --glass-border: #1f1f23; /* Border color */
-  --accent-primary: var(--store-green); /* Neon Pink */
-  --accent-primary-light: rgba(53, 94, 33, 0.14);
-  --accent-primary-hover: var(--store-green-hover);
-  --accent-pink: var(--accent-primary);
+  --accent-primary: #ff2a85; /* Neon Pink */
+  --accent-primary-light: rgba(255, 42, 133, 0.15);
+  --accent-primary-hover: #e01a6f;
+  --accent-pink: #ff2a85;
   --accent-cyan: #00f0ff;
   --accent-green: #39ff14;
   --accent-yellow: #fffb00;
@@ -68,15 +59,15 @@ body.dark {
 }
 
 body.light {
-  --bg-dark: var(--store-paper);
+  --bg-dark: #f4f4f5;
   --sidebar-bg: #ffffff;
   --card-bg: #ffffff;
   --glass-bg: #f1f1f1;
-  --glass-border: var(--store-border);
-  --accent-primary: var(--store-green);
-  --accent-primary-light: rgba(53, 94, 33, 0.14);
-  --accent-primary-hover: var(--store-green-hover);
-  --accent-pink: var(--accent-primary);
+  --glass-border: #e4e4e7;
+  --accent-primary: #e11d48;
+  --accent-primary-light: rgba(225, 29, 72, 0.1);
+  --accent-primary-hover: #be123c;
+  --accent-pink: #e11d48;
   --accent-cyan: #0891b2;
   --accent-green: #16a34a;
   --accent-yellow: #ca8a04;
@@ -99,7 +90,7 @@ body.light {
 
 body {
   font-family: var(--font-main);
-  background-color: var(--store-paper);
+  background-color: #fdfcfb;
   color: #1a1a1a;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;

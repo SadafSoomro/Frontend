@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Leaf,
   ShieldCheck,
   RotateCcw,
   Lock,
@@ -191,7 +190,7 @@ const MyOrders = () => {
       <header className="landing-header">
         <div className="header-container">
           <Link to="/" className="brand-logo-container">
-            <span className="logo-text-box"><Leaf aria-hidden="true" />makskin</span>
+            <span className="logo-text-box">makskin</span>
           </Link>
           <div className="my-orders-header-title">
             <Package size={16} />

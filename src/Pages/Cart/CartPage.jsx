@@ -5,7 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 import { removeFromCart, updateQuantity } from '../../Store/Slices/CartSlice';
 import { validateCouponApi } from '../../API/api';
 import {
-  Leaf,
   ShieldCheck,
   RotateCcw,
   Lock,
@@ -85,7 +84,7 @@ const CartPage = () => {
       <header className="landing-header">
         <div className="header-container">
           <Link to="/" className="brand-logo-container">
-            <span className="logo-text-box"><Leaf aria-hidden="true" />makskin</span>
+            <span className="logo-text-box">makskin</span>
           </Link>
           <div className="cart-header-title">
             <span>Shopping Cart</span>
