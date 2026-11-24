@@ -3,7 +3,7 @@
 .cart-page-layout {
   min-height: 100vh;
   width: 100%;
-  background: #fdf8f9;
+  background: #f6faf3;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #1a1a1a;
   display: flex;
@@ -29,7 +29,7 @@
 }
 
 .back-store-btn:hover {
-  color: #690923;
+  color: #41673a;
 }
 
 .cart-main-container {
@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #690923;
+  color: #41673a;
   margin-bottom: 24px;
   border: 1px solid #fce6db;
 }
@@ -86,7 +86,7 @@
 }
 
 .continue-shopping-action {
-  background: #690923;
+  background: #41673a;
   color: #fff;
   text-decoration: none;
   padding: 12px 30px;
@@ -100,7 +100,7 @@
 }
 
 .continue-shopping-action:hover {
-  background: #51061c;
+  background: #2a4929;
 }
 
 /* ── CART GRID ── */
@@ -121,7 +121,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  border-bottom: 1px solid #efd4db;
+  border-bottom: 1px solid #d6e4d1;
   padding-bottom: 12px;
 }
 
@@ -132,7 +132,7 @@
 }
 
 .add-more-link {
-  color: #634a52;
+  color: #50634c;
   text-decoration: none;
   font-size: 0.8rem;
   font-weight: 600;
@@ -140,7 +140,7 @@
 }
 
 .add-more-link:hover {
-  color: #690923;
+  color: #41673a;
 }
 
 /* ── TABLE HEADERS (DESKTOP) ── */
@@ -152,7 +152,7 @@
   border-radius: 6px;
   font-size: 0.76rem;
   font-weight: 700;
-  color: #634a52;
+  color: #50634c;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 12px;
@@ -191,7 +191,7 @@
   height: 76px;
   border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #efd4db;
+  border: 1px solid #d6e4d1;
   background: #fbf9f6;
   flex-shrink: 0;
 }
@@ -242,7 +242,7 @@
 }
 
 .item-remove-text-btn:hover {
-  color: #690923;
+  color: #41673a;
 }
 
 .price-label, .qty-label, .total-label {
@@ -260,13 +260,13 @@
 }
 
 .total-val {
-  color: #690923;
+  color: #41673a;
 }
 
 /* ── SUMMARY CARD ── */
 .summary-card {
   background: #fff;
-  border: 1px solid #efd4db;
+  border: 1px solid #d6e4d1;
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.02);
@@ -338,7 +338,7 @@
 }
 
 .proceed-checkout-btn {
-  background: #690923;
+  background: #41673a;
   color: #fff;
   border: none;
   width: 100%;
@@ -356,7 +356,7 @@
 }
 
 .proceed-checkout-btn:hover {
-  background: #51061c;
+  background: #2a4929;
   transform: translateY(-1px);
 }
 
@@ -416,7 +416,7 @@
 }
 
 .promo-code-form button {
-  background: #540819;
+  background: #324e2e;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -428,7 +428,7 @@
 }
 
 .promo-code-form button:hover {
-  background: #690923;
+  background: #41673a;
 }
 
 .promo-msg {
@@ -439,7 +439,7 @@
 }
 
 .promo-msg.error {
-  color: #690923;
+  color: #41673a;
 }
 
 .promo-msg.success {
@@ -462,7 +462,7 @@
 }
 
 .remove-promo-btn:hover {
-  color: #690923;
+  color: #41673a;
 }
 
 /* ── TRUST INDICATORS ── */
@@ -501,7 +501,7 @@
   color: #7a6e67;
   padding: 3px 8px;
   border-radius: 3px;
-  border: 1px solid #efd4db;
+  border: 1px solid #d6e4d1;
 }
 
 /* ── SIMPLIFIED FOOTER ── */
