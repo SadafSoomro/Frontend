@@ -17,6 +17,7 @@ import {
   Heart,
   ShoppingCart,
   ChevronDown,
+  Menu,
   ChevronLeft,
   ChevronRight,
   Pause,
@@ -108,6 +109,16 @@ const LandingPage = () => {
     return () => window.clearInterval(timer);
   }, [heroPaused, activeBanner]);
   const userMenuRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 901px)');
+    const closeOnDesktop = () => {
+      if (desktop.matches) mobileMenuRef.current?.close();
+    };
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, []);
   const searchRef = useRef(null);
   const promotionalScrollRef = useRef(null);
   const categoryRowRef = useRef(null);
@@ -340,6 +351,10 @@ const LandingPage = () => {
 
   const departmentOptions = (department) => categories.filter(category => categoryDepartment(category)?.id === department.id);
   const shopDepartment = (department) => handleNavClick(`department:${department.id}`, 'products-section');
+  const mobileMenuAction = (action) => {
+    mobileMenuRef.current?.close();
+    action();
+  };
 
   return (
     <div className="landing-layout">
@@ -355,6 +370,10 @@ const LandingPage = () => {
       {/* ── STICKY DARK HEADER ── */}
       <header className="landing-header">
         <div className="header-container">
+          <button type="button" className="summer-mobile-menu-button" aria-label="Open shopping menu"
+            aria-haspopup="dialog" aria-controls="summer-mobile-menu" onClick={() => mobileMenuRef.current?.showModal()}>
+            <Menu size={23} aria-hidden="true" />
+          </button>
           <Link to="/" className="brand-logo-container">
             <span className="logo-text-box"><Leaf aria-hidden="true" />makskin</span>
           </Link>
@@ -436,6 +455,7 @@ const LandingPage = () => {
                 </div>
               )}
             </div>
+            <div className="summer-account-actions">
             {isAuthenticated ? (
               <div className="user-menu-wrapper" ref={userMenuRef}>
                 <button
@@ -479,9 +499,32 @@ const LandingPage = () => {
                 <span className="cart-badge-dot">{totalCartQuantity}</span>
               )}
             </button>
+            </div>
           </div>
         </div>
       </header>
+
+      <dialog className="summer-mobile-menu" id="summer-mobile-menu" ref={mobileMenuRef} aria-labelledby="summer-mobile-menu-title"
+        onClick={event => { if (event.target === event.currentTarget) event.currentTarget.close(); }}>
+        <div className="summer-mobile-menu-content">
+          <div className="summer-mobile-menu-header">
+            <h2 id="summer-mobile-menu-title"><Leaf size={23} aria-hidden="true" /> Makskin</h2>
+            <button type="button" aria-label="Close shopping menu" onClick={() => mobileMenuRef.current?.close()}><X size={23} /></button>
+          </div>
+          <nav aria-label="Mobile shopping menu">
+            <button type="button" onClick={() => mobileMenuAction(() => window.scrollTo({ top: 0, behavior: 'smooth' }))}>Home</button>
+            {departments.map(department => (
+              <button type="button" key={department.id} onClick={() => mobileMenuAction(() => shopDepartment(department))}>
+                <img src={`/summer/${department.id}.jpg`} alt="" width="40" height="32" />{department.name}
+              </button>
+            ))}
+            <a href="#brands" onClick={() => mobileMenuRef.current?.close()}>Shop All Brands</a>
+            <button type="button" onClick={() => mobileMenuAction(() => handleNavClick('sale', 'products-section'))}>
+              <Tag size={18} aria-hidden="true" /> Sale
+            </button>
+          </nav>
+        </div>
+      </dialog>
 
       {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
       <section className="summer-hero" aria-label="Summer collection" ref={heroRef}>

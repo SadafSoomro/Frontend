@@ -418,3 +418,79 @@
   .summer-main .star-rating svg { width: 12px; height: 12px; }
   .summer-main .product-installment { column-gap: 3px; }
 }
+
+.summer-mobile-menu-button { display: none; }
+.summer-account-actions { display: flex; align-items: center; gap: inherit; flex-shrink: 0; }
+.summer-mobile-menu {
+  position: fixed;
+  inset: 0 auto 0 0;
+  margin: 0;
+  padding: 0;
+  width: min(84vw, 330px);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  border: 0;
+  background: #fbfdf8;
+  color: var(--summer-ink);
+  box-shadow: 10px 0 35px #182e1640;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.summer-mobile-menu::backdrop { background: #15251575; }
+body:has(.summer-mobile-menu[open]) { overflow: hidden; }
+.summer-mobile-menu-content { padding: 0 14px max(17px, env(safe-area-inset-bottom)); }
+.summer-mobile-menu-header {
+  position: sticky;
+  top: 0;
+  background: #fbfdf8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(10px, env(safe-area-inset-top)) 2px 10px;
+  border-bottom: 1px solid #dce8d6;
+}
+.summer-mobile-menu-header h2 { display: flex; align-items: center; gap: 7px; color: var(--summer-green); font-size: 1.25rem; }
+.summer-mobile-menu-header button, .summer-mobile-menu-button { border: 0; border-radius: 11px; color: var(--summer-green); background: #edf4e8; cursor: pointer; }
+.summer-mobile-menu-header button { display: grid; place-items: center; width: 42px; height: 42px; }
+.summer-mobile-menu nav { display: grid; gap: 4px; padding-top: 10px; }
+.summer-mobile-menu nav :is(button, a) { display: flex; align-items: center; gap: 12px; min-height: 44px; border: 0; border-radius: 10px; padding: 6px 8px; background: transparent; color: inherit; font: inherit; font-weight: 650; text-align: left; cursor: pointer; }
+.summer-mobile-menu nav :is(button, a):hover { background: #edf4e8; }
+.summer-mobile-menu nav img { flex: none; width: 40px; height: 32px; border-radius: 8px; object-fit: cover; }
+
+@media (max-width: 900px) {
+  .summer-storefront .header-nav, .summer-storefront .benefit-ribbon { display: none; }
+  .summer-storefront .header-container {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "menu logo actions" "search search search";
+    align-items: center;
+    column-gap: clamp(5px, 2vw, 14px);
+    row-gap: 7px;
+    min-height: 0;
+    padding: 9px clamp(11px, 3vw, 23px) 10px;
+  }
+  .summer-mobile-menu-button { grid-area: menu; display: grid; place-items: center; width: 40px; height: 40px; }
+  .summer-storefront .brand-logo-container { grid-area: logo; justify-self: start; }
+  .summer-storefront .logo-text-box { gap: 4px; font-size: clamp(1.35rem, 5vw, 1.75rem); }
+  .summer-storefront .header-actions { display: contents; }
+  .summer-account-actions { grid-area: actions; gap: clamp(1px, .7vw, 5px); justify-self: end; }
+  .summer-storefront .summer-account-actions :is(.action-icon-btn, .user-menu-btn) { padding: 0; width: clamp(33px, 8.5vw, 43px); height: 40px; justify-content: center; }
+  .summer-storefront .summer-account-actions :is(.action-icon-btn, .user-menu-btn) svg { width: 21px; height: 21px; }
+  .summer-storefront .landing-search-wrapper { grid-area: search; width: 100%; }
+  .summer-storefront .landing-search-input { width: 100%; height: 39px; font-size: 16px; background: #f5faf1; padding-left: 12px; }
+  .summer-storefront .landing-search-input::placeholder { font-size: .82rem; }
+  .summer-storefront .landing-search-wrapper > button { right: 8px; }
+  .summer-storefront .search-results-dropdown { width: 100%; left: 0; right: auto; }
+}
+
+@media (max-width: 720px) {
+  .summer-hero { min-height: 0; }
+  .summer-copy { width: calc(100% - 28px); padding: 19px 0 clamp(155px, 52vw, 265px); }
+  .summer-hero-image { top: auto; bottom: 0; height: clamp(155px, 52vw, 265px); object-position: 88% center; }
+  .summer-hero-shade { top: auto; bottom: 0; height: clamp(155px, 52vw, 265px); background: linear-gradient(#e7eddf 0%, transparent 23%); }
+  .summer-benefits { margin-top: -13px; width: calc(100% - 22px); }
+  .summer-categories { padding-top: 17px; padding-bottom: 12px; }
+  .summer-category-header { margin-bottom: 7px; }
+  .summer-main .section-header-row { margin-bottom: 14px; }
+}
