@@ -102,9 +102,10 @@ const LandingPage = () => {
   useEffect(() => {
     if (heroPaused) return;
     const timer = window.setInterval(() => {
-      if (!document.hidden && !heroRef.current?.matches(':hover, :focus-within')) {
-        setActiveBanner(index => (index + 1) % heroSlides.length);
-      }
+      const hero = heroRef.current;
+      if (!hero || document.hidden || hero.matches(':hover, :focus-within')) return;
+      const next = (activeBanner + 1) % heroSlides.length;
+      if (hero.querySelectorAll('.luxury-hero-image')[next]?.naturalWidth) setActiveBanner(next);
     }, 5000);
     return () => window.clearInterval(timer);
   }, [heroPaused, activeBanner]);
@@ -534,7 +535,7 @@ const LandingPage = () => {
               alt={slide.artworkText && index === activeBanner ? slide.label : ''}
               aria-hidden={index !== activeBanner || undefined}
               className={`luxury-hero-image ${activeBanner === index ? 'active' : ''}`}
-              fetchPriority={index === 0 ? 'high' : 'low'} />
+              fetchPriority={index === 0 ? 'high' : 'auto'} />
           ))}
           {activeSlide.artworkText ? (
             <h1 className="luxury-visually-hidden">{activeSlide.label}</h1>
@@ -648,7 +649,7 @@ const LandingPage = () => {
                     </button>
                     <Link to={`/product/${product._id}`} style={{ display: 'block', color: 'inherit', textDecoration: 'none' }}>
                       <div className="product-img-wrapper">
-                        <img src={assetUrl(product.main_image)} alt={product.name} />
+                        <img src={assetUrl(product.main_image)} alt={product.name} loading="lazy" />
                       </div>
                     </Link>
                     <div className="product-info">
@@ -720,7 +721,7 @@ const LandingPage = () => {
             <div className="promo-banners-track">
               {[...promoBanners, ...promoBanners].map((banner, i) => (
                 <div key={`promo-${i}`} className="promo-banner-card">
-                  <img src={banner.img} alt={banner.brand} className="promo-banner-img" />
+                  <img src={banner.img} alt={banner.brand} className="promo-banner-img" loading="lazy" />
                   {banner.discount && <div className="promo-banner-overlay">
                     <div className="promo-banner-brand-text">
                       <h4>{banner.brand}</h4>
