@@ -22,13 +22,13 @@ export default function CategoriesPage() {
     ...departments.map(department => ({
       key: department.id,
       title: department.name,
-      image: `/summer/${department.id}.jpg`,
+      image: `/category-photos/${department.id}.jpg`,
       link: `/?department=${department.id}#products-section`,
     })),
     ...categories.filter(category => category.isActive !== false && !departmentNames.has(category.name.toLowerCase())).map(category => ({
       key: category._id,
       title: category.name,
-      image: category.image ? assetUrl(category.image) : `/summer/${categoryDepartment(category)?.id || 'skincare'}.jpg`,
+      image: category.image ? assetUrl(category.image) : `/category-photos/${categoryDepartment(category)?.id || 'skincare'}.jpg`,
       link: `/?category=${encodeURIComponent(category._id)}#products-section`,
     })),
   ];
@@ -42,8 +42,8 @@ export default function CategoriesPage() {
           {tiles.map(tile => (
             <Link to={tile.link} className="category-directory-card" key={tile.key}>
               <img src={tile.image} alt="" loading="lazy" onError={event => {
-                if (event.currentTarget.getAttribute('src') !== '/summer/skincare.jpg') {
-                  event.currentTarget.src = '/summer/skincare.jpg';
+                if (event.currentTarget.getAttribute('src') !== '/category-photos/skincare.jpg') {
+                  event.currentTarget.src = '/category-photos/skincare.jpg';
                 }
               }} />
               <span>{tile.title}<ArrowRight size={17} aria-hidden="true" /></span>

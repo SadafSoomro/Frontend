@@ -20,8 +20,6 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
-  Pause,
-  Play,
   Search,
   User,
   ShoppingBag,
@@ -95,12 +93,12 @@ const LandingPage = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
-  const [heroPaused, setHeroPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [heroManuallySelected, setHeroManuallySelected] = useState(false);
   const heroRef = useRef(null);
   const activeSlide = heroSlides[activeBanner];
 
   useEffect(() => {
-    if (heroPaused) return;
+    if (heroManuallySelected || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const timer = window.setInterval(() => {
       const hero = heroRef.current;
       if (!hero || document.hidden || hero.matches(':hover, :focus-within')) return;
@@ -108,7 +106,7 @@ const LandingPage = () => {
       if (hero.querySelectorAll('.luxury-hero-image')[next]?.naturalWidth) setActiveBanner(next);
     }, 5000);
     return () => window.clearInterval(timer);
-  }, [heroPaused, activeBanner]);
+  }, [heroManuallySelected, activeBanner]);
   const userMenuRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
@@ -516,7 +514,7 @@ const LandingPage = () => {
             <button type="button" onClick={() => mobileMenuAction(() => window.scrollTo({ top: 0, behavior: 'smooth' }))}>Home</button>
             {departments.map(department => (
               <button type="button" key={department.id} onClick={() => mobileMenuAction(() => shopDepartment(department))}>
-                <img src={`/summer/${department.id}.jpg`} alt="" width="40" height="32" />{department.name}
+                <img src={`/category-photos/${department.id}.jpg`} alt="" width="40" height="32" />{department.name}
               </button>
             ))}
             <a href="#brands" onClick={() => mobileMenuRef.current?.close()}>Shop All Brands</a>
@@ -552,11 +550,8 @@ const LandingPage = () => {
           </button>
           <div className="summer-dots" aria-label="Select a banner">
             {heroSlides.map((slide, index) => (
-              <button key={slide.image} type="button" aria-label={slide.label} aria-pressed={index === activeBanner} onClick={() => setActiveBanner(index)} />
+              <button key={slide.image} type="button" aria-label={slide.label} aria-pressed={index === activeBanner} onClick={() => { setHeroManuallySelected(true); setActiveBanner(index); }} />
             ))}
-            <button className="summer-hero-pause" type="button" aria-label={heroPaused ? 'Play banner rotation' : 'Pause banner rotation'} onClick={() => setHeroPaused(!heroPaused)}>
-              {heroPaused ? <Play size={13} /> : <Pause size={13} />}
-            </button>
           </div>
         </div>
       </section>
@@ -582,7 +577,7 @@ const LandingPage = () => {
                   aria-pressed={selectedDepartment?.id === department.id}
                   aria-hidden={duplicate || undefined} tabIndex={duplicate ? -1 : undefined}
                   onClick={() => shopDepartment(department)}>
-                  <img src={`/summer/${department.id}.jpg`} alt="" width="443" height="443" />
+                  <img src={`/category-photos/${department.id}.jpg`} alt="" width="480" height="300" />
                   <span>{department.name}</span>
                 </button>
               );
@@ -688,7 +683,7 @@ const LandingPage = () => {
             {upcomingNames.map(name => (
               <article className="product-card summer-upcoming-card" key={name}>
                 <div className="product-img-wrapper">
-                  <img src={`/summer/${selectedDepartment.id}.jpg`} alt="" width="443" height="443" loading="lazy" />
+                  <img src={`/category-photos/${selectedDepartment.id}.jpg`} alt="" width="480" height="300" loading="lazy" />
                 </div>
                 <div className="product-info">
                   <span className="product-brand">{selectedDepartment.name}</span>

@@ -325,7 +325,6 @@
   .category-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 }
 
-.summer-dots .summer-hero-pause { display: inline-grid; place-items: center; width: 25px; height: 25px; margin-left: 3px; background: #e8ddcb; color: var(--summer-primary); }
 
 @media (max-width: 420px) {
   .summer-storefront .header-container { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 6px; }
@@ -496,7 +495,6 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
 .luxury-hero-controls .summer-dots { margin: 0; }
 .luxury-hero-controls .summer-dots button { background: #c6a76d; }
 .luxury-hero-controls .summer-dots button[aria-pressed="true"] { background: #191919; }
-.luxury-hero-controls .summer-dots .summer-hero-pause { background: #fcfaf6; }
 .luxury-hero + .summer-benefits { margin-top: 0; }
 @media (max-width: 720px) {
   .luxury-hero-controls { gap: 11px; padding-bottom: 9px; }
