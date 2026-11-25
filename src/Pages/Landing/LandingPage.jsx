@@ -49,7 +49,7 @@ const heroSlides = [
 ];
 
 const benefits = [
-  { icon: ShieldCheck, short: 'Authentic Products', title: '100% Authentic Products', detail: 'Guaranteed original & trusted brands' },
+  { icon: ShieldCheck, short: 'Authentic Products', title: '100% Authentic Products', mobileTitle: 'Authentic Products', detail: 'Guaranteed original & trusted brands' },
   { icon: Truck, short: 'Fast & Secure Delivery', title: 'Fast Delivery', detail: 'Across Pakistan' },
   { icon: RotateCcw, short: 'Easy Returns (7 Days)', title: 'Easy Returns', detail: '7-day hassle-free returns' },
   { icon: CreditCard, short: 'Secure Payment', title: 'Secure Payment', detail: 'Multiple safe payment options' },
@@ -570,8 +570,8 @@ const LandingPage = () => {
       </section>
 
       <div className="summer-benefits">
-        {benefits.map(({ icon, short, title, detail }) => (
-          <div key={title}>{React.createElement(icon, { 'aria-hidden': true })}<span><strong className="benefit-full-title">{title}</strong><strong className="benefit-mobile-title">{short}</strong><small>{detail}</small></span></div>
+        {benefits.map(({ icon, title, mobileTitle, detail }) => (
+          <div key={title}>{React.createElement(icon, { 'aria-hidden': true })}<span><strong className="benefit-full-title">{title}</strong><strong className="benefit-mobile-title">{mobileTitle || title}</strong><small>{detail}</small></span></div>
         ))}
       </div>
 
