@@ -539,8 +539,7 @@ const LandingPage = () => {
 
       {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
       <section className="luxury-hero" aria-label="Beauty collections" ref={heroRef}>
-        <div className="luxury-hero-stage" style={{ backgroundImage: `url("${activeSlide.image}")` }}>
-          <div className="luxury-hero-matte" aria-hidden="true" />
+        <div className="luxury-hero-stage">
           {heroSlides.map((slide, index) => (
             <img key={slide.image} src={slide.image}
               alt={slide.artworkText && index === activeBanner ? slide.label : ''}

@@ -482,7 +482,7 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
 .summer-main .section-title, .summer-category-header h2, .category-directory h1 { font-family: Georgia, 'Times New Roman', serif; }
 .summer-category img, .category-directory-card img { background: #e8ddcb; }
 .luxury-hero { background: #e8ddcb; }
-.luxury-hero-stage { position: relative; isolation: isolate; width: min(100%, 920px); height: clamp(124px, 43vw, 460px); margin: auto; background: #e8ddcb; }
+.luxury-hero-stage { position: relative; isolation: isolate; width: 100%; aspect-ratio: 2 / 1; background: #e8ddcb; }
 .luxury-hero-image { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity .55s ease; }
 .luxury-hero-image.active { opacity: 1; }
 .luxury-hero-copy { position: absolute; inset: 8% 10% auto; text-align: center; color: #191919; }
@@ -504,17 +504,6 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
   .luxury-hero-image { transition: none; }
 }
 
-.luxury-hero-stage {
-  width: 100%;
-  background-size: cover;
-  background-position: center;
-}
-.luxury-hero-matte {
-  position: absolute;
-  inset: 0;
-  backdrop-filter: blur(24px);
-  background: #e8ddcb52;
-}
 .catalog-filters {
   display: grid;
   grid-template-columns: minmax(115px, 1.3fr) repeat(2, minmax(95px, 1fr)) auto auto;
@@ -536,7 +525,6 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
 .catalog-filters button { min-height: 39px; padding: 5px 9px; border: 1px solid #d8c5a4; background: #e8ddcb; color: #191919; border-radius: 6px; cursor: pointer; font: inherit; font-size: .76rem; font-weight: 750; }
 .catalog-filter-message { margin: -8px 0 13px; font-size: .83rem; color: #862c2f; }
 @media (max-width: 720px) {
-  .luxury-hero-stage { height: auto; aspect-ratio: 2; }
   .catalog-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
   .catalog-filters label:first-of-type { grid-column: 1 / -1; }
   .catalog-filters :is(select, input:not([type="checkbox"])) { font-size: 16px; }
