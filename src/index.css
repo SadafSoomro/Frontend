@@ -6,10 +6,10 @@
   --card-bg: #1e1e1e; /* Slightly lighter black for cards */
   --glass-bg: #212121; /* Glass effect base */
   --glass-border: #333333; /* Subtle border */
-  --accent-primary: #41673a; /* Store accent */
-  --accent-primary-light: rgba(65, 103, 58, 0.14);
-  --accent-primary-hover: #2a4929;
-  --accent-pink: #41673a; /* keeping same */
+  --accent-primary: #191919; /* Store accent */
+  --accent-primary-light: rgba(153, 120, 63, 0.14);
+  --accent-primary-hover: #34302a;
+  --accent-pink: #191919; /* keeping same */
   --accent-cyan: #00f0ff; /* unchanged */
   --accent-green: #52c41a; /* unchanged */
   --accent-yellow: #faad14; /* unchanged */
@@ -40,10 +40,10 @@ body.dark {
   --card-bg: #0c0c0e; /* Card background */
   --glass-bg: #141416;
   --glass-border: #1f1f23; /* Border color */
-  --accent-primary: #a8cf93;
-  --accent-primary-light: rgba(65, 103, 58, 0.14);
-  --accent-primary-hover: #2a4929;
-  --accent-pink: #a8cf93;
+  --accent-primary: #c6a76d;
+  --accent-primary-light: rgba(153, 120, 63, 0.14);
+  --accent-primary-hover: #34302a;
+  --accent-pink: #c6a76d;
   --accent-cyan: #00f0ff;
   --accent-green: #39ff14;
   --accent-yellow: #fffb00;
@@ -64,10 +64,10 @@ body.light {
   --card-bg: #ffffff;
   --glass-bg: #f1f1f1;
   --glass-border: #e4e4e7;
-  --accent-primary: #41673a;
-  --accent-primary-light: rgba(65, 103, 58, 0.14);
-  --accent-primary-hover: #2a4929;
-  --accent-pink: #41673a;
+  --accent-primary: #191919;
+  --accent-primary-light: rgba(153, 120, 63, 0.14);
+  --accent-primary-hover: #34302a;
+  --accent-pink: #191919;
   --accent-cyan: #0891b2;
   --accent-green: #16a34a;
   --accent-yellow: #ca8a04;
@@ -90,7 +90,7 @@ body.light {
 
 body {
   font-family: var(--font-main);
-  background-color: #fdfcfb;
+  background-color: #FCFAF6;
   color: #1a1a1a;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;

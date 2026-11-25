@@ -3,7 +3,7 @@
 .checkout-page-layout {
   min-height: 100vh;
   width: 100%;
-  background: #f6faf3;
+  background: #fcfaf6;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #1a1a1a;
   display: flex;
@@ -13,8 +13,8 @@
 
 /* ── BENEFIT RIBBON ── */
 .benefit-ribbon {
-  background: #f6faf3;
-  border-bottom: 1px solid #d6e4d1;
+  background: #fcfaf6;
+  border-bottom: 1px solid #e8ddcb;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,7 +22,7 @@
   padding: 8px 16px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #50634c;
+  color: #555555;
   flex-wrap: wrap;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .benefit-item svg {
-  color: #41673a;
+  color: #191919;
 }
 
 .checkout-header-title {
@@ -62,7 +62,7 @@
 }
 
 .back-cart-btn:hover {
-  color: #41673a;
+  color: #191919;
 }
 
 .checkout-main-container {
@@ -91,7 +91,7 @@
 }
 
 .return-store-btn {
-  background: #41673a;
+  background: #191919;
   color: #fff;
   text-decoration: none;
   padding: 12px 30px;
@@ -103,7 +103,7 @@
 }
 
 .return-store-btn:hover {
-  background: #2a4929;
+  background: #34302a;
 }
 
 /* ── GRID CONTAINER ── */
@@ -122,7 +122,7 @@
 
 .form-section-card {
   background: #fff;
-  border: 1px solid #d6e4d1;
+  border: 1px solid #e8ddcb;
   border-radius: 8px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.02);
@@ -140,7 +140,7 @@
 .step-num {
   width: 24px;
   height: 24px;
-  background: #41673a;
+  background: #191919;
   color: #fff;
   border-radius: 50%;
   display: flex;
@@ -177,7 +177,7 @@
 .form-group label {
   font-size: 0.76rem;
   font-weight: 700;
-  color: #50634c;
+  color: #555555;
 }
 
 .form-group input {
@@ -223,7 +223,7 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  border: 1px solid #d6e4d1;
+  border: 1px solid #e8ddcb;
   border-radius: 6px;
   padding: 16px;
   cursor: pointer;
@@ -237,25 +237,25 @@
 }
 
 .payment-option-label.selected {
-  border-color: #41673a;
+  border-color: #191919;
   background: #ffeff0;
 }
 
 .payment-option-label input[type="radio"] {
   margin-top: 4px;
-  accent-color: #41673a;
+  accent-color: #191919;
   width: 16px;
   height: 16px;
 }
 
 .option-icon {
   margin-top: 2px;
-  color: #50634c;
+  color: #555555;
   flex-shrink: 0;
 }
 
 .payment-option-label.selected .option-icon {
-  color: #41673a;
+  color: #191919;
 }
 
 .option-info {
@@ -311,7 +311,7 @@
 .card-input-details-subform {
   margin-top: 16px;
   background: #fbf9f6;
-  border: 1.5px dashed #d6e4d1;
+  border: 1.5px dashed #e8ddcb;
   padding: 14px;
   border-radius: 6px;
 }
@@ -336,7 +336,7 @@
 /* ── ORDER SUMMARY CARD ── */
 .order-summary-card {
   background: #fff;
-  border: 1px solid #d6e4d1;
+  border: 1px solid #e8ddcb;
   border-radius: 8px;
   padding: 24px;
   position: sticky;
@@ -372,7 +372,7 @@
   border-radius: 4px;
   border: 1px solid #f0e8e2;
   position: relative;
-  background: #f6faf3;
+  background: #fcfaf6;
   flex-shrink: 0;
 }
 
@@ -434,11 +434,11 @@
 
 .final-total-val {
   font-size: 1.2rem;
-  color: #41673a;
+  color: #191919;
 }
 
 .place-order-btn {
-  background: #41673a;
+  background: #191919;
   color: #fff;
   border: none;
   width: 100%;
@@ -452,7 +452,7 @@
 }
 
 .place-order-btn:hover {
-  background: #2a4929;
+  background: #34302a;
   transform: translateY(-1px);
 }
 
@@ -516,7 +516,7 @@
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  background: linear-gradient(135deg, #f3ede2 0%, #e8ddcb 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -619,7 +619,7 @@
 }
 
 .tracking-val {
-  color: #41673a;
+  color: #191919;
   font-size: 0.95rem;
   font-weight: 700;
   background: rgba(226, 27, 38, 0.08);

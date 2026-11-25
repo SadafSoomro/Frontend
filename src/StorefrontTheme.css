@@ -1,55 +1,55 @@
 ﻿:root {
-  --makskin-green: #41673a;
-  --makskin-deep: #2a4929;
-  --makskin-paper: #f6faf3;
-  --makskin-line: #d6e4d1;
-  --makskin-muted: #50634c;
+  --makskin-primary: #191919;
+  --makskin-deep: #34302a;
+  --makskin-paper: #fcfaf6;
+  --makskin-line: #e8ddcb;
+  --makskin-muted: #555555;
 }
 
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout, .product-detail-layout) {
   background: var(--makskin-paper);
   font-family: var(--font-main);
-  color: #233022;
+  color: #191919;
 }
 
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .landing-header {
-  background: #fbfdf8;
+  background: #fcfaf6;
   box-shadow: 0 1px 0 var(--makskin-line);
 }
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .logo-text-box {
-  color: var(--makskin-green);
+  color: var(--makskin-primary);
   background: transparent;
   padding-inline: 0;
   font-size: clamp(1.15rem, 2.6vw, 1.9rem);
   letter-spacing: -.055em;
 }
-:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) :is(.cart-header-title, .checkout-header-title, .my-orders-header-title, .action-icon-btn) { color: var(--makskin-green); }
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) :is(.cart-header-title, .checkout-header-title, .my-orders-header-title, .action-icon-btn) { color: var(--makskin-primary); }
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) :is(.back-store-btn, .back-cart-btn) { color: var(--makskin-muted); }
-:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-ribbon { background: #e0ecd6; color: #294427; border: 0; }
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-ribbon { background: #e8ddcb; color: #302923; border: 0; }
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-item,
-:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-item svg { color: #294427; }
+:is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .benefit-item svg { color: #302923; }
 
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout, .product-detail-layout) :is(.form-section-card, .order-summary-card, .summary-card, .my-order-card, .cart-page-item-card, .main-image-viewport) {
-  background: #fbfdf8;
+  background: #fcfaf6;
   border: 1px solid var(--makskin-line);
   border-radius: 15px;
-  box-shadow: 0 3px 12px #41673a0d;
+  box-shadow: 0 3px 12px #1919190d;
 }
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .simplified-footer { background: var(--makskin-deep); color: white; border-color: var(--makskin-deep); }
 :is(.cart-page-layout, .checkout-page-layout, .my-orders-page-layout) .simplified-footer :is(.footer-bottom-info, .footer-logo) { color: white; }
 
-.auth-split-layout { color: #233022; background: radial-gradient(ellipse at top right, #e5efdd, var(--makskin-paper) 62%); }
+.auth-split-layout { color: #191919; background: radial-gradient(ellipse at top right, #f3ede2, var(--makskin-paper) 62%); }
 .auth-split-layout .auth-graphic-panel { background: var(--makskin-deep); }
 .auth-split-layout .auth-graphic-panel::before { background-position: 78% center; opacity: .55; }
 .auth-split-layout .graphic-overlay { background: linear-gradient(transparent, var(--makskin-deep)); }
-.auth-split-layout .back-home-btn { background: #fbfdf8; color: var(--makskin-green); border-color: var(--makskin-line); }
-.auth-split-layout .form-container { color: #233022; background: #fbfdf8; border-color: var(--makskin-line); box-shadow: 0 12px 42px #41673a15; }
-.auth-split-layout .form-header h2 { color: var(--makskin-green); -webkit-text-fill-color: currentColor; background: none; }
+.auth-split-layout .back-home-btn { background: #fcfaf6; color: var(--makskin-primary); border-color: var(--makskin-line); }
+.auth-split-layout .form-container { color: #191919; background: #fcfaf6; border-color: var(--makskin-line); box-shadow: 0 12px 42px #19191915; }
+.auth-split-layout .form-header h2 { color: var(--makskin-primary); -webkit-text-fill-color: currentColor; background: none; }
 .auth-split-layout :is(.form-header p, .form-footer) { color: var(--makskin-muted); }
-.auth-split-layout .modern-form-group label { color: #344331; }
-.auth-split-layout .modern-form-group :is(input, select) { background: #fff; color: #233022; border-color: var(--makskin-line); }
-.auth-split-layout .modern-form-group input::placeholder { color: #60775c; }
-.auth-split-layout .modern-auth-btn { color: #fff; background: var(--makskin-green); }
+.auth-split-layout .modern-form-group label { color: #302923; }
+.auth-split-layout .modern-form-group :is(input, select) { background: #fff; color: #191919; border-color: var(--makskin-line); }
+.auth-split-layout .modern-form-group input::placeholder { color: #80663f; }
+.auth-split-layout .modern-auth-btn { color: #fff; background: var(--makskin-primary); }
 .auth-split-layout .modern-auth-btn:hover:not(:disabled) { background: var(--makskin-deep); }
 .auth-split-layout .error-msg { color: #8c1534; }
 

@@ -44,9 +44,9 @@ import './LandingPage.css';
 import './SummerStorefront.css';
 
 const heroSlides = [
-  { image: '/summer/hero.jpg', title: 'Discover Your', highlight: 'Perfect Skincare', description: 'Shop 150+ authentic beauty brands with guaranteed delivery, easy returns, and exclusive member-only discounts.', department: 'skincare' },
-  { image: '/summer/hero-makeup.jpg', title: 'Find Your', highlight: 'Signature Makeup', description: 'Explore lip colours, eyeshadow and everyday makeup essentials.', department: 'makeup' },
-  { image: '/summer/hero-routine.jpg', title: 'Build Your', highlight: 'Beauty Routine', description: 'Find skincare staples and makeup favourites for your daily routine.' },
+  { image: '/luxury/luminosity.webp', label: 'Luminosity. Multiplied.', artworkText: true, department: 'makeup' },
+  { image: '/luxury/skincare.jpg', label: 'The Skincare Edit', description: 'Daily essentials for your skincare routine', department: 'skincare' },
+  { image: '/luxury/makeup.jpg', label: 'The Makeup Edit', description: 'Discover colours and finishes for every look', department: 'makeup' },
 ];
 
 const benefits = [
@@ -527,29 +527,36 @@ const LandingPage = () => {
       </dialog>
 
       {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
-      <section className="summer-hero" aria-label="Summer collection" ref={heroRef}>
-        {heroSlides.map((slide, index) => (
-          <img key={slide.image} src={slide.image} alt="" className={`summer-hero-image ${activeBanner === index ? 'active' : ''}`} fetchPriority={index === 0 ? 'high' : 'low'} />
-        ))}
-        <div className="summer-hero-shade" />
-        <div className="summer-copy">
-          <div className="hero-tag"><Leaf size={19} aria-hidden="true" /> SUMMER COLLECTION 2026</div>
-          <h1 className="hero-headline">{activeSlide.title}<br /><span className="hero-highlight">{activeSlide.highlight}</span></h1>
-          <p className="hero-sub">{activeSlide.description}</p>
-          <div className="hero-cta-group">
-            <button className="hero-cta-primary" onClick={() => handleNavClick(activeSlide.department ? `department:${activeSlide.department}` : 'all', 'products-section')}>Shop Now <ArrowRight size={23} /></button>
-            <button className="hero-cta-secondary" onClick={() => handleNavClick('sale', 'products-section')}><Tag size={23} /> Flat 30% OFF</button>
-          </div>
-          {heroSlides.length > 1 && (
-            <div className="summer-dots" aria-label="Select a banner">
-              {heroSlides.map((slide, index) => (
-                <button key={slide.image} type="button" aria-label={slide.highlight} aria-pressed={index === activeBanner} onClick={() => setActiveBanner(index)} />
-              ))}
-              <button className="summer-hero-pause" type="button" aria-label={heroPaused ? 'Play banner rotation' : 'Pause banner rotation'} onClick={() => setHeroPaused(!heroPaused)}>
-                {heroPaused ? <Play size={13} /> : <Pause size={13} />}
-              </button>
+      <section className="luxury-hero" aria-label="Beauty collections" ref={heroRef}>
+        <div className="luxury-hero-stage">
+          {heroSlides.map((slide, index) => (
+            <img key={slide.image} src={slide.image}
+              alt={slide.artworkText && index === activeBanner ? slide.label : ''}
+              aria-hidden={index !== activeBanner || undefined}
+              className={`luxury-hero-image ${activeBanner === index ? 'active' : ''}`}
+              fetchPriority={index === 0 ? 'high' : 'low'} />
+          ))}
+          {activeSlide.artworkText ? (
+            <h1 className="luxury-visually-hidden">{activeSlide.label}</h1>
+          ) : (
+            <div className="luxury-hero-copy">
+              <h1>{activeSlide.label}</h1>
+              <p>{activeSlide.description}</p>
             </div>
           )}
+        </div>
+        <div className="luxury-hero-controls">
+          <button className="luxury-shop-button" type="button" onClick={() => handleNavClick(`department:${activeSlide.department}`, 'products-section')}>
+            Shop {activeSlide.department === 'skincare' ? 'Skincare' : 'Makeup'} <ArrowRight size={16} />
+          </button>
+          <div className="summer-dots" aria-label="Select a banner">
+            {heroSlides.map((slide, index) => (
+              <button key={slide.image} type="button" aria-label={slide.label} aria-pressed={index === activeBanner} onClick={() => setActiveBanner(index)} />
+            ))}
+            <button className="summer-hero-pause" type="button" aria-label={heroPaused ? 'Play banner rotation' : 'Pause banner rotation'} onClick={() => setHeroPaused(!heroPaused)}>
+              {heroPaused ? <Play size={13} /> : <Pause size={13} />}
+            </button>
+          </div>
         </div>
       </section>
 
