@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 import { categoryDepartment, departments, productDepartment } from './catalogDepartments';
 import { upcomingProducts } from './upcomingProducts';
+import { defaultProductFilters, matchesProductFilters, productPrice } from '../../lib/catalogFilters';
 import './LandingPage.css';
 import './SummerStorefront.css';
 
@@ -82,6 +83,7 @@ const LandingPage = () => {
     const frame = window.requestAnimationFrame(() => document.getElementById('products-section')?.scrollIntoView());
     return () => window.cancelAnimationFrame(frame);
   }, [hash]);
+  const [productFilters, setProductFilters] = useState(defaultProductFilters);
   const [savedIds, setSavedIds] = useState(() => {
     try {
       const ids = JSON.parse(localStorage.getItem('makskin-favourites'));
@@ -290,6 +292,7 @@ const LandingPage = () => {
       productDepartment(product, categoriesById.get(categoryId))?.id === selectedDepartment.id;
     const matchesTab = searchQuery.trim() ||
       matchesDepartment ||
+      activeTab === 'catalog' ||
       (activeTab === 'all' && product.is_featured) ||
       (activeTab === 'saved' && savedIds.includes(product._id)) ||
       (activeTab === 'sale' && product.on_sale === true) ||
@@ -303,8 +306,16 @@ const LandingPage = () => {
     return matchesTab && matchesSearch;
   });
 
+  const filterBrands = [...new Set(filteredProducts.map(product => product.brand).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+  const hasProductFilters = Object.values(productFilters).some(Boolean);
+  const invalidPriceRange = productFilters.min !== '' && productFilters.max !== '' &&
+    Number(productFilters.min) > Number(productFilters.max);
+  const visibleProducts = invalidPriceRange ? [] : filteredProducts.filter(product => matchesProductFilters(product, productFilters));
+  const updateProductFilter = (key, value) => setProductFilters(previous => ({ ...previous, [key]: value }));
+
   const catalogNames = new Set(filteredProducts.map(product => product.name.trim().toLowerCase()));
-  const upcomingNames = (upcomingProducts[selectedDepartment?.id] || [])
+  const upcomingNames = (hasProductFilters ? [] : upcomingProducts[selectedDepartment?.id] || [])
     .filter(name => !catalogNames.has(name.toLowerCase()) && name.toLowerCase().includes(searchQuery.trim().toLowerCase()));
 
   // Extract unique brand names from products for marquee
@@ -313,6 +324,7 @@ const LandingPage = () => {
   const handleNavClick = (tabId, sectionId) => {
     setSearchQuery('');
     setActiveTab(tabId);
+    setProductFilters(defaultProductFilters);
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -331,7 +343,7 @@ const LandingPage = () => {
       return;
     }
     const isSaleLive = product.on_sale === true;
-    const activePrice = isSaleLive ? product.price : (product.discount_price || product.price);
+    const activePrice = productPrice(product);
     const discount = (isSaleLive && product.discount_price)
       ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
       : 0;
@@ -527,7 +539,8 @@ const LandingPage = () => {
 
       {/* ── FULL-WIDTH HERO BANNER WITH FADING CAROUSEL ── */}
       <section className="luxury-hero" aria-label="Beauty collections" ref={heroRef}>
-        <div className="luxury-hero-stage">
+        <div className="luxury-hero-stage" style={{ backgroundImage: `url("${activeSlide.image}")` }}>
+          <div className="luxury-hero-matte" aria-hidden="true" />
           {heroSlides.map((slide, index) => (
             <img key={slide.image} src={slide.image}
               alt={slide.artworkText && index === activeBanner ? slide.label : ''}
@@ -596,22 +609,24 @@ const LandingPage = () => {
             <div className="summer-bestsellers-heading">
               <h2 className="section-title">
                 <Leaf aria-hidden="true" />
-                {activeTab === 'all' ? 'Bestsellers' : activeTab === 'saved' ? 'Favourites' : activeTab === 'sale' ? 'Sale' : selectedDepartment?.name || categories.find(category => category._id === activeTab)?.name || 'Products'}
+                {activeTab === 'all' ? 'Bestsellers' : activeTab === 'catalog' ? 'All Products' : activeTab === 'saved' ? 'Favourites' : activeTab === 'sale' ? 'Sale' : selectedDepartment?.name || categories.find(category => category._id === activeTab)?.name || 'Products'}
               </h2>
               {activeTab === 'all' && <span className="summer-most-loved"><Heart size={18} aria-hidden="true" /> Most Loved Products</span>}
             </div>
             <div className="category-tabs-container">
               <button
                 className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
-                onClick={() => setActiveTab('all')}
+                onClick={() => handleNavClick('all', 'products-section')}
               >
                 Bestsellers
               </button>
+              <button type="button" className={`tab-btn ${activeTab === 'catalog' ? 'active' : ''}`}
+                onClick={() => handleNavClick('catalog', 'products-section')}>All Products</button>
               {displayCategories.map(cat => (
                 <button
                   key={cat._id}
                   className={`tab-btn ${activeTab === cat._id ? 'active' : ''}`}
-                  onClick={() => setActiveTab(cat._id)}
+                  onClick={() => handleNavClick(cat._id, 'products-section')}
                 >
                   {cat.name}
                 </button>
@@ -619,17 +634,37 @@ const LandingPage = () => {
             </div>
           </div>
 
+          <fieldset className="catalog-filters">
+            <legend>Filter products</legend>
+            <label>Brand
+              <select value={productFilters.brand} onChange={event => updateProductFilter('brand', event.target.value)}>
+                <option value="">All brands</option>
+                {filterBrands.map(brand => <option key={brand} value={brand}>{brand}</option>)}
+              </select>
+            </label>
+            <label>Min. price (PKR)
+              <input type="number" inputMode="numeric" min="0" placeholder="Any" value={productFilters.min} onChange={event => updateProductFilter('min', event.target.value)} />
+            </label>
+            <label>Max. price (PKR)
+              <input type="number" inputMode="numeric" min="0" placeholder="Any" value={productFilters.max} onChange={event => updateProductFilter('max', event.target.value)} />
+            </label>
+            <label className="catalog-stock-filter">
+              <input type="checkbox" checked={productFilters.inStock} onChange={event => updateProductFilter('inStock', event.target.checked)} /> In stock only
+            </label>
+            {hasProductFilters && <button type="button" onClick={() => setProductFilters(defaultProductFilters)}>Clear filters</button>}
+          </fieldset>
+          {invalidPriceRange && <p className="catalog-filter-message" role="status">Minimum price must be less than or equal to maximum price.</p>}
           <div className="products-grid">
-            {filteredProducts.length === 0 && upcomingNames.length === 0 ? (
+            {visibleProducts.length === 0 && upcomingNames.length === 0 ? (
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: '#888' }}>
                 <ShoppingBag size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
                 <p style={{ fontSize: '18px', fontWeight: 500 }}>No products found</p>
-                <p style={{ fontSize: '14px', marginTop: '8px' }}>{selectedDepartment ? 'This category has no products yet.' : 'Try selecting a different category.'}</p>
+                <p style={{ fontSize: '14px', marginTop: '8px' }}>{hasProductFilters ? 'Try adjusting your filters.' : selectedDepartment ? 'This category has no products yet.' : 'Try selecting a different category.'}</p>
               </div>
             ) : (
-              filteredProducts.map((product) => {
+              visibleProducts.map((product) => {
                 const isSaleLive = product.on_sale === true;
-                const activePrice = isSaleLive ? product.price : (product.discount_price || product.price);
+                const activePrice = productPrice(product);
                 const discount = (isSaleLive && product.discount_price)
                   ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
                   : 0;

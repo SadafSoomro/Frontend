@@ -1,7 +1,7 @@
+import { getDeliveryFee, freeDeliveryThreshold } from '../../lib/delivery';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useAuth } from '../../context/AuthContext';
 import { removeFromCart, updateQuantity } from '../../Store/Slices/CartSlice';
 import { validateCouponApi } from '../../API/api';
 import {
@@ -57,7 +57,7 @@ const CartPage = () => {
   };
 
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
-  const shippingFee = subtotal > 2000 || subtotal === 0 ? 0 : 200;
+  const shippingFee = getDeliveryFee(subtotal);
   const grandTotal = subtotal - discountAmount + shippingFee;
 
   const handleCheckoutClick = () => {
@@ -207,7 +207,7 @@ const CartPage = () => {
 
                 {shippingFee > 0 && (
                   <div className="shipping-notice-box">
-                    <p>Add <strong>Rs.{(2000 - subtotal).toLocaleString()}</strong> more to unlock <strong>FREE SHIPPING</strong>!</p>
+                    <p>Add <strong>Rs.{(freeDeliveryThreshold + 1 - subtotal).toLocaleString()}</strong> more to unlock <strong>FREE SHIPPING</strong>!</p>
                   </div>
                 )}
 

@@ -1,3 +1,4 @@
+import { getDeliveryFee } from '../../lib/delivery';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -74,7 +75,7 @@ const CheckoutPage = () => {
   );
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const shippingFee = subtotal > 2000 || subtotal === 0 ? 0 : 200;
+  const shippingFee = getDeliveryFee(subtotal);
   const grandTotal = subtotal - appliedDiscountAmount + shippingFee;
 
   useEffect(() => {

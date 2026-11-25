@@ -1,9 +1,11 @@
-﻿const shortcuts = ['Track my order', 'Delivery charges', 'Returns', 'Find skincare', 'Find makeup'];
+import { deliverySummary } from '../../lib/delivery.js';
+
+const shortcuts = ['Track my order', 'Delivery charges', 'Returns', 'Find skincare', 'Find makeup'];
 
 const answers = [
     { match: /payment|cod|cash on delivery|card|bank transfer|pay kaise/i, text: 'Checkout offers cash on delivery, bank transfer and card where available. Select an available method at checkout.', link: '/checkout', label: 'Checkout' },
     { match: /track|order status|mera order|parcel|where.*order/i, text: 'Open My Orders to check your order status and tracking details. Sign in with the account you used at checkout.', link: '/my-orders', label: 'My Orders' },
-    { match: /deliver|shipping|charges|kitn[aeiy]|kab aye/i, text: 'Makskin ships across Pakistan. Checkout charges Rs. 200 for delivery on orders of Rs. 2,000 or less, and shipping is free above Rs. 2,000.', link: '/cart', label: 'View bag' },
+    { match: /deliver|shipping|charges|kitn[aeiy]|kab aye/i, text: deliverySummary, link: '/cart', label: 'View bag' },
     { match: /return|refund|exchange|wap[ia]s/i, text: 'Makskin advertises 7-day returns. For eligibility and next steps, message support with your order number.', support: true },
     { match: /coupon|promo code|discount code|voucher/i, text: 'Enter your promo code in the shopping bag. The bag shows whether the code applies and updates the total.', link: '/cart', label: 'View bag' },
     { match: /cancel|change.*order|address.*order/i, text: 'Open My Orders to see the actions available for your order. Message support if you need help changing the delivery address.', link: '/my-orders', label: 'My Orders', support: true },

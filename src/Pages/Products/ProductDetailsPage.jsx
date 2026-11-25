@@ -5,9 +5,11 @@ import { useAuth } from '../../context/AuthContext';
 import { addToCart } from '../../Store/Slices/CartSlice';
 import API from '../../API/api';
 import { assetUrl } from '../../config';
+import { deliverySummary } from '../../lib/delivery';
+import { productPrice } from '../../lib/catalogFilters';
 import { 
   ArrowLeft, Star, ShoppingBag, Plus, Minus, CheckCircle, 
-  ShieldCheck, RotateCcw, Lock, ChevronDown, ChevronUp, AlertCircle, Sparkles, Loader2 
+  ShieldCheck, RotateCcw, Lock, Truck, ChevronDown, ChevronUp, AlertCircle, Sparkles, Loader2
 } from 'lucide-react';
 import './ProductDetailsPage.css';
 
@@ -51,7 +53,8 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const quantityInCart = useSelector(state => state.cart.items.find(item => item.id === id)?.quantity || 0);
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -89,7 +92,8 @@ const ProductDetailsPage = () => {
       try {
         const { data } = await API.get(`/products/get/${id}`);
         setProduct(data);
-        setActiveImage(data.main_image);
+        setActiveImage(data.main_image ? assetUrl(data.main_image) : '');
+        setQuantity(1);
       } catch (err) {
         setError(err.response?.data?.message || 'Product not found.');
       } finally {
@@ -131,18 +135,25 @@ const ProductDetailsPage = () => {
     checkEligibility();
   }, [id, isAuthenticated, reviewSuccess]);
 
+  const stock = product?.stock_quantity;
+  const availableQuantity = Number.isFinite(stock) ? Math.max(0, stock - quantityInCart) : Infinity;
+  const orderQuantity = Math.max(1, Math.min(quantity, availableQuantity));
+  const canAdd = availableQuantity > 0;
+  const cartLabel = canAdd ? 'Add to Cart' : stock > 0 ? 'Stock limit in cart' : 'Out of Stock';
+
   const handleQuantityChange = (val) => {
-    if (val < 1) return;
+    if (val < 1 || val > availableQuantity) return;
     setQuantity(val);
   };
 
   const handleAddToCartClick = () => {
+    if (!canAdd) return;
     if (!isAuthenticated) {
       navigate('/login', { state: { from: `/product/${id}`, message: 'Please login to add items to your cart.' } });
       return;
     }
     const isSaleLive = product.on_sale === true;
-    const activePrice = isSaleLive ? product.price : (product.discount_price || product.price);
+    const activePrice = productPrice(product);
     const discount = (isSaleLive && product.discount_price)
       ? Math.round(((product.discount_price - product.price) / product.discount_price) * 100)
       : 0;
@@ -158,14 +169,14 @@ const ProductDetailsPage = () => {
     };
 
     // Dispatch multiple times to add selected quantity
-    for (let i = 0; i < quantity; i++) {
+    for (let i = 0; i < orderQuantity; i++) {
       dispatch(addToCart(cartItemPayload));
     }
 
     setAddedProductDetails({
       name: product.name,
       brand: product.brand,
-      quantity,
+      quantity: orderQuantity,
       img: assetUrl(product.main_image),
       price: activePrice
     });
@@ -227,13 +238,17 @@ const ProductDetailsPage = () => {
     );
   }
 
+  const gallery = [...new Set([product.main_image, ...(Array.isArray(product.gallery_images) ? product.gallery_images : [])].filter(Boolean).map(assetUrl))];
+  const displayedImage = gallery.includes(activeImage) ? activeImage : gallery[0];
+  const activePrice = productPrice(product);
+
   return (
     <div className="product-detail-layout">
       {/* ── BENEFIT RIBBON ── */}
-      <div className="benefit-ribbon" style={{ background: '#fdfcfb', borderBottom: '1px solid #ebdcd3', display: 'flex', justifyContent: 'center', gap: '24px', padding: '8px 24px', fontSize: '0.75rem', fontWeight: 600, color: '#705b50' }}>
-        <div className="benefit-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ShieldCheck size={14} color="#e21b26" /><span>Authentic Products</span></div>
-        <div className="benefit-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><RotateCcw size={14} color="#e21b26" /><span>Easy Returns</span></div>
-        <div className="benefit-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Lock size={14} color="#e21b26" /><span>Secure Payment</span></div>
+      <div className="benefit-ribbon" style={{ background: '#FCFAF6', borderBottom: '1px solid #E8DDCB', display: 'flex', justifyContent: 'center', gap: '24px', padding: '8px 24px', fontSize: '0.75rem', fontWeight: 600, color: '#555555' }}>
+        <div className="benefit-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ShieldCheck size={14} color="#80663f" /><span>Authentic Products</span></div>
+        <div className="benefit-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><RotateCcw size={14} color="#80663f" /><span>Easy Returns</span></div>
+        <div className="benefit-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Lock size={14} color="#80663f" /><span>Secure Payment</span></div>
       </div>
 
       <main className="product-detail-main">
@@ -245,24 +260,15 @@ const ProductDetailsPage = () => {
           {/* Left Column: Image Gallery */}
           <div className="product-gallery-pane">
             <div className="main-image-viewport">
-              <img src={assetUrl(activeImage)} alt={product.name} />
+              {displayedImage ? <img src={displayedImage} alt={product.name} /> : <span>Product image unavailable</span>}
             </div>
-
-            {(product.gallery_images && product.gallery_images.length > 0) && (
-              <div className="thumbnails-row">
-                <button 
-                  onClick={() => setActiveImage(product.main_image)}
-                  className={`thumbnail-box ${activeImage === product.main_image ? 'active' : ''}`}
-                >
-                  <img src={assetUrl(product.main_image)} alt="Main view" />
-                </button>
-                {product.gallery_images.map((imgUrl, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setActiveImage(imgUrl)}
-                    className={`thumbnail-box ${activeImage === imgUrl ? 'active' : ''}`}
-                  >
-                    <img src={assetUrl(imgUrl)} alt={`Gallery view ${index + 1}`} />
+            {gallery.length > 1 && (
+              <div className="thumbnails-row" aria-label="Product gallery">
+                {gallery.map((image, index) => (
+                  <button type="button" key={image} onClick={() => setActiveImage(image)}
+                    className={`thumbnail-box ${displayedImage === image ? 'active' : ''}`}
+                    aria-label={`Show product photo ${index + 1} of ${gallery.length}`} aria-pressed={displayedImage === image}>
+                    <img src={image} alt="" loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -290,7 +296,7 @@ const ProductDetailsPage = () => {
 
             <div className="detail-price-row">
               <span className="detail-price">
-                Rs.{(product.on_sale === true ? product.price : (product.discount_price || product.price))?.toLocaleString()} PKR
+                Rs.{activePrice?.toLocaleString()} PKR
               </span>
               {(product.on_sale === true && product.discount_price) && (
                 <>
@@ -304,20 +310,22 @@ const ProductDetailsPage = () => {
 
             <p className="detail-desc">{product.description}</p>
 
+            <p className="product-delivery-note"><Truck size={19} aria-hidden="true" /> {deliverySummary}</p>
+
             <div className="detail-actions-row">
               <div className="detail-qty-picker">
-                <button className="qty-pick-btn" onClick={() => handleQuantityChange(quantity - 1)}>
+                <button className="qty-pick-btn" type="button" aria-label="Decrease quantity" disabled={orderQuantity <= 1} onClick={() => handleQuantityChange(orderQuantity - 1)}>
                   <Minus size={14} />
                 </button>
-                <span className="qty-pick-value">{quantity}</span>
-                <button className="qty-pick-btn" onClick={() => handleQuantityChange(quantity + 1)}>
+                <span className="qty-pick-value">{orderQuantity}</span>
+                <button className="qty-pick-btn" type="button" aria-label="Increase quantity" disabled={orderQuantity >= availableQuantity} onClick={() => handleQuantityChange(orderQuantity + 1)}>
                   <Plus size={14} />
                 </button>
               </div>
 
-              <button className="detail-add-to-cart-btn" onClick={handleAddToCartClick}>
+              <button type="button" className="detail-add-to-cart-btn" disabled={!canAdd} onClick={handleAddToCartClick}>
                 <ShoppingBag size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                Add to Cart
+                {cartLabel}
               </button>
             </div>
 
@@ -407,7 +415,7 @@ const ProductDetailsPage = () => {
                   <span style={{ color: '#888' }}>{eligibility.message || 'Checking order status...'}</span>
                 )
               ) : (
-                <span>Please <Link to="/login" style={{ color: '#e21b26', fontWeight: 700 }}>Login</Link> to review this product. Only verified buyers who purchased this product can leave reviews.</span>
+                <span>Please <Link to="/login" style={{ color: '#80663f', fontWeight: 700 }}>Login</Link> to review this product. Only verified buyers who purchased this product can leave reviews.</span>
               )}
             </div>
           </div>
@@ -479,6 +487,12 @@ const ProductDetailsPage = () => {
           </div>
         </section>
       </main>
+      <div className="product-mobile-cart">
+        <span><small>Item price</small><strong>Rs. {activePrice?.toLocaleString()} PKR</strong></span>
+        <button type="button" disabled={!canAdd} onClick={handleAddToCartClick}>
+          <ShoppingBag size={19} aria-hidden="true" /> {cartLabel}
+        </button>
+      </div>
 
       {/* ── CUSTOM ADD TO CART SUCCESS MODAL ── */}
       {showCartModal && addedProductDetails && (
