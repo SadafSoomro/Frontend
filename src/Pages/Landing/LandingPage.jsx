@@ -84,6 +84,7 @@ const LandingPage = () => {
     return () => window.cancelAnimationFrame(frame);
   }, [hash]);
   const [productFilters, setProductFilters] = useState(defaultProductFilters);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [savedIds, setSavedIds] = useState(() => {
     try {
       const ids = JSON.parse(localStorage.getItem('makskin-favourites'));
@@ -569,8 +570,8 @@ const LandingPage = () => {
       </section>
 
       <div className="summer-benefits">
-        {benefits.map(({ icon, title, detail }) => (
-          <div key={title}>{React.createElement(icon, { 'aria-hidden': true })}<span><strong>{title}</strong><small>{detail}</small></span></div>
+        {benefits.map(({ icon, short, title, detail }) => (
+          <div key={title}>{React.createElement(icon, { 'aria-hidden': true })}<span><strong className="benefit-full-title">{title}</strong><strong className="benefit-mobile-title">{short}</strong><small>{detail}</small></span></div>
         ))}
       </div>
 
@@ -633,7 +634,11 @@ const LandingPage = () => {
             </div>
           </div>
 
-          <fieldset className="catalog-filters">
+          <button className="catalog-mobile-toggle" type="button" aria-controls="catalog-filters" aria-expanded={mobileFiltersOpen}
+            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}>
+            Filters{hasProductFilters ? ' (active)' : ''} <ChevronDown size={16} aria-hidden="true" />
+          </button>
+          <fieldset className="catalog-filters" id="catalog-filters" data-mobile-open={mobileFiltersOpen}>
             <legend>Filter products</legend>
             <label>Brand
               <select value={productFilters.brand} onChange={event => updateProductFilter('brand', event.target.value)}>

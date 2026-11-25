@@ -103,6 +103,7 @@
 .summer-benefits > div + div { border-left: 1px solid #c6a76d; }
 .summer-benefits svg { width: clamp(28px, 3vw, 48px); height: clamp(28px, 3vw, 48px); flex: none; color: var(--summer-primary); stroke-width: 1.65; }
 .summer-benefits strong, .summer-benefits small { display: block; }
+.summer-benefits .benefit-mobile-title { display: none; }
 .summer-benefits strong { font-size: clamp(.83rem, 1.08vw, 1.12rem); }
 .summer-benefits small { margin-top: 4px; font-size: clamp(.7rem, .9vw, .94rem); }
 
@@ -163,8 +164,11 @@
   .summer-storefront .search-results-dropdown { width: min(300px, 92vw); right: -60px; }
   .summer-dots { margin-top: 11px; }
   .summer-dots button { width: 10px; height: 10px; }
-  .summer-benefits { width: calc(100% - 24px); grid-template-columns: repeat(2, 1fr); gap: 11px 5px; padding: 12px; border-radius: 20px; }
-  .summer-benefits > div { justify-content: flex-start; padding: 0 3px; }
+  .summer-benefits { width: calc(100% - 24px); min-height: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 9px; padding: 8px 10px; border-radius: 11px; }
+  .summer-benefits > div { justify-content: flex-start; gap: 6px; min-width: 0; padding: 0; }
+  .summer-benefits .benefit-full-title, .summer-benefits small { display: none; }
+  .summer-benefits .benefit-mobile-title { display: block; font-size: .72rem; line-height: 1.2; }
+  .summer-benefits svg { width: 16px; height: 16px; }
   .summer-benefits > div + div { border: 0; }
   .summer-categories { width: calc(100% - 24px); padding-top: 18px; }
   .summer-category-header { margin: 0 0 13px; }
@@ -357,11 +361,6 @@
 
 @media (max-width: 420px) {
   .summer-storefront .landing-search-input::placeholder { font-size: .75rem; }
-  .summer-benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .summer-benefits > div { gap: 6px; overflow-wrap: anywhere; }
-  .summer-benefits svg { width: 23px; height: 23px; }
-  .summer-benefits strong { font-size: .74rem; }
-  .summer-benefits small { font-size: .66rem; }
   .summer-main .product-info { gap: 6px; }
   .summer-main .add-to-cart-btn { gap: 5px; padding-inline: 5px; }
   .summer-main .add-to-cart-btn svg { width: 17px; height: 17px; }
@@ -441,10 +440,9 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
 }
 
 @media (max-width: 720px) {
-  .summer-benefits { margin-top: -13px; width: calc(100% - 22px); }
-  .summer-categories { padding-top: 17px; padding-bottom: 12px; }
+  .summer-categories { padding-top: 13px; padding-bottom: 9px; }
   .summer-category-header { margin-bottom: 7px; }
-  .summer-main .section-header-row { margin-bottom: 14px; }
+  .summer-main .section-header-row { margin-bottom: 10px; }
 }
 
 .summer-storefront .landing-search-wrapper .search-results-dropdown {
@@ -498,7 +496,8 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
 .luxury-hero + .summer-benefits { margin-top: 0; }
 @media (max-width: 720px) {
   .luxury-hero-stage { aspect-ratio: 2.7 / 1; }
-  .luxury-hero-controls { gap: 11px; padding-bottom: 9px; }
+  .luxury-hero-controls { gap: 11px; padding-block: 6px; }
+  .luxury-hero + .summer-benefits { margin-top: 6px; }
   .luxury-shop-button { min-height: 35px; font-size: .75rem; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -529,4 +528,27 @@ body:has(.summer-mobile-menu[open]) { overflow: hidden; }
   .catalog-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
   .catalog-filters label:first-of-type { grid-column: 1 / -1; }
   .catalog-filters :is(select, input:not([type="checkbox"])) { font-size: 16px; }
+}
+
+.catalog-mobile-toggle { display: none; }
+@media (max-width: 720px) {
+  .catalog-mobile-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+    min-height: 36px;
+    padding: 5px 11px;
+    margin-bottom: 9px;
+    color: #191919;
+    background: #fcfaf6;
+    border: 1px solid #e8ddcb;
+    border-radius: 7px;
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .catalog-mobile-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .catalog-filters[data-mobile-open="false"] { display: none; }
 }
